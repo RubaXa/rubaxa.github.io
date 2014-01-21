@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>17.01.2014: download, FileAPI.saveAs, b-shortcut.js, jQuery.event.tap.js</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=792, user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="../shwr/styles/screen.css">
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>17.01.2014</h1>
+		<p>&lt;a download/>, FileAPI.saveAs, b-shortcut.js, jQuery.event.tap.js</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Как сохранить файл на компьютер?</h2>
+	</div></section>
+
+
+	<section class="slide "><div style="margin-top: -50px">
+		<h2>Как сохранить файл на компьютер?</h2>
+		<p>
+			<pre>
+				<code>&lt;a href="/api/download/uniqId">&lt;/a></code>
+			</pre>
+
+			<pre style="font-size: 80%; margin-top: -30px;">
+				<div class="next">
+					<code>Content-Description: File Transfer</code>
+					<code>Content-Type: image/png</code>
+					<code>Content-Disposition: attachment; filename=image.png</code>
+				</div>
+				<code class="next">Content-Transfer-Encoding: binary</code>
+				<div class="next">
+					<code>Expires: 0</code>
+					<code>Cache-Control: must-revalidate</code>
+					<code>Pragma: public</code>
+				</div>
+			</pre>
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>&lt;a download /></h2>
+		<p>
+			<div>При наличии атрибута <b>download</b> браузер не переходит по ссылке, а предложит скачать документ, указанный в адресе ссылки.</div
+			<br/>
+			<br/>
+			<div class="next">
+				И даже лучше! Можно сразу задать имя:
+				<pre>
+					<code>&lt;a <mark>download="image"</mark> href="/files/uniqId.png" /></code>
+				</pre>
+			</div>
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>IE10+: navigator.msSaveBlob</h2>
+		<div>
+			Позволяет пользователю сохранять файлы на клиенте так же, как при скачивании из Интернета.
+			<br/>
+			<br/>
+			<pre class="next">
+				<code>var blobObject = new Blob(["Hello blob"]);</code>
+				<code>navigator.<mark>msSaveBlob</mark>(blobObject, "msSaveBlob.txt");</code>
+				<div style="margin-top: 20px;">Это круто господа!</div>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<div>
+			<pre>
+				<code>function saveAs(blob, file){</code>
+				<code>   if( navigator.msSaveBlob ){</code>
+				<code>      navigator.<mark>msSaveBlob</mark>(blob, file);</code>
+				<code>   } else {</code>
+				<div class="next">
+					<code>      var a = docuemnt.createElement('a');</code>
+					<code>      a.href = URL.createObjectURL(blob);</code>
+					<code>      a.<mark>download</mark> = file;</code>
+					<code>      a.click();</code>
+				</div>
+				<code>   }</code>
+				<code>}</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>FileAPI: 2.1.0 (dev)</h2>
+		<div>
+			<pre>
+				<code>FileAPI.<mark>saveAs</mark>(file, "image.png").fail(function (){</code>
+				<code>    // ..</code>
+				<code>});</code>
+			</pre>
+			<pre class="next" style="margin-top: -30px">
+				<code>FileAPI.upload("/ctrl/", files, { <mark>paralle: 3</mark> })</code>
+				<code>   .progress(function (evt){  })</code>
+				<code>   .success(function (xhr){  })</code>
+				<code>   .fail(function (err){  })</code>
+				<code>;</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Shortcuts</h2>
+		<div style="text-align: center" class="next">
+			<div style="font-size: 400%;">Но как?</div>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>&lt;a accesskey="s"/></h2>
+		<p>Позволяет активировать ссылку с помощью некоторого сочетания клавиш с заданной в коде ссылки буквой или цифрой.</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>И оно работает</h2>
+		<ul>
+			<li class="next">IE: <code>alt + s</code></li>
+			<li class="next">FF: <code>shift + Alt + S</code></li>
+			<li class="next">Chrome: <code>alt + S</code></li>
+			<li class="next">Opera: <code>shift + esc, s</code></li>
+		</ul>
+		<div class="next">Хуего!</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>b-shortcut.js</h2>
+		<div>
+			<ul>
+				<li>Декларативность</li>
+				<li>Активны только те shortcut, которые «видны»</li>
+			</ul>
+			<pre class="next">
+				<code>&lt;div <mark>data-shortcut</mark>="ctrl+up"/></code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>b-shortcut.js</h2>
+		<div>
+			<pre>
+				<code>&lt;div <mark>class="js-shortcut"</mark> data-shortcut="ctrl+up"/></code>
+			</pre>
+
+			<pre class="next" style="font-size: 85%; margin-top: -40px;">
+				<code>var shortcuts = document.<mark>getElementsByClassName(".js-shortcut");</mark></code>
+				<code>document.onkeydown = function (evt){</code>
+				<code>   var i = shortcuts.length</code>
+				<code>   while( i-- ){</code>
+				<code>      // ...</code>
+				<code>   }</code>
+				<code>};</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Touch vs. Click</h2>
+		<div>
+			Проблемы:
+			<ul>
+				<li class="next">~250ms задержка перед click</li>
+				<li class="next"><a href="https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js#L42">Проверка</a> не дает 100% гарантии наличия touch событий</li>
+				<li class="next">Пользователь может одновременно использовать разные устройтсва ввода (mouse/touch)</li>
+			</ul>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Google Fast Buttons</h2>
+		<div>
+			<ul>
+				<li>Обработчик вешается на touch и click</li>
+				<li>Если срабатывает touch, то убиваем click</li>
+			</ul>
+			<a href="https://developers.google.com/mobile/articles/fast_buttons">Подробнее</a>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Основная идея реализации GFB</h2>
+		<ul>
+			<li>Вешаем два обработчика <b>touchstart</b> и <b>click</b></li>
+			<li>На <b>touchstart</b> запоминаем координаты и вешаем <b>touchend</b></li>
+			<li>На <b>touchend</b> проверяем разницу координат, есть они меньше определенной дельты,
+			вызываем обработчик события. Кроме этого, добавляем координаты в массив.</li>
+			<li>Помимо этого, на <b>document</b> висит глобальный обработчик <b>click</b> на фазе
+			погружения и если разница координат меньше определенной дельты, событие подавляется.</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://gist.github.com/RubaXa/8333650">jQuery.event.tap</a> (gist)</h2>
+		<pre>
+			<code>$("#btn").on(<mark>"tap"</mark>, function (evt){</code>
+			<code>   <mark class="comment">// Обязательно вызываем, чтобы</mark></code>
+			<code>   <mark class="comment">// остановить последущий вызов click.</mark></code>
+			<code>   evt.preventDefault();</code>
+			<code>   </code>
+			<code>   <mark class="comment">// ...</mark></code>
+			<code>});</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<ul>
+			<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a">&lt;a download/></a></li>
+			<li><a href="https://github.com/mailru/FileAPI">mailru/FileAPI</a></li>
+			<li><a href="https://developers.google.com/mobile/articles/fast_buttons">Google fast buttons</a></li>
+			<li><a href="https://gist.github.com/RubaXa/8333650">jQuery.event.tap</a></li>
+		</ul>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+</body>
+</html>
