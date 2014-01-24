@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>24.01.2014: Оптимизация кода на jQuery. Часть I.</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>24.01.2014</h1>
+		<p>Оптимизация кода на jQuery. Часть I.</p>
+	</header>
+
+
+	<section class="slide"><div>
+		<h2>О чем это всё?</h2>
+		<div>
+			В этой презентациия я покажу, что мы делаем для ускорения своего кода
+			использующего jQuery. Конечно это не панацея и многие вещи очевилны,
+			но очень помогает для большиства задачь, увеличиая производительность
+			кода в несколько раз.
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>С чего начинается<br/>оптимизация кода?</h2>
+		<ul>
+			<li class="next">Растановка таймеров</li>
+			<li class="next">Профилирование</li>
+			<li class="next">Анализ timeline</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Расмотрим пример</h2>
+		<pre>
+			<code>&lt;script></code>
+			<code>   $el.show();</code>
+			<code>&lt;/script></code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Раставляем таймеры</h2>
+		<pre>
+			<code>&lt;script></code>
+			<code>   console.<mark>time</mark>('jquery.fn.show');</code>
+			<code>   $el.show();</code>
+			<code>   console.<mark>timeEnd</mark>('jquery.fn.show');</code>
+			<code>&lt;/script></code>
+		</pre>
+		<div class="next" style="margin-top: -30px;">
+			Первый вызов: <code>jquery.fn.show: 1.006ms</code><br/>
+			Второй: jquery.fn.show: 0.076ms
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Профилируем</h2>
+		<pre>
+			<code>&lt;script></code>
+			<code>   console.<mark>profile</mark>();</code>
+			<code>   $el.show();</code>
+			<code>   console.<mark>profileEnd</mark>();</code>
+			<code>&lt;/script></code>
+		</pre>
+		<div style="margin-top: -20px">
+			Первый: <code class="importan">0.993ms</code>, 12 calls<br/>
+			Второй: 0.073ms, <code class="importan">11 calls</code>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<img style="position: absolute; width: 250px; margin: -135px 0 0 -55px" src="http://orphancenter.org.ua/wp-content/uploads/2013/07/korona12.png"/>
+			<b style="position: relative; color: #333;">12</b> &mdash; это win!
+		</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Почему так происхоит?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Почему так происхоит?</h2>
+		Так как jQuery расчитан на «все случаи жизни» то, чтобы отобразить элементы, ему нужно
+		понять, какой <b>display</b> выставить. Для этого, внутри себя он вызывает функцию <b>showHide</b>(elements, true)
+		которая пытается определяет display элемента:
+		<pre class="next">
+			<code>var display = jQuery._data( elem, "olddisplay" )</code>
+			<code>if ( elem.style.display === "" && isHidden( elem ) ) {</code>
+			<code>    display = css_defaultDisplay(elem.nodeName);</code>
+			<code>    jQuery._data( elem, "olddisplay", display );</code>
+			<code>}</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Почему так происхоит?</h2>
+		<b>Первый вызов</b>:
+		<ul>
+			<li>jQuery._data &mdash; получение olddisplay</li>
+			<li>css_defaultDisplay &mdash; определение display для данного nodeName</li>
+			<li>jQuery._data &mdash; сохранение olddisplay</li>
+			<li>Непосредственное изменение style</li>
+		</ul>
+
+		<div class="next" style="margin-top: -30px">
+			<b>Второй</b>:
+			<ul>
+				<li>jQuery._data &mdash; получение сохраненного olddisplay</li>
+				<li>Изменение style</li>
+			</ul>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что можно сделать?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Что можно сделать?</h2>
+		<ol>
+			<li>Скрываем элементы только через <code>style="display: none"</code></li>
+			<li class="next">Не используем jQuery.fn.show/hide</li>
+			<li class="next">Пишем свой метод, например <code>jQuery.fn.display</code></li>
+		</ol>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre>
+			<code><mark>jQuery.fn.display</mark> = function (value){</code>
+			<code>  var i = this.length, el;</code>
+			<code>  value = typeof value === 'string' ? value</code>
+			<code>            : (value ? '' : 'none');</code>
+			<code>  while( i-- ){</code>
+			<code>    el = this[i];</code>
+			<code>    el.style && (el.style.display = value);</code>
+			<code>  }</code>
+			<code>  return this;</code>
+			<code>};</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jQuery.fn.display: используем</h2>
+		<pre>
+			<code>&lt;script></code>
+			<code>   console.profile();</code>
+			<code>   $el.<mark>display</mark>(true);</code>
+			<code>   console.profileEnd();</code>
+			<code>&lt;/script></code>
+		</pre>
+		<div class="next">
+			<code>0.011ms, 1 call</code>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>data-аттрибуты</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>data-аттрибуты</h2>
+
+		<div>Если вы хотите работать именно с data-аттрибутами, лучше отказаться от <code>$el.data("name")</code>.</div>
+		<br/>
+
+		<div class="next">
+			Потому что:
+			<ul>
+				<li>Непонятно, это jQuery.data или data-аттрибут?!</li>
+				<li class="next"><code>$el.data("name")</code> &mdash; 1.089ms, 8 calls</li>
+				<li class="next"><code>$el.data("name", "value")</code> &mdash; 1.103ms, 17 calls</li>
+				<li class="next">
+					Для &lt;a data-id="12345678901234567890"/> <code>$el.data('id')</code>
+					вернет <code>12345678901234567000</code> (jQuery до 1.7)
+				</li>
+			</ul>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jQuery.fn.dataset</h2>
+
+		<pre>
+			<code>jQuery.fn.dataset = function (data, value){</code>
+			<code>    <mark class="comment">// Реализация на основе dataset</mark></code>
+			<code>    <mark class="comment">// или getAttribute</mark></code>
+			<code>};</code>
+		</pre>
+
+		<div class="next">
+			<pre><code>$el.dataset("id"); // <mark>0.028ms, 1 call</mark></code></pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что ещё?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Ещё</h2>
+		<div>
+			<ul>
+				<li>$.fn.html → $.fn.innerHTML</li>
+				<li>Использовать быстрый <a href="https://gist.github.com/RubaXa/2954434">$.event.fix.js</a></li>
+				<li>$.fn.addClass/removeClass — заменяем на <a href="https://gist.github.com/RubaXa/5575339">classList</a> реализацию</li>
+				<li>Подменяем <a href="https://gist.github.com/RubaXa/6593747">$.fn.find</a> на <b>querySelectorAll</b> для простых селекторов</li>
+			</ul>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<p>
+			Помимо увелечения производительности кода, вы сокращаете кол-во вызов, уменьшая
+			«шум» при профилировании, а так же при запуске debugger.
+		</p>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

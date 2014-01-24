@@ -17,18 +17,20 @@ window.shower = window.shower || (function(window, document, undefined) {
 	showShortcuts = function(){
 		showShortcuts = function (){};
 
-		var el = document.createElement('div');
-		el.classList.add("b-shortcuts");
-		el.innerHTML = "Use right <b>→</b> or down <b>↓</b> arrows for next and<br/>" +
-			"left <b>←</b> or up <b>↑</b> arrows for previous slide.";
+		if( !/local/.test(location.hostname) && location.protocol != 'file:' ){
+			var el = document.createElement('div');
+			el.classList.add("b-shortcuts");
+			el.innerHTML = "Use right <b>→</b> or down <b>↓</b> arrows for next and<br/>" +
+				"left <b>←</b> or up <b>↑</b> arrows for previous slide.";
 
-		setTimeout(function (){
-			document.body.appendChild(el);
-		}, 0);
+			setTimeout(function (){
+				document.body.appendChild(el);
+			}, 0);
 
-		setTimeout(function (){
-			document.body.removeChild(el);
-		}, 1500)
+			setTimeout(function (){
+				document.body.removeChild(el);
+			}, 1500);
+		}
 	};
 
 
