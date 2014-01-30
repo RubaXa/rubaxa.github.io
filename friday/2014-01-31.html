@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>31.01.2014: User Timing/Performance, grasp</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>31.01.2014</h1>
+		<p>User Timing/Performance, grasp.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2 style="margin-top: -40px">
+			<small style="font-size: 19%; color: #ccc;">window.</small>performance
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Немного истории</h2>
+		<div>
+			<pre>
+				<code><mark class="comment">// Начало замера</mark></code>
+				<code>var startTime = new Date;</code>
+				<code> </code>
+				<code>slowFunction();</code>
+				<code> </code>
+				<code><mark class="comment">// Время выполнения</mark></code>
+				<code>var duration = (new Date) - startTime;</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Немного истории</h2>
+		<div>
+			И это способ до сих пор актуален, даже больше, он едиственно возможный,
+			для передачи этих замеров в мониторинг. Есть ещё <code>console.time/timeEnd</code>,
+			но они только выводитят результат в консоль.
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Немного истории</h2>
+		<div>
+			Но у <code>new Date</code> есть один существенный недостаток.
+			Если замеряемый участок кода выполнется в пределах <b>1ms</b>,
+			продолжительность такого участка получится <b>0ms</b>.
+			<br/>
+			<br/>
+			<div class="next">
+				Ситуация изменилась в начале 2013, когда появился метод <code>performance.now</code>,
+				который возвращает <a href="https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp">DOMHighResTimeStamp</a>.
+			</div>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>User Timing</h2>
+		<div>Декабрь 2013, принес нам полноценную работу с «засечками»:</div>
+		<ul style="margin-top: 10px;">
+			<li class="next">performance.<b>mark</b>(name) &mdash; установить временную метку</li>
+			<li class="next">performance.<b>measure</b>(name, startMark, endMark)  &mdash; измерить продолжительность (разницу)</li>
+		</ul>
+		<ul class="next" style="margin-top: -40px">
+			<li>performance.<b>clearMarks</b>([name]) &mdash; отчистить метки</li>
+			<li>performance.<b>clearMeasure</b>([name]) &mdash; отчистить «измерения»</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>performance.mark</h2>
+		<div>
+			Cоздает следующую запись:
+			<pre>
+				<code>{</code>
+				<code>   name: "foo", <mark class="comment">// название записи</mark></code>
+				<code>   entryType: "mark", <mark class="comment">// тип записи</mark></code>
+				<code>   startTime: 2686782.357000047, <mark class="comment">// время засечки</mark></code>
+				<code>   duration: 0, <mark class="comment">// всегда ноль, т.к. это засечка</mark></code>
+				<code>}</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>performance.measure</h2>
+		<div>
+			Создает такую же запись, как и performance.mark, только с иным entryType и запоненым duration.
+			<pre>
+				<code>{</code>
+				<code>   name: "foo_bar", <mark class="comment">// название записи</mark></code>
+				<code>   entryType: "measure", <mark class="comment">// тип записи</mark></code>
+				<code>   startTime: 2686782.357000047, <mark class="comment">// время последней засечки</mark></code>
+				<code>   duration: 7876.608999911696, <mark class="comment">// продолжительность</mark></code>
+				<code>}</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Важно</h2>
+		<div>
+			Хочу обратить внимание, оба метода не перезаписывают предыдущее значение,
+			а добавляют новую запись. <b>performance.measure</b> &mdash; работает с последними метками.
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Получение записей</h2>
+		<ul>
+			<li>performance.<b>getEntriesByType</b>(type) &mdash; получить записи по типу <b>mark</b> или <b>measure</b></li>
+			<li>performance.<b>getEntriesByName</b>(name) &mdash; по имени «измерения»</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Пример. Замеряем <b>head</b>.</h2>
+		<pre>
+			<code>&lt;head></code>
+			<code>  &lt;script>performance.<mark>mark("head_start")</mark>;&lt;script></code>
+			<code>  ...</code>
+			<code>  &lt;script></code>
+			<code>    performance.<mark>mark("head_end")</mark>;</code>
+			<code>    performance.<mark>measure("head", "head_start", "head_end")</mark>;</code>
+			<code>  &lt;script></code>
+			<code>&lt;head></code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Пример. Замеряем <b>body</b>.</h2>
+		<pre>
+			<code>&lt;body></code>
+			<code>  &lt;script>performance.<mark>mark("body_start")</mark>;&lt;script></code>
+			<code>  ...</code>
+			<code>  &lt;script></code>
+			<code>    performance.<mark>mark("body_end")</mark>;</code>
+			<code>    performance.<mark>measure("body", "body_start", "body_end")</mark>;</code>
+			<code>  &lt;script></code>
+			<code>&lt;body></code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Скидываем замеры в мониторинг</h2>
+		<pre>
+			<code>var entries = performance.<mark>getEntriesByType("measure")</mark>;</code>
+			<code>var i = entries.length;</code>
+			<code>while( i-- ){</code>
+			<code>   var entry = entries[i];</code>
+			<code>   __monitoring("page", entry.name, entry.duration);</code>
+			<code>}</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Мониторинг</h2>
+		<p>Если у вас нет своего мониторинга, то вы всегда можете использовать <a href="https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingTiming">Google Analytics</a>:</p>
+		<pre>
+			<code>function __monitoring(category, name, duration){</code>
+			<code>  duration = Math.round(duration);</code>
+			<code>  (window._gaq || (window._gaq = []))</code>
+			<code>    .push(["_trackTiming", category, name, duration]);</code>
+			<code>}</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Ммм?</h2>
+		<div>
+			Всё это конечно хорошо, но:
+			<pre>
+				<code>  performance.mark("body__end");</code>
+				<code>  performance.measure("body", "body_start", "body_end");</code>
+			</pre>
+		</div>
+
+		<div class="next" style="margin-top: -30px;">
+		Предлагаю заменить на:
+			<pre>
+				<code>performance.markEnd = function (name){</code>
+				<code>   performance.<mark>mark("_" + name)</mark>;</code>
+				<code>   performance.<mark>measure(name, name, "_" + name)</mark>;</code>
+				<code>};</code>
+			</pre>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Кто поддерживает?</h2>
+		<ul>
+			<li class="next">Chrome 30+ <code class="next">только</code></li>
+			<li class="next">для остальных <a href="https://gist.github.com/RubaXa/8662836">performance.js</a> (polyfill)</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>grasp</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>grasp</h2>
+		<p>
+			Интсрумент для поиска и рефакторинга JavaScript кода на основе его структуры,
+			а не текста.
+		</p>
+		<p class="next">
+			Устанавливаем: <code>npm install -g grasp</code>
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Есть метод</h2>
+		<pre>
+			<code>api.edit = function (action, items, extra, callback){</code>
+			<code>   <mark class="comment">/* __ */</mark></code>
+			<code>};</code>
+		</pre>
+		<pre class="next">
+			<div style="position: absolute; width: 100%; text-align: center; left: 0; margin-top: -80px; font-size: 200%;">↓</div>
+			<code>api.edit = function (params<mark class="comment">/**Object*/</mark>){</code>
+			<code>   <mark class="comment">/* __ */</mark></code>
+			<code>};</code>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Найдем все места, где он используется</h2>
+		<p>
+			<code>grasp -r -e 'api.edit(_$)' path/to</code>
+		</p>
+		<pre class="next">
+			path/to/foo.js:37  &nbsp; &nbsp; &nbsp; &nbsp;   <mark>api.edit("remove", [1, 2])</mark><br/>
+			path/to/sub/bar.js:3 &nbsp;&nbsp;  <mark>api.edit("mark", ids)</mark><br/>
+			path/to/baz.js:3     &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;  <mark>api.edit("more", list, extra, callback)</mark><br/>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Заменяем</h2>
+		<p>
+			grasp -r -e <code>'api.edit($a, $i)'</code><br/>
+			<b style="padding-left: 50px"></b>-R 'api.edit(<code>{ action: {{a}}, items: {{i}} }</code>)'<br/>
+			<b style="padding-left: 50px"></b>path/to -i
+		</p>
+		<p class="next">
+			grasp -r -e <code>'api.edit($a, $i, $e, $c)'</code><br/>
+			<span style="white-space: nowrap"><b style="padding-left: 50px"></b>-R 'api.edit({ action: {{a}}, items: {{i}}, extra: {{e}}, callback: {{c}} })'<br/></span>
+			<b style="padding-left: 50px"></b>path/to -i
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<ul>
+			<li><a href="http://www.w3.org/TR/user-timing/">W3C / User Timing</a></li>
+			<li><a href="http://graspjs.com/">grasp</a></li>
+		</ul>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
