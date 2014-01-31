@@ -25,14 +25,14 @@
 	<section class="slide"><div>
 		<h2>Немного истории</h2>
 		<div>
-			<pre>
-				<code><mark class="comment">// Начало замера</mark></code>
-				<code>var startTime = new Date;</code>
-				<code> </code>
-				<code>slowFunction();</code>
-				<code> </code>
-				<code><mark class="comment">// Время выполнения</mark></code>
-				<code>var duration = (new Date) - startTime;</code>
+			<pre class="js-code">
+				// Начало замера
+				var startTime = new Date;
+
+				slowFunction();
+
+				// Время выполнения
+				var duration = (new Date) - startTime;
 			</pre>
 		</div>
 	</div></section>
@@ -82,13 +82,13 @@
 		<h2>performance.mark</h2>
 		<div>
 			Cоздает следующую запись:
-			<pre>
-				<code>{</code>
-				<code>   name: "foo", <mark class="comment">// название записи</mark></code>
-				<code>   entryType: "mark", <mark class="comment">// тип записи</mark></code>
-				<code>   startTime: 2686782.357000047, <mark class="comment">// время засечки</mark></code>
-				<code>   duration: 0, <mark class="comment">// всегда ноль, т.к. это засечка</mark></code>
-				<code>}</code>
+			<pre class="js-code">
+				{
+				   name: "foo", // название записи
+				   entryType: "mark", // тип записи
+				   startTime: 2686782.357000047, // время засечки
+				   duration: 0 // всегда ноль, т.к. это засечка
+				}
 			</pre>
 		</div>
 	</div></section>
@@ -98,13 +98,13 @@
 		<h2>performance.measure</h2>
 		<div>
 			Создает такую же запись, как и performance.mark, только с иным entryType и запоненым duration.
-			<pre>
-				<code>{</code>
-				<code>   name: "foo_bar", <mark class="comment">// название записи</mark></code>
-				<code>   entryType: "measure", <mark class="comment">// тип записи</mark></code>
-				<code>   startTime: 2686782.357000047, <mark class="comment">// время последней засечки</mark></code>
-				<code>   duration: 7876.608999911696, <mark class="comment">// продолжительность</mark></code>
-				<code>}</code>
+			<pre class="js-code">
+				{
+				   name: "foo_bar", // название записи
+				   entryType: "measure",  // тип записи
+				   startTime: 2686782.357000047, // время последней засечки
+				   duration: 7876.608999911696  // продолжительность
+				}
 			</pre>
 		</div>
 	</div></section>
@@ -130,43 +130,43 @@
 
 	<section class="slide"><div>
 		<h2>Пример. Замеряем <b>head</b>.</h2>
-		<pre>
-			<code>&lt;head></code>
-			<code>  &lt;script>performance.<mark>mark("head_start")</mark>;&lt;script></code>
-			<code>  ...</code>
-			<code>  &lt;script></code>
-			<code>    performance.<mark>mark("head_end")</mark>;</code>
-			<code>    performance.<mark>measure("head", "head_start", "head_end")</mark>;</code>
-			<code>  &lt;script></code>
-			<code>&lt;head></code>
+		<pre class="js-code">
+			&lt;head>
+			  &lt;script>performance.<mark>mark("head_start")</mark>;&lt;script>
+			  ...
+			  &lt;script>
+			    performance.<mark>mark("head_end")</mark>;
+			    performance.<mark>measure("head", "head_start", "head_end")</mark>;
+			  &lt;script>
+			&lt;head>
 		</pre>
 	</div></section>
 
 
 	<section class="slide"><div>
 		<h2>Пример. Замеряем <b>body</b>.</h2>
-		<pre>
-			<code>&lt;body></code>
-			<code>  &lt;script>performance.<mark>mark("body_start")</mark>;&lt;script></code>
-			<code>  ...</code>
-			<code>  &lt;script></code>
-			<code>    performance.<mark>mark("body_end")</mark>;</code>
-			<code>    performance.<mark>measure("body", "body_start", "body_end")</mark>;</code>
-			<code>  &lt;script></code>
-			<code>&lt;body></code>
+		<pre class="js-code">
+			&lt;body>
+			  &lt;script>performance.<mark>mark("body_start")</mark>;&lt;script>
+			  ...
+			  &lt;script>
+			    performance.<mark>mark("body_end")</mark>;
+			    performance.<mark>measure("body", "body_start", "body_end")</mark>;
+			  &lt;script>
+			&lt;body>
 		</pre>
 	</div></section>
 
 
 	<section class="slide"><div>
 		<h2>Скидываем замеры в мониторинг</h2>
-		<pre>
-			<code>var entries = performance.<mark>getEntriesByType("measure")</mark>;</code>
-			<code>var i = entries.length;</code>
-			<code>while( i-- ){</code>
-			<code>   var entry = entries[i];</code>
-			<code>   __monitoring("page", entry.name, entry.duration);</code>
-			<code>}</code>
+		<pre class="js-code">
+			var entries = performance.<mark>getEntriesByType("measure")</mark>;
+			var i = entries.length;
+			while( i-- ){
+			   var entry = entries[i];
+			   __monitoring("page", entry.name, entry.duration);
+			}
 		</pre>
 	</div></section>
 
@@ -174,12 +174,12 @@
 	<section class="slide"><div>
 		<h2>Мониторинг</h2>
 		<p>Если у вас нет своего мониторинга, то вы всегда можете использовать <a href="https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingTiming">Google Analytics</a>:</p>
-		<pre>
-			<code>function __monitoring(category, name, duration){</code>
-			<code>  duration = Math.round(duration);</code>
-			<code>  (window._gaq || (window._gaq = []))</code>
-			<code>    .push(["_trackTiming", category, name, duration]);</code>
-			<code>}</code>
+		<pre class="js-code">
+			function __monitoring(category, name, duration){
+			  duration = Math.round(duration);
+			  (window._gaq || (window._gaq = []))
+			    .push(["_trackTiming", category, name, duration]);
+			}
 		</pre>
 	</div></section>
 
@@ -188,19 +188,19 @@
 		<h2>Ммм?</h2>
 		<div>
 			Всё это конечно хорошо, но:
-			<pre>
-				<code>  performance.mark("body__end");</code>
-				<code>  performance.measure("body", "body_start", "body_end");</code>
+			<pre class="js-code">
+				performance.mark("body__end");
+				performance.measure("body", "body_start", "body_end");
 			</pre>
 		</div>
 
 		<div class="next" style="margin-top: -30px;">
 		Предлагаю заменить на:
-			<pre>
-				<code>performance.markEnd = function (name){</code>
-				<code>   performance.<mark>mark("_" + name)</mark>;</code>
-				<code>   performance.<mark>measure(name, name, "_" + name)</mark>;</code>
-				<code>};</code>
+			<pre class="js-code">
+				performance.markEnd = function (name){
+				   performance.<mark>mark("_" + name)</mark>;
+				   performance.<mark>measure(name, name, "_" + name)</mark>;
+				};
 			</pre>
 		</div>
 	</div></section>
@@ -234,17 +234,19 @@
 
 	<section class="slide"><div>
 		<h2>Есть метод</h2>
-		<pre>
-			<code>api.edit = function (action, items, extra, callback){</code>
-			<code>   <mark class="comment">/* __ */</mark></code>
-			<code>};</code>
+		<pre class="js-code">
+			api.edit = function (action, items, extra, callback){
+			   //* __ *//
+			};
 		</pre>
-		<pre class="next">
+		<div class="next">
 			<div style="position: absolute; width: 100%; text-align: center; left: 0; margin-top: -80px; font-size: 200%;">↓</div>
-			<code>api.edit = function (params<mark class="comment">/**Object*/</mark>){</code>
-			<code>   <mark class="comment">/* __ */</mark></code>
-			<code>};</code>
-		</pre>
+			<pre class="js-code">
+				api.edit = function (params/**Object*/){
+				   //* __ *//
+				};
+			</pre>
+		</div>
 	</div></section>
 
 

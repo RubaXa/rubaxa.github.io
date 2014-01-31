@@ -1021,7 +1021,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			pre.innerHTML = lines.map(function (line){
 				line = line
 						.substr(pad)
-						.replace(/(-?\d+|".*?"|\/\/.+|(?:new|function))/g, function (_, val){
+						.replace(/(-?\d+|".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val){
 							var type = '';
 							if( /^-?\d+$/.test(val) ){
 								type = 'number';
@@ -1030,15 +1030,19 @@ window.shower = window.shower || (function(window, document, undefined) {
 							} else if( /\/\//.test(val) ){
 								type = 'comment';
 							} else {
-//								type = 'keyword';
+								type = 'keyword';
 							}
 							return '<span class="'+type+'">'+val+'</span>';
 						})
+						.replace(/(\/\*.*?\*\/)/gi, '<span class="comment">$1</span>')
+						.replace(/(\b\w+)\(/gi, '<span class="function">$1</span>(')
+						.replace(/\.(\w+)/gi, '.<span class="tomorrow-aqua">$1</span>')
+						.replace(/(\barguments\b)/g, '<span class="tomorrow-aqua">$1</span>')
 //						.replace(/(\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
 //						.replace(/(\/\/.+)/, '<mark class="comment">$1</mark>')
 					;
-				return '<code>'+line+'</code>';
+				return '<code>'+(line || '&nbsp;')+'</code>';
 			}).join('\n');
 		});
 	})();

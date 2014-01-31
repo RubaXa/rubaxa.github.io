@@ -731,10 +731,6 @@ a {
 	color: #718c00;
 }
 
-xpre mark .string {
-	color: #334400;
-}
-
 .tomorrow-aqua, pre .css .hexcolor {
 	color: #3e999f;
 }
@@ -746,3 +742,6 @@ xpre mark .string {
 .tomorrow-purple, pre .keyword, pre .javascript .function {
 	color: #8959a8;
 }
+
+
+.js-code {  }
