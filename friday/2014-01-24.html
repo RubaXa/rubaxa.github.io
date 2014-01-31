@@ -38,22 +38,22 @@
 
 	<section class="slide"><div>
 		<h2>Расмотрим пример</h2>
-		<pre>
-			<code>&lt;script></code>
-			<code>   $el.show();</code>
-			<code>&lt;/script></code>
+		<pre class="js-code">
+			&lt;script>
+			   $el.show();
+			&lt;/script>
 		</pre>
 	</div></section>
 
 
 	<section class="slide"><div>
 		<h2>Раставляем таймеры</h2>
-		<pre>
-			<code>&lt;script></code>
-			<code>   console.<mark>time</mark>('jquery.fn.show');</code>
-			<code>   $el.show();</code>
-			<code>   console.<mark>timeEnd</mark>('jquery.fn.show');</code>
-			<code>&lt;/script></code>
+		<pre class="js-code">
+			&lt;script>
+			   console.<mark>time</mark>("jquery.fn.show");
+			   $el.show();</code>
+			   console.<mark>timeEnd</mark>("jquery.fn.show");
+			&lt;/script>
 		</pre>
 		<div class="next" style="margin-top: -30px;">
 			Первый вызов: <code>jquery.fn.show: 1.006ms</code><br/>
@@ -64,12 +64,12 @@
 
 	<section class="slide"><div>
 		<h2>Профилируем</h2>
-		<pre>
-			<code>&lt;script></code>
-			<code>   console.<mark>profile</mark>();</code>
-			<code>   $el.show();</code>
-			<code>   console.<mark>profileEnd</mark>();</code>
-			<code>&lt;/script></code>
+		<pre class="js-code">
+			&lt;script></code>
+			   console.<mark>profile</mark>();
+			   $el.show();</code>
+			   console.<mark>profileEnd</mark>();
+			&lt;/script>
 		</pre>
 		<div style="margin-top: -20px">
 			Первый: <code class="importan">0.993ms</code>, 12 calls<br/>
@@ -96,12 +96,12 @@
 		Так как jQuery расчитан на «все случаи жизни» то, чтобы отобразить элементы, ему нужно
 		понять, какой <b>display</b> выставить. Для этого, внутри себя он вызывает функцию <b>showHide</b>(elements, true)
 		которая пытается определяет display элемента:
-		<pre class="next">
-			<code>var display = jQuery._data( elem, "olddisplay" )</code>
-			<code>if ( elem.style.display === "" && isHidden( elem ) ) {</code>
-			<code>    display = css_defaultDisplay(elem.nodeName);</code>
-			<code>    jQuery._data( elem, "olddisplay", display );</code>
-			<code>}</code>
+		<pre class="js-code next">
+			var display = jQuery._data( elem, "olddisplay" );
+			if ( elem.style.display === "" && isHidden( elem ) ) {
+			    display = css_defaultDisplay(elem.nodeName);
+			    jQuery._data( elem, "olddisplay", display );
+			}
 		</pre>
 	</div></section>
 
@@ -142,29 +142,29 @@
 
 
 	<section class="slide"><div>
-		<pre>
-			<code><mark>jQuery.fn.display</mark> = function (value){</code>
-			<code>  var i = this.length, el;</code>
-			<code>  value = typeof value === 'string' ? value</code>
-			<code>            : (value ? '' : 'none');</code>
-			<code>  while( i-- ){</code>
-			<code>    el = this[i];</code>
-			<code>    el.style && (el.style.display = value);</code>
-			<code>  }</code>
-			<code>  return this;</code>
-			<code>};</code>
+		<pre class="js-code">
+			<mark>jQuery.fn.display</mark> = function (value){
+			  var i = this.length, el;
+			  value = typeof value === "string" ? value
+			            : (value ? "" : "none");
+			  while( i-- ){
+			    el = this[i];
+			    el.style && (el.style.display = value);
+			  }
+			  return this;
+			};
 		</pre>
 	</div></section>
 
 
 	<section class="slide"><div>
 		<h2>jQuery.fn.display: используем</h2>
-		<pre>
-			<code>&lt;script></code>
-			<code>   console.profile();</code>
-			<code>   $el.<mark>display</mark>(true);</code>
-			<code>   console.profileEnd();</code>
-			<code>&lt;/script></code>
+		<pre class="js-code">
+			&lt;script>
+			   console.profile();
+			   $el.<mark>display</mark>(true);
+			   console.profileEnd();
+			&lt;/script>
 		</pre>
 		<div class="next">
 			<code>0.011ms, 1 call</code>
@@ -201,15 +201,17 @@
 	<section class="slide"><div>
 		<h2><a href="https://gist.github.com/RubaXa/8599781">jQuery.fn.dataset</a> (gist)</h2>
 
-		<pre>
-			<code>jQuery.fn.dataset = function (data, value){</code>
-			<code>    <mark class="comment">// Реализация на основе dataset</mark></code>
-			<code>    <mark class="comment">// и getAttribute</mark></code>
-			<code>};</code>
+		<pre class="js-code">
+			jQuery.fn.dataset = function (data, value){
+			    // Реализация на основе dataset
+			    // и getAttribute
+			};
 		</pre>
 
 		<div class="next">
-			<pre><code>$el.dataset("id"); // <mark>0.028ms, 1 call</mark></code></pre>
+			<pre class="js-code">
+				$el.dataset("id"); // <mark>0.028ms, 1 call</mark>
+			</pre>
 		</div>
 	</div></section>
 
