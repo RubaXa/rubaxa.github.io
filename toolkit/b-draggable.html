@@ -23,7 +23,7 @@
 		<h2>b-draggable</h2>
 		<pre class="js-code">
 			new toolkit["b-draggable"]({
-			  el: ".box",  // элемент, который будет тоскать
+			  el: ".box",  // элемент, который будем перемещать
 			  name: "letter",  // имя блока для b-droppable
 			  toleranceX: 5,  // на сколько нужно сместить элемент,
 			  toleranceY: 10  // для начала перетаскивания
@@ -51,7 +51,7 @@
 		<h2>b-droppable</h2>
 		<pre class="js-code">
 			new toolkit["b-droppable"]({
-			  el: ".box",  // элемент на который можно «бросить»
+			  el: ".box",  // элемент, на который можно «бросить»
 			  accept: ["letter"]  // имена b-draggable
 			});
 		</pre>
@@ -62,8 +62,8 @@
 		<h2>b-droppable: события</h2>
 		<ul>
 			<li><b>dragenter</b> — «вход» в область, если событие отменить, то модифиткатор <code>hover</code> не будет установлен</li>
-			<li><b>drop</b> — бросили</li>
-			<li><b>dragleave</b> — выход из области</li>
+			<li><b>drop</b> — «бросили» элемент</li>
+			<li><b>dragleave</b> — «выход» из области</li>
 		</ul>
 	</div></section>
 
