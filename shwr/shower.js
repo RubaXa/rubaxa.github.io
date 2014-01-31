@@ -1009,6 +1009,40 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 	document.addEventListener('mousewheel', shower.wheel, false);
 
+
+	(function (){
+		var items = [].slice.call(document.querySelectorAll('.js-code'));
+
+
+		items.forEach(function (pre){
+			var lines = pre.innerHTML.split('\n').slice(0, -1);
+			var pad = lines[0].match(/^\s*/)[0].length;
+
+			pre.innerHTML = lines.map(function (line){
+				line = line
+						.substr(pad)
+						.replace(/(-?\d+|".*?"|\/\/.+|(?:new|function))/g, function (_, val){
+							var type = '';
+							if( /^-?\d+$/.test(val) ){
+								type = 'number';
+							} else if( /^"/.test(val) ){
+								type = 'string'
+							} else if( /\/\//.test(val) ){
+								type = 'comment';
+							} else {
+//								type = 'keyword';
+							}
+							return '<span class="'+type+'">'+val+'</span>';
+						})
+//						.replace(/(\d+)/, '<span class="number">$1</span>')
+//						.replace(/(".*?")/, '<span class="string">$1</span>')
+//						.replace(/(\/\/.+)/, '<mark class="comment">$1</mark>')
+					;
+				return '<code>'+line+'</code>';
+			}).join('\n');
+		});
+	})();
+
 	return shower;
 
 })(this, this.document);
