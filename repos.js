@@ -91,10 +91,14 @@
 					}
 				}
 
-				el.innerHTML = '<ul style="line-height: 145%; font-size: 18px; list-style: none; padding: 20px;">'+
+				el.innerHTML = '<ul style="line-height: 145%; font-size: 18px; list-style: none; padding: '+(el.getAttribute('data-padding') || 20)+'px;">'+
 					'<li style="padding-bottom: 10px">' +
-						'<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a> / '+
-						'<a href="https://github.com/RubaXa/">github</a>:' +
+					(el.getAttribute('data-title')
+						? ('<h3>'+el.getAttribute('data-title')+'</h3>')
+						: (
+							'<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a> / '+
+							'<a href="https://github.com/RubaXa/">github</a>:'
+						)) +
 					'</li>'+
 					html+
 					'</ul>'

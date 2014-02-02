@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+	<title>Rubaxa</title>
+
+	<meta name="keywords" content="rubaxa, лебедев, константин, javascript"/>
+	<meta name="description" content="JavaScript developer"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+	<link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'/>
+
+	<style>
+		html {
+			background-image: -webkit-linear-gradient(bottom, #eefbf6 20%, #c8f4e2 100%);
+			background-image: -ms-linear-gradient(bottom, #eefbf6 20%, #c8f4e2 100%);
+			background-image: linear-gradient(to bottom, #eefbf6 20%, #c8f4e2 100%);
+		}
+
+		html, body {
+			margin: 0;
+			padding: 0;
+			position: relative;
+			color: #464637;
+			min-height: 100%;
+			font-size: 20px;
+			font-family: 'Roboto', sans-serif;
+			font-weight: 300;
+		}
+
+		.container {
+			width: 80%;
+			margin: 50px auto;
+		}
+
+		#Splash {
+			text-align: center;
+		}
+			#Splash .userpic {
+				border-radius: 4px;
+				box-shadow: 0 1px 3px rgba(0,0,0,.19);
+			}
+
+		h1, h3 {
+			margin: 0;
+			font-weight: 300;
+		}
+
+		a {
+			color: #36c;
+		}
+		a:hover {
+			color: #f00;
+		}
+
+		ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+			line-height: 145%;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div id="Splash">
+			<img class="userpic"
+				 src="http://ru.gravatar.com/userimage/27787489/20f440e3dccbb3070fa15fc91680debb.jpg?size=100"/>
+
+			<h1>Lebedev Konstantin</h1>
+
+			<div>
+				<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+				&nbsp; ✦ &nbsp;
+				<a href="https://github.com/rubaxa/">github.com</a>
+			</div>
+		</div>
+
+		<div style="height: 30px;"></div>
+
+		<div id="rubaxa-repos" data-title="Projects" data-padding="0"></div>
+		<script src="./repos.js"></script>
+
+		<div style="height: 40px;"></div>
+
+		<h3>Friday</h3>
+		<ul id="rubaxa-friday" style="font-size: 18px; margin-top: 10px"></ul>
+		<script>
+			(function (){
+				var date = new Date;
+				var xhr = new XMLHttpRequest();
+
+				xhr.open('GET', './README.md?'+date.toISOString().split('T')[0], true);
+				xhr.onload = function (){
+					var
+						  match
+						, list = []
+						, regexp = /\*\s+\[(.*?)\]\((.*?)\):\s+(.*?)\n/ig
+						, content = xhr.response
+					;
+
+					while( match = regexp.exec(content) ){
+						list.push('<li style="padding-left: 20px"><a href="'+match[2]+'">'+match[1]+'</a>: '+match[3]+'</li>');
+					}
+
+					document.getElementById('rubaxa-friday').innerHTML = list.join('\n');
+				};
+				xhr.send();
+			})();
+		</script>
+
+		<div style="height: 100px;"></div>
+
+	</div>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
