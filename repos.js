@@ -73,7 +73,7 @@
 						   !repo.fork
 						&& (repo.owner.login.toLowerCase() === login || repo.name == 'FileAPI')
 						&& (repo.stargazers_count > 10 || /stack/i.test(url))
-						&& (url.indexOf(location.pathname) == -1)
+						&& (url.indexOf(location.pathname) == -1 || location.pathname == '/')
 					){
 						html += '<li style="padding-bottom: 5px; padding-left: 20px;">'+
 							'<a href="'+url+'">'+(match[1] || repo.name)+'</a>'+
