@@ -42,6 +42,19 @@
 	</div></section>
 
 
+	<section class="slide"><div>
+		<h2>b-draggable: призрак</h2>
+		<pre class="js-code">
+			new toolkit["b-draggable"]({
+				// Вызывается после "dragstart"
+				_createDraggableGhost: function ($el){
+					return $el.clone().addMod("ghost"); // по умолчанию
+				}
+			});
+		</pre>
+	</div></section>
+
+
 	<section class="slide shout"><div>
 		<h2>b-droppable</h2>
 	</div></section>

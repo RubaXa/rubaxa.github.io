@@ -1021,6 +1021,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			pre.innerHTML = lines.map(function (line){
 				line = line
 						.substr(pad)
+						.replace(/\t/g, '  ')
 						.replace(/(-?\d+|".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val){
 							var type = '';
 							if( /^-?\d+$/.test(val) ){
