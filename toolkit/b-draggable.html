@@ -47,8 +47,8 @@
 		<pre class="js-code">
 			new toolkit["b-draggable"]({
 				// Вызывается после "dragstart"
-				_createDraggableGhost: function ($el){
-					return $el.clone().addMod("ghost"); // по умолчанию
+				_createDraggableEl: function ($el){
+					return $el.clone(); // по умолчанию
 				}
 			});
 		</pre>
