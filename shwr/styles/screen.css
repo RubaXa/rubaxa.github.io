@@ -198,6 +198,7 @@ a {
 	color: #666;
 	font: 700 50px/1 'PT Sans Narrow', sans-serif
 }
+h2 b { color: #333; }
 
 .slide p {
 	margin: 0 0 50px
@@ -296,6 +297,11 @@ a {
 	background: 0 0;
 	white-space: pre;
 	line-height: 50px
+}
+
+.compact {}
+.slide pre.compact code {
+	line-height: 40px;
 }
 
 .slide pre code:before {

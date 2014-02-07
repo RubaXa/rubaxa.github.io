@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>07.02.2014: «Классы» :]</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>07.02.2014</h1>
+		<p>«Классы» :]</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>«Классы»</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Don't Panic!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Введение</h2>
+		<p>
+			Всем хорошо известно, что любое упомнание OOP в JavaScript приводит
+			к обильному нецензурной брани и обвинением опонента, что он не понимает JS
+			и ему не место сред «них».
+		</p>
+		<p class="next">
+			А зря, ведь в ES6 черным по белому написано <b>class</b>, <b>extends</b> и <b>super</b>.
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>или Backbone</h2>
+		<pre class="js-code">
+			var Note = Backbone.Model.extend({
+				initialize: function() { /*...*/ },
+				author: function() { /*...*/ },
+
+				allowedToEdit: function(account) {
+					return true;
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>или Backbone</h2>
+		<pre class="js-code">
+			// Наследуемся от Note
+			var PrivateNote = Note.extend({
+				// Переопределяем родительский метод
+				allowedToEdit: function(account) {
+					return true;
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>или Ember</h2>
+		<pre class="js-code">
+			App.UserView = Ember.View.extend({
+				templateName: "user",
+				firstName: "Albert",
+				lastName: "Hofmann"
+			});
+		</pre>
+		<div class="next">И много где ещё&hellip;</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			.<b>extend</b>({ })
+		</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			Что это?
+			<div class="next" style="color: #333; font-size: 70%">Это и есть «классы»!</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Это «класс»</h2>
+		<pre class="js-code compact">
+			var Hello = function (first){ // Конструктор
+				this.setText(first);
+			};
+			// Методы «класса»
+			Hello.prototype.setText = function (text){
+				this.text = text;
+			};
+			Hello.prototype.say = function (){
+				alert(this.text);
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>«Наследование»</h2>
+		<pre class="js-code compact">
+			var HelloXXX = function (first, second){
+				this.setText(first+" "+second);
+			};
+			// Наcледуем методы
+			HelloXXX.prototype = Object.create(Hello.prototype);
+			// Переопределяем метод
+			HelloXXX.prototype.setText = function (text){
+				// Вызываем parent/super
+				Hello.prototype.setText.call(this, text+"!");
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Инстанцируем</h2>
+		<pre class="js-code compact">
+			// Создаем экземпляр класса
+			var hello = new HelloXXX("Hi", "Class");
+
+			// Вызываем метод "say"
+			hello.say(); // alert: Hi Class!
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<p>Тут вы должны остановить меня и сказать, мы и так всё это знаем, ничего сложно.</p>
+
+		<p class="next">И вы правы.<br/><br/>
+		<b>«Классы»</b> и ругань начинаются когда кто-то пытается создать обертку над процессом создания
+		<i>функции-конструктора</i>, а <a href="http://microjs.com/#class">самое главное вызовов «родительского» метода</a>.</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что тут сложного?</h2>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/mfvy475ntdblssx/Screenshot%202014-02-07%2015.49.22.png" height="500"/>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/pxr8u967qlmet4d/Screenshot%202014-02-07%2015.51.27.png" height="500"/>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/waaliljrg38gvws/Screenshot%202014-02-07%2015.52.32.png" height="500"/>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/1siu6amd7rr21nt/Screenshot%202014-02-07%2015.54.43.png" height="500"/>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/c91fyfqmy6ykddd/Screenshot%202014-02-07%2015.56.06.png" height="500"/>
+	</div></section>
+
+
+	<section class="slide"><div style="text-align: center; margin-top: -20px;">
+		<img src="https://dl.dropboxusercontent.com/s/cl5uiv517b3fvpi/Screenshot%202014-02-07%2015.57.16.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И это не все ;]</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Основные реализации parent/super</h2>
+		<ul>
+			<li class="next"><b>Vanilla</b> &mdash; вызов метода из протипа «класса» от котрого наследовались</li>
+			<li class="next"><b>SimpleClass</b> &mdash; завернуть вызов каждой переопределенной функции в дополнительную функцию в которой реализовать метод this.parent</li>
+			<li class="next"><b>Foo.$superp</b> &mdash; запомнить ссылку на прототип родилея в свойстве $superp у функции-конструктара наследника</li>
+			<li class="next"><b>arguments.callee.caller</b> &mdash; похоже на Foo.$super, только «хитрей»</li>
+			<li class="next"><b>funcName.parent</b> &mdash; вызов родительского метода через ссылку у именнованой функции</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="http://ejohn.org/blog/simple-javascript-inheritance/">SimpleClass</a> (Resig)</h2>
+		<pre class="js-code">
+			function makeParent(func, parentFunc){
+				return function (){
+					var tmp = this.parent/*запомним*/, retVal
+					this.parent = parentFunc; // текущий родитель
+					retVal = func.apply(this, arguments);
+					this.parent = tmp; // востановим
+					return retVal;
+				};
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="http://ejohn.org/blog/simple-javascript-inheritance/">SimpleClass</a> (Resig)</h2>
+		<pre class="js-code compact">
+			var Foo = Class.extend({
+				toString: function (){
+					return "foo";
+				}
+			});
+
+			var Bar = Foo.extend({
+				toString: function (){
+					return <mark>this._super()</mark> + " bar";
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/tnhu/jsface">Foo.$superp</a> (jsface.js)</h2>
+		<pre class="js-code">
+			var Foo = ...;
+
+			var Bar = Foo.extend({
+				toString: function (){
+					return <mark>Bar.$superp.toString.call(this)</mark> + " bar";
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/tobytailor/def.js/blob/master/def.js">arguments.callee.caller</a> (def.js)</h2>
+		<pre class="js-code">
+			function base(){
+				var caller = arguments.callee.caller;
+				return caller._class._super.prototype[caller._name]
+					.apply(this, arguments.length
+						? arguments
+						: caller.arguments);
+			}
+		</pre>
+		<p style="margin-top: -40px;">Вот она, настоящая «магия» :]</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/tobytailor/def.js/blob/master/def.js">arguments.callee.caller</a> (def.js)</h2>
+		<pre class="js-code">
+			def("Foo") ({ /*..*/ });
+
+			def("Bar") << Foo ({
+				toString: function (){
+					return <mark>this._super()</mark> + " bar";
+				}
+			});
+		</pre>		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://gist.github.com/RubaXa/8857525">funcName.parent</a> (gist)</h2>
+		<pre class="js-code">
+			var Foo = ...;
+
+			var Bar = Foo.extend({
+				toString: function <mark>__</mark>(){
+					return <mark>__.parent.call(this)</mark> + " bar";
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Benchmarks: extend (<a href="http://jsperf.com/bench-oop-extend">jsperf</a>)</h2>
+		<div align="center"><img src="https://dl.dropboxusercontent.com/s/1p2is99xe51ubnh/Screenshot%202014-02-07%2010.42.07.png"/></div>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>Benchmarks: call (<a href="http://jsperf.com/bench-oop-call">jsperf</a>)</h2>
+		<div align="center"><img src="https://dl.dropboxusercontent.com/s/p7k0js363g6e0e2/Screenshot%202014-02-07%2010.38.32.png"/></div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<ul>
+			<li><a href="http://microjs.com/#class">http://microjs.com/#class</a></li>
+			<li><a href="http://ejohn.org/blog/simple-javascript-inheritance/">Class</a> &mdash; Simple JavaScript Inheritance</li>
+			<li><a href="https://github.com/tnhu/jsface">jsface</a> &mdash; Small, fast, elegant, powerful, and cross platform JavaScript OOP library.</li>
+			<li><a href="https://github.com/tobytailor/def.js">def.js</a> &mdash; Simple Ruby-style inheritance for JavaScript.</li>
+			<li><a href="https://gist.github.com/RubaXa/8857525">inherit.js</a> &mdash; моя реализация «классов»</li>
+		</ul>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
