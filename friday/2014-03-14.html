@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>14.03.2014: grunt analyzer, работа с битами</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>14.03.2014</h1>
+		<p>grunt analyzer, работа с битами</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Сборка JS</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Сборка JS</h2>
+		<ul>
+			<li>jsLoader</li>
+			<li>RequireJS</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jsLoader</h2>
+		<div>Плохо</div>
+		<pre class="js-code">
+			jsLoader.require(["{jquery}jquery"], function () {
+				globalNamesapce.module = {
+					foo: "...",
+					bar: true
+				};
+				jsLoader.loaded("{alias}filename");
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jsLoader</h2>
+		<div>Уже лучше</div>
+		<pre class="js-code">
+			jsLoader.require(["{jquery}jquery"], function (<mark>$</mark>) {
+				var module = {
+					foo: "...",
+					bar: true
+				};
+				jsLoader.loaded("{alias}filename", <mark>module</mark>);
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>RequireJS</h2>
+		<pre class="js-code">
+			define("{alias}filename", ["{jquery}jquery"], function ($) {
+				var module = {
+					foo: "...",
+					bar: true
+				};
+				return <mark>module</mark>;
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			Сборка JS
+			<div class="next" style="color: #333;">прощай Максим!</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div style="font-size: 80%; color: #999;">Привет</div>
+			<div>grunt&nbsp;analyzer!</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Что умеет?</h2>
+		<div class="next">
+			<code>grunt analyzer:help</code>
+		</div>
+		<ul>
+			<li class="next"><b>analyzer</b> — показать информацию о сборках</li>
+			<li class="next"><b>analyzer:map</b> — работа с кратой сборок</li>
+			<li class="next"><b>analyzer:duplicate</b> — файлы, которые находятся в нескольких сборка</li>
+			<li class="next"><b>analyzer:build</b> — сборать все сборки</li>
+			<li class="next"><b>analyzer:filename</b> — показать все зависимости для файла или сборки</li>
+			<li class="next"><b>analyzer:search:filename</b> — поиск файла в зависимостях</li>
+			<li class="next"><b>analyzer:server</b> — запуск сервера для тестирование сборок на win.dev</li>
+			<li class="next"><b>analyzer:normalize</b> —нормализация файлов (jsLoader -> define)</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer</code></h2>
+		<div>
+			Running "analyzer" task<br/>
+			>>&nbsp;Read&nbsp;aliases&nbsp;data/ru/.templates/default/blocks/head/head__js_aliases.tpl.json<br/>
+			>> 887 analyzed files<br/>
+			<br/>
+			<div class="next">
+			Build: {patron.build}core -> data/ru/images/js/ru/build/core.js<br/>
+			>> All deps: 79<br/>
+			>> Real deps: 79<br/>
+			>> Size: 918.826KB<br/>
+			</div>
+			<br/>
+			Build: {patron.build}MsgList -> data/ru/images/js/ru/build/MsgList.js<br/>
+			>> All deps: 131<br/>
+			>> Real deps: 60<br/>
+			>> Size: 592.305KB<br/>
+			<br/>
+			Build: {patron.build}Settings -> data/ru/images/js/ru/build/Settings.js<br/>
+			>> All deps: 81<br/>
+			>> Real deps: 15<br/>
+			>> Size: 219.593KB<br/>
+			<br/>
+			Build: {patron.build}Addressbook -> data/ru/images/js/ru/build/Addressbook.js<br/>
+			>> All deps: 88<br/>
+			>> Real deps: 34<br/>
+			>> Size: 5196.316KB<br/>
+			<br/>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer</code></h2>
+		<div>
+			Build: {patron.build}MsgList -> data/ru/images/js/ru/build/MsgList.js<br/>
+			>> All deps: 131<br/>
+			>> Real deps: 60<br/>
+			>> Size: 592.305KB<br/>
+			<div class="next" style="margin-top: 20px">
+			Build:&nbsp;{patron.build}Addressbook&nbsp;-&nbsp;data/ru/images/js/ru/build/Addressbook.js<br/>
+			>> All deps: 88<br/>
+			>> Real deps: 34<br/>
+			>> Size: <code class="next">5196.316KB</code>
+			</div>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer:core.js</code></h2>
+		<div class="pre" style="font-size: 80%">
+			<b>data/ru/images/js/ru/build/core.js</b><div style="font-size: 70%">    data/common/js/ajs/Array.js,  18.643
+			    data/common/js/ajs/String.js,  8.468
+			    data/common/js/ajs/ajs.ui.operands.js,  32.610
+			    data/ru/images/js/ru/jsCore/jquery/jquery.js,  83.693
+			    data/ru/images/js/ru/jsCore/jsCore.js,  24.799
+			    data/ru/images/js/ru/jsCore/JSON.js,  17.349
+			    data/ru/images/js/ru/jsCore/utils/Lang.js,  2.486
+			    data/ru/images/js/ru/jsCore/Date.js,  6.489
+			    data/ru/images/js/ru/jsCore/jsCore.ajs.js,  7.010
+			    data/ru/images/js/ru/jsCore/swfobject.js,  26.676
+			    &hellip;
+			</div><b>Size: 918.826KB</b>
+			<b>Minify: 525.770KB</b>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>grunt analyzer:{patron.utils}patron.Utils.FileSearch.js</h2>
+		<div class="pre">
+			<b>data/ru/images/js/ru/utils/patron.Utils.FileSearch.js</b>
+			   data/ru/images/js/ru/jsCore/jquery/jquery.js,  83.693
+			   data/ru/images/js/ru/jsCore/swfobject.js,  26.676
+			   data/ru/images/js/ru/utils/patron.Utils.js,  21.163
+
+			Size: 137.352KB
+			Minify: 103.939KB
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>runt analyzer:search:formatPhone</h2>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/mfj95hjuqyvah8l/Screenshot%202014-03-14%2017.20.21.png"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer:duplicate</code></h2>
+		<div class="pre" style="font-size: 80%">
+			<b>{patron.utils}patron.Utils.Addressbook, 9.092KB</b>
+			    {patron.build}Settings
+			    {patron.build}MsgList
+			    {patron.build}Settings.v2
+			    {patron.build}v2
+
+			<b>{jQuery}addressbookSuggest, 8.995KB</b>
+			    {patron.build}Settings
+			    {patron.build}MsgList
+			    {patron.build}Settings.v2
+			    {patron.build}v2
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer:duplicate</code></h2>
+		<div class="pre">
+			<b>{patron.ui}patron.ui.ComposeLabels, 62.218KB</b>
+			    {patron.build}Settings
+			    {patron.build}MsgList
+			    {patron.build}Settings.v2
+			    {patron.build}v2
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt analyzer:map:smart</code></h2>
+		<div>
+			<img height="430" src="https://dl.dropboxusercontent.com/s/scpgit59ko8utz1/Screenshot%202014-03-14%2017.27.16.png"/>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Биты</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Bit.definitions.js</h2>
+		<pre class="js-code compact-s">
+			define("{patron.v2}bit/Bit.definitions", [], function () {
+				return {
+					"messagelineMedia": {
+						bit: (1<<2)
+					},
+
+					// MAIL-24706: Промо тредов
+					"threads-promo": {
+						bit: (1<<2),
+						created: "2014-03-01"
+					}
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Bit.js</h2>
+		<pre class="js-code">
+			require("{patron.v2}bit/Bit", function (Bit) {
+				var bit = Bit.get("threads-promo");
+				if (bit.isActual()) {
+					bit.update(); // обновляем timestamp
+					bit.use(); // используем бит
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Bit.js</h2>
+		<pre class="js-code">
+			require("{patron.v2}bit/Bit", function (Bit) {
+				Bit.useActual("threads-promo", function (useFn) {
+					// какой-то код
+					Layer.open("tutorial").done(<mark>useFn</mark>);
+				});
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>var bit = Bit.get("name")</h2>
+		<ul style="font-size: 80%">
+			<li><b>bit</b> — бит</li>
+			<li><b>name</b> — имя</li>
+			<li><b>created</b> — дата создания</li>
+			<li><b>updated</b> — дата обновления</li>
+			<li><b>isUsed()</b></li>
+			<li><b>isExpired()</b></li>
+			<li><b>isAvaible()</b> — доступность бита для использвания</li>
+			<li><b>isAcual()</b> — бит актуален</li>
+			<li><b>use()</b> — использовать бит</li>
+			<li><b>update()</b> — обновить время</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<p>Если знаете как сделать это лучше, пишите!</p>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
