@@ -10,25 +10,168 @@
 <body class="list">
 
 	<header class="caption">
-		<h1>toolkit</h1>
+		<h1>b-toolkit.js и Радары</h1>
 	</header>
 
 
 	<section class="slide shout"><div>
-		<h2>toolkit</h2>
+		<h2>b-toolkit.js</h2>
 	</div></section>
 
 
-	<section class="slidetoolkit"><div>
-		<h2>toolkit.create()</h2>
-		<pre class="js-code">
-			toolkit.create('b-block', {
-				init: function (){ },
-				render: function (){ },
-				destory: function (){ }
+	<section class="slide"><div>
+		<h2>b-toolkit.js</h2>
+		<p>— это «минималистичная» обвязка для <b>fest</b> блоков и написания кросс-проектных «ui компонентов».</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Создание блока</h2>
+		<pre class="js-code compact">
+			var block = toolkit["b-toolkit"].extend({
+				init: function (){
+					// Описание логики инициализация блока
+					this.$el.toggleMod("inited", true); // как пример
+				},
+				destory: function (){
+					this.$el.toggleMod("inited", false);
+					toolkit["b-toolkit"].fn.destory.call(this);
+				}
 			});
 		</pre>
 	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Базовые свойства</h2>
+		<ul>
+			<li><b>el</b> &mdash; ссылка на DOM-элемент</li>
+			<li><b>$el</b> &mdash; ссылка на jQuery-коллекцию</li>
+			<li><b>template</b> &mdash; шаблон блока, либо блоков</li>
+			<li><b>templateBlock</b> &mdash; имя блока</li>
+			<li><b>eventEmitTo</b> &mdash; делегировать события на другой контекст</li>
+			<li><b>eventEmitPrefix</b> &mdash; добавить к названию события префикс</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Базовые методы</h2>
+		<ul>
+			<li><b>__lego()</b> &mdash; конструктор блока (лучше не трогать)</li>
+			<li><b>init()</b> &mdash; инициализация (для переопределениея)</li>
+			<li><b>on(event, fn)</b> &mdash; подписаться на событие</li>
+			<li><b>off(event, fn)</b> &mdash; отписаться</li>
+			<li><b>emit(type, args)</b> &mdash; испустить событие</li>
+			<li><b>$(selector)</b> &mdash; эквивалент this.$el.find(selector)</li>
+			<li><b>bound(nameOrFn)</b> &mdash; привязать метод к this</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Базовые методы</h2>
+		<ul>
+			<li><b>setData(data)</b> &mdash; установить дату</li>
+			<li><b>getData()</b> &mdash; получить установленные данные</li>
+			<li><b>getHtml([data])</b> &mdash; получить html блока</li>
+			<li><b>render()</b> &mdash; render блока, см. getHtml()</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Используем</h2>
+		<pre class="js-code">
+			var dropdown = new toolkit["b-dropdown"]({
+				el: "#my-dropdown"
+			});
+
+			// Рендерим блок
+			dropdown.render();
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Усложняем I</h2>
+		<pre class="js-code">
+			var dropdown = new toolkit["b-dropdown"]({
+				el: "#my-dropdown",
+				eventEmitTo: mySuperView,
+				eventEmitPrefix: "dropdown"
+			});
+			// Рендерим блок
+			dropdown.render();
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Усложняем II</h2>
+		<pre class="js-code">
+			var toolbar = new toolkit["b-toolbar"]({
+				el: "#my-toolbar",
+				eventEmitTo: mySuperView,
+				eventEmitPrefix: "toolbar"
+			});
+			// Рендерим блок
+			toolbar.render();
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Готово :]</h2>
+		<pre class="js-code">
+			var mySuperView = {
+				onDropdownExpand: function (evt, uiEvt){
+					// Открыли dropdown
+				},
+				onToolbarRemove: function (evt, uiEvt){
+					// Нажали кнопку удалить в тулбаре
+				}
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>b-controls-group.js</h2>
+		<pre class="js-code">
+			&lt;div class="b-toolbar">
+				&lt;div <mark>data-name="remove"</mark> class="b-toolbar__btn">
+					&lt;span>Удалить&lt;span>
+				&lt;div>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Радары</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Радары</h2>
+		<pre class="js-code">
+			&lt;div data-mnemo="compose">
+				&lt;div <mark>data-name="send"</mark> <mark>data-block="show"</mark> class="btn">
+					Отправить
+				&lt;div>
+			&lt;/div>
+			&lt;div <mark>data-mnemo="status"</mark>>
+				&lt;a href="/messages/drafts" <markx>data-name="drafts"</markx>>Черновики</a>
+			&lt;div>
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
 
 	<script src="../shwr/shower.js"></script>
 

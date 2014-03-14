@@ -196,7 +196,7 @@ a {
 .slide h2 {
 	margin: 0 0 37px;
 	color: #666;
-	font: 700 50px/1 'PT Sans Narrow', sans-serif
+	font: 700 50px/1 'PT Sans Narrow', sans-serif;
 }
 h2 b { color: #333; }
 
@@ -284,6 +284,10 @@ h2 b { color: #333; }
 	content: counter(list) ".\00A0"
 }
 
+.slide ul.unstyle li:before {
+	content: '';
+}
+
 .slide pre {
 	margin: 0 0 49px;
 	padding: 1px 0 0;
@@ -300,9 +304,31 @@ h2 b { color: #333; }
 }
 
 .compact {}
+.compact-s {}
+.compact-xs {}
+.compact-xxs {}
+
 .slide pre.compact code {
 	line-height: 40px;
 }
+.slide pre.compact-s code {
+	font-size: 80%;
+	line-height: 30px;
+}
+.slide pre.compact-xs code {
+	font-size: 80%;
+	line-height: 26px;
+}
+.slide pre.compact-xxs code {
+	font-size: 70%;
+	line-height: 23px;
+}
+
+.full .slide pre mark.next:not(.active) {
+	opacity: 1;
+	background: rgba(0,0,0,0);
+}
+
 
 .slide pre code:before {
 	position: absolute;
@@ -314,19 +340,24 @@ h2 b { color: #333; }
 	content: counter(code, decimal-leading-zero) "."
 }
 
+.slide pre[class*=compact] code:before {
+	font-size: 85%;
+}
+
 .slide pre code:only-child:before {
 	content: ''
 }
 
-.slide pre mark {
+.slide pre mark, markx {
 	padding: 3px 8px;
 	border-radius: 8px;
 	background: #F7FCA0;
 	color: #000;
-	font-style: normal
+	font-style: normal;
+	transition: all 0.3s;
 }
 
-.slide pre mark.important {
+.slide pre mark.important, markx {
 	background: #C00;
 	color: #FFF;
 	font-weight: 400
@@ -367,7 +398,32 @@ h2 b { color: #333; }
 }
 
 .slide.cover {
-	background: #000
+	xbackground: #000
+}
+
+.slide.cover h2 {
+	margin: 30px 0 0;
+	padding: 0;
+	font-size: 1000%;
+	text-align: center;
+	position: relative;
+	color: #000;
+	opacity: 0.7;
+}
+.slide.cover h2.white {
+	color: #fff;
+	opacity: 1;
+	text-shadow: 0 1px 3px rgba(0,0,0,.4);
+}
+
+.slide.cover pre {
+	padding: 10px 0 10px 80px;
+	margin-top: 60px;
+	margin-left: -50px;
+	margin-right: -50px;
+	background: rgba(255,255,255, 1);
+	box-shadow: 0 1px 1px rgba(0,0,0,.4);
+	border-radius: 3px;
 }
 
 .slide.cover img, .slide.cover svg, .slide.cover video, .slide.cover object, .slide.cover canvas, .slide.cover iframe {
@@ -593,11 +649,12 @@ h2 b { color: #333; }
 	}
 
 	.full .slide .next {
-		visibility: hidden
+		opacity: 0;
+		transition: all .4s ease-out
 	}
 
 	.full .slide .next.active {
-		visibility: visible
+		opacity: 1;
 	}
 
 	.full .slide:target {
@@ -717,10 +774,6 @@ h2 b { color: #333; }
 
 
 
-.tomorrow-comment, pre .comment, pre .title {
-	color: #8e908c;
-}
-
 .tomorrow-red, pre .variable, pre .attribute, pre .tag, pre .regexp, pre .ruby .constant, pre .xml .tag .title, pre .xml .pi, pre .xml .doctype, pre .html .doctype, pre .css .id, pre .css .class, pre .css .pseudo {
 	color: #c82829;
 }
@@ -749,5 +802,18 @@ h2 b { color: #333; }
 	color: #8959a8;
 }
 
+.tomorrow-comment, pre .comment, pre .title, .comment > * {
+	color: #8e908c;
+}
+
+
 
 .js-code {  }
+
+
+s { color: #666; }
+
+
+.pre {
+	white-space: pre;
+}

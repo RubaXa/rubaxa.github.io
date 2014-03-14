@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>14.02.2014: jQuery.ajax или как заставить передавать первым аргументом ссылку на xhr</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>14.02.2014</h1>
+		<p>jQuery.ajax или как заставить передавать первым аргументом ссылку на xhr</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>По хорошему —&nbsp;никак. Но!</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>#1.<br/>Как делал я.</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>#1. Как делал я</h2>
+		<pre class="js-code">
+			$.ajaxPrefilter(function (options, originalOptions, xhr){
+				options.dataTypes	= [];
+				options.dataFilter	= function (){
+					return	xhr;
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>#1. Как делал я</h2>
+		<div>Плюсы</div>
+		<ul class="next">
+			<li>Везде будет ссылка на xhr, даже в succes/error колбеках</li>
+		</ul>
+		<div class="next">
+			<div>Минусы</div>
+			<ul>
+				<li>Обработку JSON ответа, нужно самому реализовать в options.dataFilter</li>
+			</ul>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>#1. Как делал я</h2>
+		<pre class="js-code">
+			$.ajaxPrefilter(function (options, originalOptions, xhr){
+				options.dataTypes	= ["xxx"];
+				options.dataFilter	= function (result){
+					xhr.body = result;
+					return	xhr;
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>#1. Как делал я</h2>
+		<pre class="js-code compact">
+			$.ajaxSetup({
+				"converters": {
+					"* xxx": function (xhr){
+						if( /json/i.test(xhr.getResponseHeader("content-type") ){
+							// Без try catch, да-да!
+							xhr.body = JSON.parse(xhr.body);
+						}
+						return xhr;
+					}
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>#2.<br/>Как делалют нормальные.</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Переопределить jQuery.ajax</h2>
+		<pre class="js-code compact">
+			(function ($, originalAjax){
+				$.ajax = function (){
+					var xhr = originalAjax.apply($, arguments);
+					$.extend(xhr, xhr.then( // заменяем методы done/fail/progress
+						function (){ return $.Deferred().resolve(xhr); },
+						function (){ return $.Deferred().reject(xhr); })
+					);
+					return xhr;
+				};
+			})(jQuery, jQuery.ajax)
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Переопределить jQuery.ajax</h2>
+		<div>Минусы:</div>
+		<ul>
+			<li>Не будет работать для success/error</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<p>Если знаете как сделать это лучше, пишите!</p>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

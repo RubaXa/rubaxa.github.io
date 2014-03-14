@@ -11,6 +11,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 		progress = [],
 		timer,
 		showShortcuts,
+		getEl = function (id){ return document.getElementById(id); },
 		isHistoryApiSupported = !!(window.history && window.history.pushState);
 
 
@@ -150,7 +151,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 				return false;
 			}
 
-			prevSteps = document.getElementById(slide.id).querySelectorAll('.next.active');
+			prevSteps = getEl(slide.id).querySelectorAll('.next.active');
 
 			if ( ! prevSteps || prevSteps.length < 1) {
 				return false;
@@ -180,9 +181,12 @@ window.shower = window.shower || (function(window, document, undefined) {
 			}
 
 			if ( ! slide.isFinished()) {
-				nextSteps = document.getElementById(slide.id).querySelectorAll('.next:not(.active)');
+				nextSteps = getEl(slide.id).querySelectorAll('.next:not(.active)');
 				nextSteps[0].classList.add('active');
-
+				
+//				if ( slide.innerComplete == 0 ) {
+//					getEl(slide.id).classList.remove('shout');
+//				}
 				slide.innerComplete++;
 			}
 
@@ -659,7 +663,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 		}
 
 		if (shower.slideList[slideNumber]) {
-			currentSlide = document.getElementById(shower.slideList[slideNumber].id);
+			currentSlide = getEl(shower.slideList[slideNumber].id);
 			window.scrollTo(0, currentSlide.offsetTop);
 			ret = true;
 		} else {
@@ -722,7 +726,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 		}
 
 		for (i = 0; i < l; ++i) {
-			slide = document.getElementById(shower.slideList[i].id);
+			slide = getEl(shower.slideList[i].id);
 
 			if (i < slideNumber) {
 				slide.classList.remove('active');
@@ -760,7 +764,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 			var slideId = shower.slideList[slideNumber].id,
 				nextSlideId = shower.slideList[slideNumber + 1] ? shower.slideList[slideNumber + 1].id : null,
-				notes = document.getElementById(slideId).querySelector('footer');
+				notes = getEl(slideId).querySelector('footer');
 
 			if (notes && notes.innerHTML) {
 				console.info(notes.innerHTML.replace(/\n\s+/g,'\n'));
@@ -768,7 +772,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 			if (nextSlideId) {
 
-				var next = document.getElementById(nextSlideId).querySelector('h2');
+				var next = getEl(nextSlideId).querySelector('h2');
 
 				if (next) {
 					next = next.innerHTML.replace(/^\s+|<[^>]+>/g,'');
@@ -1011,41 +1015,56 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 
 	(function (){
-		var items = [].slice.call(document.querySelectorAll('.js-code'));
-
-
-		items.forEach(function (pre){
-			var lines = pre.innerHTML.split('\n').slice(0, -1);
+		// .js-code
+		[].forEach.call(document.querySelectorAll('.js-code,.pre'), function (pre) {
+			var isCode = pre.classList.contains('js-code');
+			var lines = pre.innerHTML.split('\n').slice(+!isCode, -1);
 			var pad = lines[0].match(/^\s*/)[0].length;
 
-			pre.innerHTML = lines.map(function (line){
+			pre.innerHTML = lines.map(function (line) {
 				line = line
-						.substr(pad)
-						.replace(/\t/g, '  ')
-						.replace(/(-?\d+|".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val){
+					.substr(pad)
+					.replace(/\t/g, '  ')
+				;
+
+				if (isCode) {
+					var html = [];
+					line = line
+						.replace(/<\/?.*?>/g, function (tag) {
+							return '$$'+html.push(tag)+'$$';
+						})
+						.replace(/(\s-?\d+|(?=[^=])".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val) {
 							var type = '';
-							if( /^-?\d+$/.test(val) ){
+							if (/^-?\d+$/.test(val)) {
 								type = 'number';
-							} else if( /^"/.test(val) ){
+							} else if (/^"/.test(val)) {
 								type = 'string'
-							} else if( /\/\//.test(val) ){
+							} else if (/\/\//.test(val)) {
 								type = 'comment';
 							} else {
 								type = 'keyword';
 							}
-							return '<span class="'+type+'">'+val+'</span>';
+							return '<span class="' + type + '">' + val + '</span>';
 						})
 						.replace(/(\/\*.*?\*\/)/gi, '<span class="comment">$1</span>')
 						.replace(/(\b\w+)\(/gi, '<span class="function">$1</span>(')
+						.replace(/\bif\s\(/g, '<span class="function">if </span>(')
+						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\barguments\b)/g, '<span class="tomorrow-aqua">$1</span>')
+						.replace(/(\barguments|true|false\b)/g, '<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\b(jQuery|Array|Math|this|typeof)\b)/g, '<span class="tomorrow-orange">$1</span>')
-						.replace(/(&lt;)(\/?\w+)/g, '$1<span class="tomorrow-blue">$2</span>')
-//						.replace(/(\d+)/, '<span class="number">$1</span>')
+						.replace(/(&lt;)(\/?[\w:]+)/g, '$1<span class="tomorrow-blue">$2</span>')
+						.replace(/(\s\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
 //						.replace(/(\/\/.+)/, '<mark class="comment">$1</mark>')
+						.replace(/\$\$(\d+)\$\$/g, function (_, i) {
+							return html[i-1];
+						})
 					;
-				return '<code>'+(line || '&nbsp;')+'</code>';
+					return '<code>' + (line || '&nbsp;') + '</code>';
+				}
+
+				return line;
 			}).join('\n');
 		});
 	})();
