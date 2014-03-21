@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>21.03.2014: JSSDK. config, Emitter, Promise, request.</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>21.03.2014</h1>
+		<p>JSSDK. Введение.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div style="font-size: 50%; color: #aaa;">JSSDK</div>
+			<div style="font-size: 80%; color: #333;">config Emitter Promise&nbsp;request</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>config</div>
+			<div style="font-size: 80%; color: #aaa;">Работа с конфигами</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config</h2>
+		<ul>
+			<li><b>is</b>(keys) &mdash; Проверить свойства на истинность</li>
+			<li><b>has</b>(keys) &mdash; Проверить свойства на наличие</li>
+			<li><b>get</b>(key, def) &mdash; Получить значение свойства</li>
+			<li><b>set</b>(key, value) &mdash; Установить свойство</li>
+			<li><b>set</b>(attrs) &mdash; Установить свойства</li>
+			<li><b>unset</b>(attrs) &mdash; Удалить свойство</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config()</h2>
+		<pre class="js-code">
+			// Создаем локальный конфиг
+			var cfg = config({
+				foo: true,
+				bar: false,
+				num: 7
+			});
+			// Либо используем глобальный
+			config.set("flag", true);
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config.is(keys)</h2>
+		<pre class="js-code">
+			cfg.is("foo"); // true
+			cfg.is("bar"); // false
+			#! cfg.is("!bar"); // true
+			#! cfg.is("bar num:7"); // true, num == 7
+			#! cfg.is("num:5:10"); // true, т.к. num >= 5 && num <= 10
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config.get(key, def)</h2>
+		<pre class="js-code">
+			cfg.get("user"); // [object Object]
+			#! cfg.get("user.name"); // "RubaXa"
+			#! cfg.get("user.phones"); // [Array]
+			#! cfg.get("user.phones.0") // { id: 1, number: ... }
+			#! cfg.get("user.phones.0.number") // 79666361666
+			#! cfg.get("foo[bar].baz['qux'].123['zzz'].wow", "lol"); // "lol"
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config.set()</h2>
+		<pre class="js-code">
+			cfg.set("foo", "bar");
+			#! cfg.set("user.name", "RubaXa");
+			#! cfg.set("user.phones[0].number", "..");
+			#!+ cfg.set({
+			   "user.name": "Konstantin",
+			   "user.email": "k.lebedev@corp.mail.ru",
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>config.unset()</h2>
+		<pre class="js-code">
+			cfg.unset("foo");
+			#!+ cfg.unset(
+				"user.name",
+				"unset.phone[0].number",
+				"unset.phone[1]"
+			#!- );
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>Emitter</div>
+			<div style="font-size: 80%; color: #aaa;">«Излуччатель»</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Emitter &mdash; super fastest</h2>
+		<div class="pre">
+			<b><u>trigger x 10000</u></b>
+			<b class="tomorrow-green">Emitter.trigger: 16ms</b>
+			MicroEvent.trigger: 56ms
+			<span class="tomorrow-red">jQuery.trigger: 92ms</span>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Emitter.emit</h2>
+		<pre class="js-code">
+			Emitter.apply(myObj); // или var emitter = new Emitter;
+			#! myObj.on("foo bar", function (a, b){ console.log(a, b); });
+			#! myObj.emit("foo", 123); // 123, undefined
+			#! myObj.emit("bar", [4, 5]); // 4, 5
+			#!+
+			myObj.onBaz = function (val){ console.log(val+"!"); };
+			#!- myObj.emit("baz", "ok"); // ok!
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Emitter: методы</h2>
+		<ul>
+			<li><b>on</b>(names, callback) &mdash; подписаться на события</li>
+			<li class="next"><b>off</b>(names, callback) &mdash; отписатся от событий</li>
+			<li class="next"><b>one</b>(names, callback) &mdash; обработчик будет выполнен один раз</li>
+			<li class="next"><b>emit</b>(name, args) &mdash; распространить событие.</li>
+			<li class="next"><b>trigger</b>(type, args) &mdash; распространить событие (Emitter.Event).</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Emitter.trigger</h2>
+		<pre class="js-code">
+			emitter.on("auth", function (evt, arg) {
+			#!+	if (!evt.isDefaultPrevented()) {
+					evt.preventDefault();
+					console.log(evt.type, evt.details, arg);
+			#!-	}
+			});
+			#!+ emitter.trigger({ type: "auth", details: 123 }, "bar");
+			#!- // "auth", 123, "bar"
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Emitter & handleEvent</h2>
+		<pre class="js-code">
+			var ctrl = {
+				handleEvent: function () {
+					// some code
+				}
+			};
+			#! emitter.on("foo", ctrl);
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>Promise</div>
+			<div style="font-size: 80%; color: #aaa;">«Общания»</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Promise</h2>
+		<p>Это не только polyfill, но и полноценная замена jQuery.Deferred.</p>
+		<pre class="js-code next" style="margin-top: -30px;">
+			var promise = new Promise(function (resolve, reject) {
+				// some code
+				resolve(tue);
+			});
+			#!+ promise.always(function (state) {
+				console.log(state);
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Promise</h2>
+		<p>Это не только polyfill, но и полноценная замена jQuery.Deferred.</p>
+		<pre class="js-code" style="margin-top: -30px;">
+			function delay(ms) {
+				var dfd = Promise(); // jQuery-style
+				setTimeout(function () {
+					dfd.resolve();
+				}, ms);
+				return dfd.promise();
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Promise</h2>
+		<div class="pre">
+			<b><u>resolve x 10000</u></b>
+			Promise: 77ms
+			<b class="tomorrow-green">Native.Promise: 33ms</b>
+			<span class="tomorrow-red next">jQuery.Deferred: 497ms</span>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>request</div>
+			<div style="font-size: 80%; color: #aaa;">ajax/jsop-запросы</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request</h2>
+		<pre class="js-code compact">
+			request.get("path/to")
+				#!+ .then(null, function (xhr) {
+					#!+ if (xhr.status == 503) {
+						return setTimeout(<mark class="next">xhr.retry</mark>.bind(xhr), 5000);
+					#!- }
+				#!- })
+				#!+ .always(function () {
+					console.log(xhr);
+				#!- })
+			;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request.Request: свойства</h2>
+		<ul>
+			<li><b>url</b><span class="tomorrow-comment">:String</span> — куда делаем запрос</li>
+			<li><b>type</b><span class="tomorrow-comment">:String</span> — тип запроса: GET, POST и т.п.</li>
+			<li><b>data</b><span class="tomorrow-comment">:Object</span> — параметры запроса</li>
+			<li><b>options</b><span class="tomorrow-comment">:Object</span> — опции</li>
+			<li><b>body</b><span class="tomorrow-comment">:*</span> — тело ответа</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request.Request: свойства</h2>
+		<ul>
+			<li><b>startTime</b><span class="tomorrow-comment">:Number</span> — начало запроса</li>
+			<li><b>endTime</b><span class="tomorrow-comment">:Number</span> — завершение</li>
+			<li><b>duration</b><span class="tomorrow-comment">:Number</span> — продолжительность</li>
+			<li><b>pending</b><span class="tomorrow-comment">:Boolean</span> — запрос в ожидании ответа</li>
+			<li><b>aborted</b><span class="tomorrow-comment">:Boolean</span> — отменен</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request.Request: методы</h2>
+		<ul>
+			<li><b>isOK()</b> — сервер ответил 200, 201 или 202 и не было ошибок при парсинге ответа</li>
+			<li><b>retry()</b> — повторить запрос</li>
+			<li><b>abort()</b> — отменить запрос</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>request.mock</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request.mock</h2>
+		<pre class="js-code">
+			request.mock({
+				url: "path/to",
+				type: "post",
+				responseText: ".."
+			});
+			#! request.mock.one({ url: "path/to", status: 500 });
+			#! request.mock.one({ url: "path/to", status: 200 });
+		</pre>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

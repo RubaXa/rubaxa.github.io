@@ -946,7 +946,6 @@ window.shower = window.shower || (function(window, document, undefined) {
 		}
 	}, false);
 
-	shower.init();
 
 	document.addEventListener('click', function(e) {
 		var slideId = shower._getSlideIdByEl(e.target),
@@ -1020,6 +1019,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			var isCode = pre.classList.contains('js-code');
 			var lines = pre.innerHTML.split('\n').slice(+!isCode, -1);
 			var pad = lines[0].match(/^\s*/)[0].length;
+			var groups = 0;
 
 			pre.innerHTML = lines.map(function (line) {
 				line = line
@@ -1028,7 +1028,8 @@ window.shower = window.shower || (function(window, document, undefined) {
 				;
 
 				if (isCode) {
-					var html = [];
+					var html = [], classes = '', before = '', after = '';
+
 					line = line
 						.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
@@ -1061,13 +1062,31 @@ window.shower = window.shower || (function(window, document, undefined) {
 							return html[i-1];
 						})
 					;
-					return '<code>' + (line || '&nbsp;') + '</code>';
+
+					if (line.indexOf('#!') != -1) {
+						if (line.indexOf('#!+') != -1) {
+							before = '<div class="next">';
+						}
+						else if (line.indexOf('#!-') != -1) {
+							after = '</div>';
+						}
+						else {
+							classes += 'next';
+						}
+
+						line = line.replace(/#![+-]*\s?/, '');
+					}
+
+					return before + '<code class="'+classes+'">' + (line || '&nbsp;') + '</code>' + after;
 				}
 
 				return line;
 			}).join('\n');
 		});
 	})();
+
+
+	shower.init();
 
 	return shower;
 

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>21.03.2014: JSSDK. Введение.</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>21.03.2014</h1>
+		<p>JSSDK. Введение.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			JSSDK
+			<div style="font-size: 80%; color: #aaa;">Введение</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Идеология</h2>
+		<ul>
+			<li class="next">Строгий и единый code-style (<a href="http://jshint.com/">JSHint</a>)</li>
+			<li class="next">Тесты до кода (<a href="https://qunitjs.com">QUnit</a>)</li>
+			<li class="next">Контроль покрытия кода тестеми (<a href="https://github.com/gotwarlost/istanbul">Istanbul</a>)</li>
+			<li class="next"><strong>В <code>master</code> можно закомитеть только валидный код со <u>100%&nbsp;покрытием тестами</u></strong></li>
+			<li class="next">Непрерывная интеграция (<a href="https://travis-ci.org/">Travis-CI</a>)</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Начало работа</h2>
+		<ol>
+			<li>Клонирование репозитория</li>
+			<li class="next"><code>npm install</code> &mdash; установка зависимостей</li>
+			<li class="next"><code>grunt init</code> &mdash; установка git-хуков и прочего</li>
+			<li class="next"><code>grunt dev-server</code> &mdash; запуск сервера для разработки</li>
+			<li class="next"><code>grunt</code> &mdash; тестирование и сборка проекта</li>
+		</ol>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code>grunt dev-server</code></h2>
+		<div class="pre">
+			<u><b>Running "dev-server" task</b></u>
+			>> Сервер запущен:
+			       <a>http://127.0.0.1:1625/tests/</a> — запуск тестов
+			       <a>http://127.0.0.1:1625/report/coverage/</a> — code coverage
+			>> Запуск apidoc сервера, port: 1624
+		</div>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/ys6syhxxp069v6f/Screenshot%202014-03-21%2011.42.16.png"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/k3v9pl4mt5zn47n/Screenshot%202014-03-21%2011.43.23.png"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code style="font-size: 60%">git commit -am"+ config module"</code> (плохо)</h2>
+		<div class="pre" style="margin-top: 30px">
+			<u><b>Running "jshint:all" (jshint) task</b></u>
+			<span class="tomorrow-red">Linting config/config.js...ERROR</span>
+			[L18:C20] Unexpected space after '_split'.
+  			<code>function _split (val) {</code>
+			[L76:C19] Unexpected space after '_grep'.
+  			<code>function _grep (obj, key, set, value) {</code>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code style="font-size: 60%">git commit -am"+ config module"</code> (хорошо)</h2>
+		<div class="pre" style="margin-top: 30px">
+			<u><b>Running "jshint:all" (jshint) task</b></u>
+			>> 6 files lint free.
+			<b class="tomorrow-green">Done, without errors.</b>
+
+			[config bcc9360] + config module
+			  5 files changed, 488 insertions(+)
+			  create mode 100644 config/README.md
+			  create mode 100644 config/config.js
+			  create mode 100644 config/config.test.js
+ 		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><code style="font-size: 60%">git push origin master</code></h2>
+		<div class="pre">
+			<u><b>Running "qunit:all" (qunit) task</b></u>
+			Testing tests/index.html ....................................................OK
+			>> 303 assertions passed (1580ms)
+			>> <b>Coverage</b>:
+			>> -  Lines: 99.39%
+			>> -  Statements: 99.39%
+			>> -  Functions: 100%
+			>> -  Branches: 93.9%
+			<b class="tomorrow-green">Done, without errors.</b>
+		</div>
+	</div></section>
+
+
+	<section class="slide cover"><div style="background-color: #002832">
+		<div style="overflow: hidden; margin: -50px 0 0 50px; width: 1000px; height: 800px; position: relative"><img style="z-index: 10000; margin-left: -10px;" src="https://fbcdn-sphotos-d-a.akamaihd.net/hphotos-ak-ash3/t1.0-9/1888488_678433142212417_484570840_n.jpg"/></div>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="left: 240px; top: 50px;" src="https://dl.dropboxusercontent.com/s/2k0covyy51mp4wb/Screenshot%202014-03-21%2010.15.46.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 400%">Во всех ветках кроме master, можно делать всё что&nbsp;угодно ;]</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Автоматизация</h2>
+		<p>Если какую-то операцию вы делаете больше двух раз, сделайте таск.</p>
+		<div class="pre next">
+			<code>grunt module:create:Model</code>
+			<u><b>Running "module:create:Model" (module) task</b></u>
+			Create module Model..OK
+			   /git/JSSDK/Model/Model.js..OK
+			   /git/JSSDK/Model/Model.test.js..OK
+			   /git/JSSDK/Model/README.md..OK
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что уже есть?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Уже есть:</h2>
+		<ul>
+			<li><b>config</b> &mdash; работа с конфигами/настройками</li>
+			<li><b>Emitter</b> &mdash; «Излучатель»</li>
+			<li><b>Promise</b> &mdash; «Обещания» (Native/jQuery—style)</li>
+			<li><b>request</b> &mdash; Low-level интерфейс для работы с ajax/jsonp запросами</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
