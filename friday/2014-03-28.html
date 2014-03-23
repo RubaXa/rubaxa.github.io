@@ -243,15 +243,13 @@
 
 	<section class="slide"><div>
 		<h2>request</h2>
-		<pre class="js-code compact">
+		<pre class="js-code">
 			request.get("path/to")
-				#!+ .then(null, function (xhr) {
-					#!+ if (xhr.status == 503) {
-						return setTimeout(<mark class="next">xhr.retry</mark>.bind(xhr), 5000);
-					#!- }
-				#!- })
-				#!+ .always(function () {
-					console.log(xhr);
+				#!+ .always(function (req/**request.Request*/) {
+					if (req.isOK()) {
+						#!+ // Резльтат ответа сервера
+						#!- console.log(req.body);
+					}
 				#!- })
 			;
 		</pre>
