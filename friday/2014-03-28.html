@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns="http://www.w3.org/1999/html">
 <head>
-	<title>21.03.2014: JSSDK. config, Emitter, Promise, request.</title>
+	<title>28.03.2014: JSSDK. config, Emitter, Promise, request.</title>
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=792, user-scalable=no"/>
 	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
@@ -10,8 +10,8 @@
 <body class="list">
 
 	<header class="caption">
-		<h1>21.03.2014</h1>
-		<p>JSSDK. Введение.</p>
+		<h1>28.03.2014</h1>
+		<p>JSSDK. config, Emitter, Promise, request.</p>
 	</header>
 
 
@@ -285,15 +285,95 @@
 	<section class="slide"><div>
 		<h2>request.Request: методы</h2>
 		<ul>
-			<li><b>isOK()</b> — сервер ответил 200, 201 или 202 и не было ошибок при парсинге ответа</li>
-			<li><b>retry()</b> — повторить запрос</li>
-			<li><b>abort()</b> — отменить запрос</li>
+			<li><b>isOK</b>() — сервер ответил 200, 201 или 202 и не было ошибок при парсинге ответа</li>
+			<li><b>retry</b>() — повторить запрос</li>
+			<li><b>abort</b>() — отменить запрос</li>
+			<li><b>is</b>(keys) — проверить свойство на истинность</li>
+			<li><b>has</b>(key) — проверить начилие свойства</li>
+			<li><b>get</b>(key, def) — пполучить свойство</li>
 		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request: события</h2>
+		<ul>
+			<li><b>start</b> — начало запрос</li>
+			<li><b>end</b> — завершение</li>
+			<li><b>error</b> — ошибка (http, parse error и т.п.)</li>
+			<li><b>lossWiFiAuth</b> — потеря WiFi-авториации</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request: пример</h2>
+		<pre class="js-code">
+			request.get("path/to").done(function (xhr) {
+				var body = xhr.body; // ответ сервера
+				if (body.user && body.user.id) {
+					// some code
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request: пример</h2>
+		<pre class="js-code">
+			request.get("path/to").done(function (xhr) {
+				var userId = xhr.get("body.user.id");
+				if (userId) {
+					// some code
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request: глобальная обработка ошибок</h2>
+		<pre class="js-code compact">
+			request.on("error", function (evt, xhr) {
+				#!+ if (xhr.is("status:401")) { // нужна авториция
+					#!+ return xhr.retry(function () {
+						return request.post("auth/user");
+					#!- });
+				#!- }
+			});
+			request.post("path/to").always(function (xhr) {
+				// some code
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>request: глобальная обработка ошибок</h2>
+		<pre class="js-code">
+			request.on("error", function (evt, xhr) {
+				#!+ if (xhr.is("status:503 status:504")) {
+					#!+ return xhr.retry(function (resolve, reject) {
+						#!+ // на xhr.retry есть ограничения
+						#!- setTimeout(resolve, 7000);
+					#!- });
+				#!- }
+			});
+		</pre>
 	</div></section>
 
 
 	<section class="slide shout"><div>
 		<h2>request.mock</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>request.mock</h2>
+		<ul>
+			<li>request.<b>mock</b>(options) — <a href="https://github.com/appendto/jquery-mockjax">jquery.mockajax</a></li>
+			<li class="next">request.<b>mock.one</b>(options) — одноразовый mock</li>
+			<li class="next">request.<b>mock.clear</b>([id]) — удалить mock по id, либо все</li>
+		</ul>
 	</div></section>
 
 
