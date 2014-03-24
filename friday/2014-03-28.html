@@ -346,6 +346,7 @@
 		</pre>
 	</div></section>
 
+
 	<section class="slide"><div>
 		<h2>request: глобальная обработка ошибок</h2>
 		<pre class="js-code">
@@ -356,6 +357,21 @@
 						#!- setTimeout(resolve, 7000);
 					#!- });
 				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>request: глобальная обработка ошибок</h2>
+		<pre class="js-code">
+			request.on("error", function (evt, xhr) {
+				if (xhr.is(<mark>"status:503:504"</mark>)) {
+					return xhr.retry(function (resolve, reject) {
+						// на xhr.retry есть ограничения
+						setTimeout(resolve, 7000);
+					});
+				}
 			});
 		</pre>
 	</div></section>
