@@ -29,10 +29,10 @@
 		<h2>Pilot</h2>
 		<ul>
 			<li>Гибкий синтаксис описания маршрута (like <a href="http://expressjs.com/">Express</a>)</li>
-			<li>Работа именно с запросом, а не только отдельными параметрами</li>
-			<li>События «начала», «изменения» и «конца» маршрута</li>
-			<li>Возможность назначения нескольких обработчиков на один маршрут</li>
-			<li>Возможность назначения ID маршрутам и осуществления навигации по ним</li>
+			<li class="next">Работа именно с запросом, а не только отдельными параметрами</li>
+			<li class="next">События «начала», «изменения» и «конца» маршрута</li>
+			<li class="next">Возможность назначения нескольких обработчиков на один маршрут</li>
+			<li class="next">Возможность назначения ID маршрутам и осуществления навигации по ним</li>
 		</ul>
 	</div></section>
 
@@ -46,12 +46,12 @@
 		<h2>Синтаксис описания маршрута</h2>
 		<pre class="js-code">
 			var Ivan = new Pilot;
-			// Реагирует на любой url: ^/(.+)/?$
-			Ivan.route("/:page", function (evt, req) { });
-			// ^/(.+)/?<mark>.*?</mark>$
-			Ivan.route("/:page<mark>*</mark>", function (evt, req) { });
-			// ^/(.+)/<mark>?.+</mark>$
-			Ivan.route("/:page<mark>+</mark>", function (evt, req) { });
+			#!+ // Реагирует на любой url: ^/(.+)/?$
+			#!- Ivan.route("/:page", function (evt, req) { });
+			#!+ // ^/(.+)/?<mark>.*?</mark>$
+			#!- Ivan.route("/:page<mark>*</mark>", function (evt, req) { });
+			#!+ // ^/(.+)/<mark>?.+</mark>$
+			#!- Ivan.route("/:page<mark>+</mark>", function (evt, req) { });
 		</pre>
 	</div></section>
 
@@ -105,13 +105,13 @@
 		<h2>Pilot.Request: пример</h2>
 		<pre class="js-code">
 			var Moses = new Pilot;
-			Moses.route("/deserts/", ctrl); // параметры передаются через GET
-			Moses.route("/desert/:name/:coords", ctrl);
+			#! Moses.route("/deserts/", ctrl); // используется GET
+			#! Moses.route("/desert/:name/:coords", ctrl);
 
-			function ctrl(evt, req) {
-				var name = req.params.name || req.query.name;
-				var coords = req.params.coords || req.query.coords;
-			}
+			#!+ function ctrl(evt, req) {
+				#! var name = req.params.name || req.query.name;
+				#! var coords = req.params.coords || req.query.coords;
+			#!- }
 		</pre>
 	</div></section>
 
@@ -136,8 +136,8 @@
 			Moses.route("/desert/:name/:coords", ctrl);
 
 			function ctrl(evt, req) {
-				var name = req.get("name");
-				var coords = req.get("coords");
+				#! var name = req.get("name");
+				#! var coords = req.get("coords");
 			}
 		</pre>
 	</div></section>
@@ -154,11 +154,11 @@
 			router.route("path/:to", function (evt, req) {
 				console.log(evt.type + ": " + req.path");
 			});
-			router.nav("/path/");     // (ничего)
-			router.nav("/path/foo/"); // routestart: /path/foo/
-			router.nav("/path/bar/"); // routechange: /path/bar/
-			router.nav("/path/baz/"); // routechange: /path/baz/
-			router.nav("/path/");     // (ничего)
+			#! router.nav("/path/");     // (ничего)
+			#! router.nav("/path/foo/"); // routestart: /path/foo/
+			#! router.nav("/path/bar/"); // routechange: /path/bar/
+			#! router.nav("/path/baz/"); // routechange: /path/baz/
+			#! router.nav("/path/");     // (ничего)
 		</pre>
 	</div></section>
 
