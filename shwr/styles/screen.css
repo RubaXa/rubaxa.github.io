@@ -822,3 +822,12 @@ s { color: #666; }
 .pre {
 	white-space: pre;
 }
+
+
+.slide .diff-plus {
+	background-color: #ccffcc;
+}
+
+.slide .diff-minus {
+	background-color: #ffe5e5;
+}

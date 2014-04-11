@@ -1,6 +1,7 @@
 ## Пятница
 
- * [28.03.2014](http://rubaxa.github.io/friday/2014-03-21.modules.html): JSSDK. config, Emitter, Promise, request.
+ * [11.04.2014](http://rubaxa.github.io/friday/2014-04-11.html): Pilot 1.5 / Пример одностраничного приложения (SAP).
+ * [28.03.2014](http://rubaxa.github.io/friday/2014-03-28.html): JSSDK. config, Emitter, Promise, request.
  * [21.03.2014](http://rubaxa.github.io/friday/2014-03-21.html): JSSDK. Введение.
  * [14.02.2014](http://rubaxa.github.io/friday/2014-02-14.html): jQuery.ajax или как заставить передавать первым аргументом ссылку на xhr
  * [07.02.2014](http://rubaxa.github.io/friday/2014-02-07.html): «Классы» :]

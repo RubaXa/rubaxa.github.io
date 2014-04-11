@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>11.04.2014: Pilot 1.5 / Пример одностраничного приложения (SAP)</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>11.04.2014</h1>
+		<p>Pilot 1.5 / Пример одностраничного приложения (SAP)</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<a href="http://rubaxa.github.io/Pilot/" target="_blank" style="text-decoration: none; border: 0">
+				<img src="http://rubaxa.github.io/Pilot/statics/logo.png" style="vertical-align: middle"/>
+				<span style="color: #888; position: relative; top: -110px; font-size: 50%">1.5</span>
+			</a>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot</h2>
+		<ul>
+			<li>Гибкий синтаксис описания маршрута (like <a href="http://expressjs.com/">Express</a>)</li>
+			<li>Работа именно с запросом, а не только отдельными параметрами</li>
+			<li>События «начала», «изменения» и «конца» маршрута</li>
+			<li>Возможность назначения нескольких обработчиков на один маршрут</li>
+			<li>Возможность назначения ID маршрутам и осуществления навигации по ним</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Синтаксис</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Синтаксис описания маршрута</h2>
+		<pre class="js-code">
+			var Ivan = new Pilot;
+			// Реагирует на любой url: ^/(.+)/?$
+			Ivan.route("/:page", function (evt, req) { });
+			// ^/(.+)/?<mark>.*?</mark>$
+			Ivan.route("/:page<mark>*</mark>", function (evt, req) { });
+			// ^/(.+)/<mark>?.+</mark>$
+			Ivan.route("/:page<mark>+</mark>", function (evt, req) { });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Синтаксис описания маршрута</h2>
+		<pre class="js-code">
+			Ivan.route("/:page/:details?/", function (evt, req) { });
+			// Реагирует на:
+			//   /foo/
+			//   /foo/bar/
+			// Не реагирует
+			//   /
+			//   /foo/bar/baz
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Синтаксис описания маршрута</h2>
+		<pre class="js-code">
+			"/search/"                 // строгое совпадание
+			"/user/:id(\\d+)"          // только цифры
+			"/search/(result/:page/)?" // группировка
+
+			// Сложный пример:
+			"/:mode(show|link)?/:storage(home|links|shared)"
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pilot.Request</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.Request</h2>
+		<ul>
+			<li><b>url</b> &mdash; абсолютный адрес</li>
+			<li><b>path</b> &mdash; путь, относительно корня</li>
+			<li><b>search</b> &mdash; строка параметров</li>
+			<li><b>query</b> &mdash; объект параметров</li>
+			<li><b>params</b> &mdash; параметры маршрута</li>
+			<li><b>referrer</b> &mdash; url откуда пришли</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.Request: пример</h2>
+		<pre class="js-code">
+			var Moses = new Pilot;
+			Moses.route("/deserts/", ctrl); // параметры передаются через GET
+			Moses.route("/desert/:name/:coords", ctrl);
+
+			function ctrl(evt, req) {
+				var name = req.params.name || req.query.name;
+				var coords = req.params.coords || req.query.coords;
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.Request.fn: пример</h2>
+		<pre class="js-code">
+			// Получить зачение по имени параметра
+			// в независимости от его нахождения
+			Pilot.fn.get = function (name) {
+				return this.params[name] || this.query[name];
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.Request: пример</h2>
+		<pre class="js-code">
+			var Moses = new Pilot;
+			Moses.route("/deserts/", ctrl); // используется GET
+			Moses.route("/desert/:name/:coords", ctrl);
+
+			function ctrl(evt, req) {
+				var name = req.get("name");
+				var coords = req.get("coords");
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>События</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>События</h2>
+		<pre class="js-code">
+			router.route("path/:to", function (evt, req) {
+				console.log(evt.type + ": " + req.path");
+			});
+			router.nav("/path/");     // (ничего)
+			router.nav("/path/foo/"); // routestart: /path/foo/
+			router.nav("/path/bar/"); // routechange: /path/bar/
+			router.nav("/path/baz/"); // routechange: /path/baz/
+			router.nav("/path/");     // (ничего)
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>События</h2>
+		<pre class="js-code">
+			router.route("path/:to", {
+				#! onRouteStart: function (evt, req) { },
+				#!+ onRoute: function (evt, req) {
+					// routeStart + routeChange
+				#!- },
+				#! onRouteEnd: function (evt, req) { }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pilot.create</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.create</h2>
+		<div>
+			Чтобы показать всю мощь этого метода, расмотрим пример создания одностраничного
+			приложения «галерея».<br/>
+		</div>
+		<div class="next">
+			<div style="white-space: nowrap">Приложение будет стостоять из трех «экранов» и использовать <a href="https://www.flickr.com/services/api/">Flickr API</a>:</div>
+			<ul style="margin-left: 60px;">
+				<li><b>Home</b> &mdash; выбор направление жипописи</li>
+				<li><b>Gallery</b> &mdash; просмотр работ выбранной категории</li>
+				<li><b>Artwork</b> &mdash; просмотр «работы»</li>
+			</ul>
+			<p><a href="https://github.com/RubaXa/Pilot/tree/tutorial/tutorial">Репозиторий примера</a>.</p>
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.create: Шаг первый (<a href="https://github.com/RubaXa/Pilot/commit/ced9bcc6db493243def7bcf23e98ba2b94de25af">diff</a>)</h2>
+		<div>Создаем структуру приложения:</div>
+		<ul style="margin-left: 80px;">
+			<li><b>app.css</b> &mdash; css приложения</li>
+			<li><b>app.js</b> &mdash; код приложения</li>
+			<li><b>index.html</b> &mdash; точка входа</li>
+		</ul>
+		<div>Для прототипа используем <a href="http://goratchet.com">Ratchet</a> (css framwork)</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.create: Шаг первый.html</h2>
+		<pre class="js-code compact-xs">
+			&lt;div id="app">
+				#!+ &lt;!-- App screen -->
+				&lt;div style="z-index: 1; display: none;">
+					#!+ &lt;header class="bar bar-nav">
+						&lt;h1 class="js-title title">&lt;/h1>
+					#!- &lt;/header>
+					#! &lt;div class="js-content content">&lt;/div>
+				&lt;/div>
+				#!- &lt;!-- /App screen -->
+			&lt;/div>
+			#!+ &lt;!-- vendors: -->
+			&lt;script src="http://code.jquery.com/jquery-2.1.0.min.js">&lt;/script>
+			#!- &lt;script src="../../Pilot.js">&lt;/script>
+			#!+ &lt;!-- app:code -->
+			#!- &lt;script src="app.js">&lt;/script>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.create: Шаг первый.js</h2>
+		<pre class="js-code">
+			(function ($, Pilot) {
+
+				/* app code */
+
+			})(jQuery, Pilot);
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Home screen</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Home screen.js (<a href="https://github.com/RubaXa/Pilot/commit/ff6c4af13637f344cdbea01d65e61fa159e4630b">diff</a>)</h2>
+		<pre class="js-code compact-xxs">
+			(function ($, Pilot) {
+				var App = Pilot.create({
+					#! el: "#app", // корневой элемент
+					#!+ "/": { // ключь — описание маршура
+						id: "home", // id маршрута
+						#!+ loadData: function (req) {
+							return $.getJSON("./data/galleries.json"); // взял с <a href="http://en.wikipedia.org/wiki/List_of_art_movements">WiKi</a>
+						#!- },
+						#!+ init: function () {
+							#! var galleries = this.<mark class="next">getLoadedData</mark>();
+							#! this.$(".js-title").text("List of art movements");
+							#!+ this.$(".js-list").append(galleries.map(function (name) {
+								var url = this.getUrl("gallery", { name: name });
+								return "&lt;li class='table-view-cell'>&lt;a>"+name+"&lt;/a>&lt;/li>";
+							#!- }, this));
+						#!- }
+					#!- }
+				});
+			})(jQuery, Pilot);
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Home screen.html</h2>
+		<pre class="js-code compact-xs">
+			&lt;div id="app">
+
+				&lt;!-- Home -->
+				&lt;div <mark>data-view-id="home"</mark> style="z-index: 1; display: none;">
+					&lt;header class="bar bar-nav">
+						&lt;h1 class="js-title title">&lt;/h1>
+					&lt;/header>
+
+					&lt;div class="js-content content">
+						&lt;ul class="js-list table-view">&lt;/ul>
+					&lt;/div>
+				&lt;/div>
+				&lt;!-- /Home -->
+
+			&lt;/div>
+		</pre>
+	</div></section>
+	
+	
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/04qgi6afwzcnz8b/Screenshot%202014-04-11%2015.37.20.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Gallery screen</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Gallery screen.js (<a href="https://github.com/RubaXa/Pilot/commit/8ee68061a2d311ddc5ef1242bd7d81089f6aa569">diff</a>)</h2>
+		<pre class="js-code">
+			// Gallery screen
+			"/gallery/<mark>:name/</mark>": {
+				id: "gallery",
+				onRoute: function (evt, req) {
+					this.$(".title").text(<mark>req.params.name</mark>);
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Первая проблема</h2>
+		<div>
+			При перемещении возвращении на «Home» отправляется запрос за список категорий.
+			Это происходит из-за того, что функция loadData дергается перед сменой маршрута, если
+			нужно получить данные только при перво попадании, замените loadData на loadDataOnce.
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение проблемы</h2>
+		<pre class="js-code compact">
+			"/": { // Home screen
+				id: "home",
+			-	loadData: function (req) {
+			+	loadDataOnce: function (req) {
+					return $.getJSON("./data/galleries.json");
+				},
+				init: function () {
+					/* ... */
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Gallery screen.js (<a href="https://github.com/RubaXa/Pilot/commit/853e0a7980e4b77117246f4725ae23ac5bcac8d7">diff</a>)</h2>
+		<pre class="js-code compact-s">
+			"/gallery/:name/:page?": {
+				id: "gallery",
+				#!+ loadData: function (req) {
+					return $.flickr("flickr.photos.search", {
+						#! tags: req.params.name,
+						#! page: req.params.page|0,
+						#! per_page: 50
+					}).then(function (result) {
+					#!-	return result.photos;
+					});
+				#!- },
+				onRoute: function (evt, req) { /* .. */ }
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Gallery screen.js (<a href="https://github.com/RubaXa/Pilot/commit/853e0a7980e4b77117246f4725ae23ac5bcac8d7">diff</a>)</h2>
+		<pre class="js-code compact-s">
+			"/gallery/:name/:page?": {
+				id: "gallery",
+				loadData: function (req) { return $.flickr({ /*...*/ }); },
+				onRoute: function (evt, req) {
+					#!+ var name = req.params.name,
+					    photos = this.getLoadedData()
+					#!- ;
+					#! this.$(".title").text(name);
+					#!+ this.$(".photos").html(photos.photo.map(function (photo) {
+						#! var url = this.getUrl("artwork", { name: name, id: photo.id });
+						#! return "&lt;a href='" + url + "'>&lt;img src='" + photo.url_q + "' />&lt;/a>";
+					#!- }, this));
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<h2 style="margin-top: 150px; font-size: 400%; color: #fff; text-shadow: 0 1px 4px #000; opacity: 1">Home + Gallery<br/><a href="http://rubaxa.github.io/Pilot/tutorial/04-jquery-flickr/">DEMO</a></h2>
+		<img src="https://dl.dropboxusercontent.com/s/7ofdi2m5io3iomv/Screenshot%202014-04-11%2016.42.21.png"/>
+		<img style="top: 100px; left: 150px; " src="https://dl.dropboxusercontent.com/s/mu8s7pwo9fiqdpc/Screenshot%202014-04-11%2016.42.58.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Subviews</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Subviews: loading (<a href="https://github.com/RubaXa/Pilot/commit/4f8b7fc1d342fee09e15a357bdf3d6be1c439f5f">diff</a>)</h2>
+		<pre class="js-code compact">
+			App = Pilot.create({
+				el: "#app",
+				subviews: {
+					#!+ loading: { // id подвида и [data-subview-id="loading"]
+						#! loadData: function () { this.$el.show(); },
+						#! onRoute: function () { this.$el.hide(); }
+					#!- }
+				},
+				/* Home, Gallery, etc. */
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Effects</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Effects (<a href="https://github.com/RubaXa/Pilot/commit/3d628eab4c6d47cc88a3125e3bdd49c426ed8272">diff</a>)</h2>
+		<pre class="js-code compact-xxs">
+			Pilot.View.toggleEffect("transition", function ($el, state) {
+				#!+ $el.css({
+						display: "",
+						opacity: +!state,
+						transition: "",
+						transform: "translate3d(" + (!state ? "0" : "100%") + ",0,0)"
+					})
+					#! .delay(1)
+					#!+ .queue(function (){
+						$el.css({
+								opacity: +state,
+								transition: "all .2s ease-in-out",
+								transform: "translate3d(" + (state ? "0" : "100%") + ",0,0)"
+							})
+							.dequeue()
+						;
+					#!- })
+				#!- ;
+			});
+
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Effects: применяем (<a href="https://github.com/RubaXa/Pilot/commit/3d628eab4c6d47cc88a3125e3bdd49c426ed8272">diff</a>)</h2>
+		<pre class="js-code compact-xs">
+			App = Pilot.create({
+				el: "#app",
+				subviews: {},
+				"/": {
+					id: "home",
+					#! toggleEffect: "fadeIn"
+				},
+				"/gallery/:name/:page?": {
+					id: "gallery",
+					#! toggleEffect: "transition"
+				},
+				"/artwork/:id/": {
+					id: "artwork",
+					#! toggleEffect: "transition"
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Effects: проблема / <a href="http://rubaxa.github.io/Pilot/tutorial/08-jquery-effects/">DEMO</a></h2>
+		<p>
+			Попробовав демо, можно быстро заметить, что при переходе с Gallery на Artwork,
+			один экран уезжает, другой приезжает, что выглядит не очень красиво.
+		</p>
+		<p>
+			Чтобы добится такого эффекта, можно объеденить Gallery и Artwork в группу.
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Gallery & Artwork group (<a href="https://github.com/RubaXa/Pilot/commit/9afe79a6b3303e9c6a98c19d03fd043b0d889974">diff</a>)</h2>
+		<pre class="js-code compact-s">
+			&lt;!-- GalleryGroup -->
+			&lt;div data-view-id="gallery-group" style="z-index: 2; display: none;">
+				#!+ &lt;!-- Gallery -->
+				&lt;div data-view-id="gallery" style="z-index: 2; display: none;">
+					&lt;!--...-->
+				&lt;/div>
+				#!- &lt;!-- /Gallery -->
+				#!+ &lt;!-- Artwork -->
+				&lt;div data-view-id="artwork" style="z-index: 3; display: none;">
+					&lt;!--...-->
+				&lt;/div>
+				#!- &lt;!-- /Artwork -->
+			&lt;/div>
+			&lt;!-- /GalleryGroup -->
+		</pre>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>Gallery & Artwork group (<a href="https://github.com/RubaXa/Pilot/commit/9afe79a6b3303e9c6a98c19d03fd043b0d889974">diff</a>)</h2>
+		<pre class="js-code compact-xxs">
+			App = Pilot.create({
+				/* el, subview, home */
+				#!+ "/gallery/": {
+					#! id: "gallery-group", // [data-view-id="gallery-group"]
+					#! toggleEffect: "transition",
+
+					#!+ "/:name/:page?": {
+						id: "gallery",
+						toggleEffect: "show", // просто показать
+						#!+ paramsRules: { // валидация параметров
+							#! name: function (val) { return val != 'artwork'; }
+						#!- }
+					#!- },
+					#!+ "/artwork/:id": {
+						id: "artwork",
+						toggleEffect: "transition"
+					#!- }
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="http://rubaxa.github.io/Pilot/tutorial/09-jquery-group/">Готово</a><span class="next">?</span></h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2>:(</h2>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/4caojty3eg1s7m6/Screenshot%202014-04-11%2017.27.54.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pilot.View</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.View: DefaultView (<a href="https://github.com/RubaXa/Pilot/commit/df2ffe1b2881229036126d18a1a630d22c53ebe2">diff</a>)</h2>
+		<pre class="js-code compact-s">
+			var DefaultView = Pilot.View.extend({
+				#!+ $$: function (name) {
+					return this.$(".js-" + name);
+				#!- },
+				#!+ setTitle: function (val) {
+					this.$$("title").text(val);
+				#!- },
+				#!+ setBackUrl: function (url) {
+					this.$$("back").prop('href', url);
+				#!- },
+				#!+ setHtml: function (val) {
+					this.$$("content").html( val );
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.View: HomeView (<a href="https://github.com/RubaXa/Pilot/commit/df2ffe1b2881229036126d18a1a630d22c53ebe2">diff</a>)</h2>
+		<pre class="js-code compact-s">
+			var HomeView = DefaultView.extend({
+				#!+ loadDataOnce: function (req) {
+					return $.getJSON("./data/galleries.json");
+				#!- },
+				#!+ init: function () {
+					var galleries = this.getLoadedData();
+					#! this.setTitle("List of art movements");
+					#!+ this.setHtml("list", galleries.map(function (name) {
+						#!+ var url = this.getUrl('gallery', { name: name });
+						#!- return "&lt;li class='table-view-cell'>&lt;a href='" + url + "'>" + name + "&lt;/a>&lt;/li>";
+					#!- }, this));
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<h2>
+			<img style="position: absolute; z-index: 10000; top: 15%; left: 20%; opacity: .4" width="50%" src="http://upload.wikimedia.org/wikipedia/commons/1/13/Facebook_like_thumb.png"/>
+		</h2>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/y13ic7o5k6o4kb1/Screenshot%202014-04-11%2017.36.27.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И это не конец!</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>RequireJS</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<div style="margin-top: -40px;">
+			<h2>И тут я устал</h2>
+			<div style="margin-top: -20px; font-size: 70%">RequireJS и все шаги создания этого приложения вы можете посмотреть на github:</div>
+		</div>
+		<ul style="margin-left: 60px; font-size: 80%">
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/01-jquery">01-jquery</a>: Structure / <a
+					href="https://github.com/RubaXa/Pilot/commit/ced9bcc6db493243def7bcf23e98ba2b94de25af">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/01-jquery/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/02-jquery-home">02-jquery-home</a>: Home screen / <a
+					href="https://github.com/RubaXa/Pilot/commit/ff6c4af13637f344cdbea01d65e61fa159e4630b">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/02-jquery-home/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/03-jquery-gallery">03-jquery-gallery</a>: Gallery screen / <a
+					href="https://github.com/RubaXa/Pilot/commit/8ee68061a2d311ddc5ef1242bd7d81089f6aa569">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/03-jquery-gallery/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/04-jquery-flickr">04-jquery-flickr</a>: Flickr API / <a
+					href="https://github.com/RubaXa/Pilot/commit/853e0a7980e4b77117246f4725ae23ac5bcac8d7">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/04-jquery-flickr/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/05-jquery-loading">05-jquery-loading</a>: Loading indicator / <a
+					href="https://github.com/RubaXa/Pilot/commit/4f8b7fc1d342fee09e15a357bdf3d6be1c439f5f">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/05-jquery-loading/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/06-jquery-cache">06-jquery-cache</a>: jQuery ajax cache API / <a
+					href="https://github.com/RubaXa/Pilot/commit/ed6469fab74dcdc219c60ab0da16c46481944e46">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/06-jquery-cache/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/07-jquery-artwork">07-jquery-artwork</a>: Artwork screen / <a
+					href="https://github.com/RubaXa/Pilot/commit/dc9921568734ebf46632de5db7ecb7fa401dc84d">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/07-jquery-artwork/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/08-jquery-effects">08-jquery-effects</a>: Effects / <a
+					href="https://github.com/RubaXa/Pilot/commit/3d628eab4c6d47cc88a3125e3bdd49c426ed8272">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/08-jquery-effects/">demo</a>)
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/09-jquery-group">09-jquery-group</a>: Gallery &amp; Artwork group
+				/ <a href="https://github.com/RubaXa/Pilot/commit/9afe79a6b3303e9c6a98c19d03fd043b0d889974">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/09-jquery-group/">demo</a>
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/10-jquery-view">10-jquery-view</a>: Use Pilot.View / <a
+					href="https://github.com/RubaXa/Pilot/commit/df2ffe1b2881229036126d18a1a630d22c53ebe2">diff</a> / <a
+					href="http://rubaxa.github.io/Pilot/tutorial/10-jquery-view/">demo</a>)
+			</li>
+			<li>
+				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/11-jquery-requirejs-finally">11-jquery-requirejs-finally</a>:
+				RequireJS / <a href="https://github.com/RubaXa/Pilot/commit/9c94af98d9050d2b41cfce7687dffc55790462b9">diff</a> /
+				<a href="http://rubaxa.github.io/Pilot/tutorial/11-jquery-requirejs-finally/">demo</a>
+			</li>
+		</ul>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

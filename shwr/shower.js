@@ -1030,6 +1030,11 @@ window.shower = window.shower || (function(window, document, undefined) {
 				if (isCode) {
 					var html = [], classes = '', before = '', after = '';
 
+					if (/^[\+\-]/.test(line)) {
+						classes += ' diff-' + (line.charAt(0) == '+' ? 'plus' : 'minus');
+						line = line.substr(1);
+					}
+
 					line = line
 						.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
@@ -1048,6 +1053,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 							return '<span class="' + type + '">' + val + '</span>';
 						})
 						.replace(/(\/\*.*?\*\/)/gi, '<span class="comment">$1</span>')
+						.replace(/(&lt;!--.*?--(&gt;|>))/gi, '<span class="comment">$1</span>')
 						.replace(/(\b\w+)\(/gi, '<span class="function">$1</span>(')
 						.replace(/\bif\s\(/g, '<span class="function">if </span>(')
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
@@ -1063,6 +1069,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						})
 					;
 
+
 					if (line.indexOf('#!') != -1) {
 						if (line.indexOf('#!+') != -1) {
 							before = '<div class="next">';
@@ -1071,7 +1078,8 @@ window.shower = window.shower || (function(window, document, undefined) {
 							after = '</div>';
 						}
 						else {
-							classes += 'next';
+							before = '<div class="next">';
+							after = '</div>';
 						}
 
 						line = line.replace(/#![+-]*\s?/, '');
