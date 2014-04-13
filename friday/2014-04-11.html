@@ -316,7 +316,7 @@
 			"/gallery/<mark>:name/</mark>": {
 				id: "gallery",
 				onRoute: function (evt, req) {
-					this.$(".title").text(<mark>req.params.name</mark>);
+					this.$(".js-title").text(<mark>req.params.name</mark>);
 				}
 			}
 		</pre>
@@ -326,9 +326,9 @@
 	<section class="slide"><div>
 		<h2>Первая проблема</h2>
 		<div>
-			При перемещении возвращении на «Home» отправляется запрос за список категорий.
-			Это происходит из-за того, что функция loadData дергается перед сменой маршрута, если
-			нужно получить данные только при перво попадании, замените loadData на loadDataOnce.
+			При возвращении на «Home» отправляется запрос за список категорий.
+			Это происходит из-за того, что функция loadData вызывается каждый раз перед сменой маршрута,
+			если нужно получить данные только один раз, замените <b>loadData</b> на <b>loadDataOnce</b>.
 		</div>
 	</div></section>
 
@@ -380,8 +380,8 @@
 					#!+ var name = req.params.name,
 					    photos = this.getLoadedData()
 					#!- ;
-					#! this.$(".title").text(name);
-					#!+ this.$(".photos").html(photos.photo.map(function (photo) {
+					#! this.$(".js-title").text(name);
+					#!+ this.$(".js-photos").html(photos.photo.map(function (photo) {
 						#! var url = this.getUrl("artwork", { name: name, id: photo.id });
 						#! return "&lt;a href='" + url + "'>&lt;img src='" + photo.url_q + "' />&lt;/a>";
 					#!- }, this));
@@ -482,7 +482,7 @@
 			один экран уезжает, другой приезжает, что выглядит не очень красиво.
 		</p>
 		<p>
-			Чтобы добится такого эффекта, можно объеденить Gallery и Artwork в группу.
+			Чтобы избавиться от такого эффекта, можно объеденить Gallery и Artwork в группу.
 		</p>
 	</div></section>
 
@@ -514,18 +514,18 @@
 		<pre class="js-code compact-xxs">
 			App = Pilot.create({
 				/* el, subview, home */
-				#!+ "/gallery/": {
+				#!+ "/gallery/": { // Группа
 					#! id: "gallery-group", // [data-view-id="gallery-group"]
 					#! toggleEffect: "transition",
 
-					#!+ "/:name/:page?": {
+					#!+ "/:name/:page?": { // Gallery screen
 						id: "gallery",
 						toggleEffect: "show", // просто показать
 						#!+ paramsRules: { // валидация параметров
-							#! name: function (val) { return val != 'artwork'; }
+							#! name: function (val) { return val != "artwork"; }
 						#!- }
 					#!- },
-					#!+ "/artwork/:id": {
+					#!+ "/artwork/:id": { // Artwork screen
 						id: "artwork",
 						toggleEffect: "transition"
 					#!- }
@@ -612,7 +612,7 @@
 	<section class="slide"><div>
 		<div style="margin-top: -40px;">
 			<h2>И тут я устал</h2>
-			<div style="margin-top: -20px; font-size: 70%">RequireJS и все шаги создания этого приложения вы можете посмотреть на github:</div>
+			<div style="margin-top: -20px; font-size: 70%"><a href="http://rubaxa.github.io/Pilot/tutorial/11-jquery-requirejs-finally/">RequireJS</a> и все шаги создания этого приложения вы можете посмотреть на github:</div>
 		</div>
 		<ul style="margin-left: 60px; font-size: 80%">
 			<li>
@@ -653,7 +653,7 @@
 			<li>
 				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/08-jquery-effects">08-jquery-effects</a>: Effects / <a
 					href="https://github.com/RubaXa/Pilot/commit/3d628eab4c6d47cc88a3125e3bdd49c426ed8272">diff</a> / <a
-					href="http://rubaxa.github.io/Pilot/tutorial/08-jquery-effects/">demo</a>)
+					href="http://rubaxa.github.io/Pilot/tutorial/08-jquery-effects/">demo</a>
 			</li>
 			<li>
 				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/09-jquery-group">09-jquery-group</a>: Gallery &amp; Artwork group
@@ -663,7 +663,7 @@
 			<li>
 				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/10-jquery-view">10-jquery-view</a>: Use Pilot.View / <a
 					href="https://github.com/RubaXa/Pilot/commit/df2ffe1b2881229036126d18a1a630d22c53ebe2">diff</a> / <a
-					href="http://rubaxa.github.io/Pilot/tutorial/10-jquery-view/">demo</a>)
+					href="http://rubaxa.github.io/Pilot/tutorial/10-jquery-view/">demo</a>
 			</li>
 			<li>
 				<a href="/RubaXa/Pilot/blob/tutorial/tutorial/11-jquery-requirejs-finally">11-jquery-requirejs-finally</a>:
