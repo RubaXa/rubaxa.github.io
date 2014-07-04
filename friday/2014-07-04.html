@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-	<title>04.06.2014: Глобальные события</title>
+	<title>04.07.2014: Глобальные события  (коротко о главном)</title>
 
 	<meta charset="utf-8"/>
 	<meta name="viewport" content="width=792, user-scalable=no"/>
@@ -20,13 +20,50 @@
 			-moz-box-sizing: border-box;
 			box-sizing: border-box;
 		}
+
+		.evt-steps {
+			white-space: nowrap;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 14px;
+			line-height: 1.42857143;
+			color: #333;
+		}
+
+		.evt-steps .step {
+			display: inline-block;
+			text-align: center;
+			vertical-align: middle;
+			margin-right: 60px;
+			position: relative;
+		}
+			.evt-steps .step:after {
+				top: 30%;
+				left: -45px;
+				content: '→';
+				display: inline-block;
+				position: absolute;
+				font-size: 200%;
+				line-height: 0;
+			}
+			.evt-steps .step:first-child:after {
+				display: none;
+			}
+
+		.evt-steps .module {
+			color: #8959a8;
+			font-weight: bold;
+		}
+		.evt-steps .event {
+			color: #3e999f;
+			font-weight: bold;
+		}
 	</style>
 </head>
 <body class="list">
 
 	<header class="caption">
-		<h1>04.06.2014</h1>
-		<p>Глобальные события</p>
+		<h1>04.07.2014</h1>
+		<p>Глобальные события  (коротко о главном)</p>
 	</header>
 
 
@@ -43,11 +80,13 @@
 			<li>Слабая связанность</li>
 		</ul>
 
-		<div>Минусы</div>
-		<ul style="margin-left: 60px">
-			<li>Отладка</li>
-			<li>Слабая связанность</li>
-		</ul>
+		<div class="next">
+			<div>Минусы</div>
+			<ul style="margin-left: 60px">
+				<li>Слабая связанность</li>
+				<li>Отладка</li>
+			</ul>
+		</div>
 	</div></section>
 
 
@@ -64,44 +103,6 @@
 
 
 	<section class="slide"><div>
-		<style>
-			.evt-steps {
-				white-space: nowrap;
-				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-				font-size: 14px;
-				line-height: 1.42857143;
-				color: #333;
-			}
-
-			.evt-steps .step {
-				display: inline-block;
-				text-align: center;
-				vertical-align: middle;
-				margin-right: 60px;
-				position: relative;
-			}
-				.evt-steps .step:after {
-					top: 30%;
-					left: -45px;
-					content: '→';
-					display: inline-block;
-					position: absolute;
-					font-size: 200%;
-					line-height: 0;
-				}
-				.evt-steps .step:first-child:after {
-					display: none;
-				}
-
-			.evt-steps .module {
-				color: #8959a8;
-				font-weight: bold;
-			}
-			.evt-steps .event {
-				color: #3e999f;
-				font-weight: bold;
-			}
-		</style>
 		<h2>Пример: события</h2>
 
 		<div class="evt-steps">
@@ -109,12 +110,13 @@
 				<div class="btn btn-primary">Add</div>
 				<div class="next">
 					<div>↓</div>
-					emit(<span class="module">users</span>:<span class="event">add-dialog</span>)
+					emit(<span class="module">dialog</span>:<span class="event">add-user</span>)
 				</div>
-			</div><!--
+			</div>
 
-			--><div class="step next">
-				on(<span class="module">users</span>:<span class="event">add-dialog</span>)
+			<div class="step next">
+				on(<span class="module">dialog</span>:<span class="event">add-user</span>)
+
 				<div class="next">
 					<div>↓</div>
 					<div class="bs panel panel-success" style="width: 230px; margin: 0">
@@ -129,18 +131,25 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="next">
 					<div>↓</div>
 					<div>ajax.<span class="function">save</span>(<span class="tomorrow-green">"/user/"</span>, { name: el.<span class="tomorrow-aqua">value</span> })</div>
+					<div class="next">
+						<div class="tomorrow-comment">/* или в лучшем случае */</div>
+						<div>userList.<span class="function">save</span>({ name: el.<span class="tomorrow-aqua">value</span> })</div>
+					</div>
 				</div>
+
 				<div class="next">
 					<div>↓</div>
 					emit(<span class="module">users</span>:<span class="event">add</span>, user)
 				</div>
-			</div><!--
+			</div>
 
-			--><div class="step next">
+			<div class="step next">
 				on(<span class="module">users</span>:<span class="event">add</span>, user)
+
 				<div class="next">
 					<div>↓</div>
 					<div style="text-align: left">
@@ -148,6 +157,7 @@
 						<div><span class="tomorrow-orange">this</span>.<span class="function">render</span>();</div>
 					</div>
 				</div>
+
 				<div class="next">
 					<div>↓</div>
 					<ul style="text-align: left; margin-left: 50px">
@@ -166,10 +176,15 @@
 		<ul>
 			<li>Кто-то, где-то испускает события</li>
 			<li>Кто-то, где-то слушает и пораждает события</li>
-			<li>Проследить цепочку «от» и «до» не реально</li>
+			<li>Проследить цепочку «от» и «до» сложно</li>
 			<li>Нет возможности понять, чем закончилась цепочка</li>
 			<li>Отладка возможна только в рамках одного события, а не всей цепочки</li>
 		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>«Легкая связанность»</h2>
 	</div></section>
 
 
@@ -182,7 +197,7 @@
 				<div class="next">
 					<div>↓</div>
 					<div style="text-align: left">
-						<div>dialogs.<span class="tomorrow-blue">open</span>(<span class="tomorrow-green">"add-user"</span>)</div>
+						<div>dialog.<span class="tomorrow-blue">open</span>(<span class="tomorrow-green">"add-user"</span>)</div>
 						&nbsp; &nbsp; .<span class="tomorrow-blue">catch</span>(<span class="tomorrow-purple">function</span> (err) {
 						<div>&nbsp; &nbsp;  &nbsp;  &nbsp; <span class="tomorrow-comment">/* обработка */</span></div>
 						<div>&nbsp; &nbsp; });</div>
@@ -191,7 +206,7 @@
 			</div>
 
 			<div class="step next">
-				<div>dialogs.<span class="tomorrow-blue">open</span>(<span class="tomorrow-green">"add-user"</span>)</div>
+				<div>dialogs.<span class="tomorrow-blue">open</span>(<span class="tomorrow-green">"add-user"</span>):Promise</div>
 				<div>↓</div>
 				<div class="bs panel panel-success" style="width: 230px; margin: 0">
 					<div class="panel-heading">%username%?</div>
@@ -206,7 +221,7 @@
 				</div>
 				<div class="next">
 					<div>↓</div>
-					<div>userList.<span class="tomorrow-blue">save</span>({ name: el.<span class="tomorrow-aqua">value</span> });</div>
+					<div><span class="tomorrow-purple">return</span> userList.<span class="tomorrow-blue">save</span>({ name: el.<span class="tomorrow-aqua">value</span> });</div>
 				</div>
 			</div>
 		</div>
@@ -226,7 +241,13 @@
 
 
 	<section class="slide"><div>
-		<h2>Пример</h2>
+		<h2>«Легкая связанность»</h2>
+		<ul>
+			<li>Единый «узел» получения и изменения данных</li>
+			<li>«Прозрачная» цепочка «от» и «до»</li>
+			<li>Всегда известно чем закончилась цепочка</li>
+			<li>Возможность отладки «от» и «до»</li>
+		</ul>
 	</div></section>
 
 

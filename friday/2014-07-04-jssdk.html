@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns="http://www.w3.org/1999/html">
+<head>
+	<title>04.07.2014: JSSDK: Model, Model.List</title>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>04.07.2014</h1>
+		<p>JSSDK: Model, Model.List</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Почему не Backbone?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Backbone: проблемы</h2>
+		<ul>
+			<li>Не умеет работать с объект-свойствами</li>
+			<li>Расчитан на RESTfull</li>
+			<li>Нет встроенного кеширования</li>
+			<li>Нет «целостности» модели</li>
+			<li>Коллекции</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>«Целостность»</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Backbone vs. Целостность</h2>
+		<pre class="js-code compact-xs">
+			// Поиск модели
+			function find(id) {
+				var model = new XModel({ id: id, flag: false });
+				return model.fetch();
+			}
+			#!+ // Где-то в коде #1
+			find(123).then(function (model) {
+				model.on("change:flag", function () {  // Слушаем событие
+					console.log(model.get("flag"));
+				});
+			#!- });
+			#!+ // Где-то #2
+			find(123).then(function (model) {
+				#! model.set("flag", true); // и ничего не происходит
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И не только это</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Backbone и Коллекции</h2>
+		<pre class="js-code compact">
+			findAll().then(function (collection) {
+				#! collection.on("change", function () { });
+				#!+ collection
+					#! .where({ flag: true })
+					#!+ .on("change", function () {
+						#! // TypeError: undefined is not a function :[
+					#!- })
+				#!- ;
+				#! // Все методы с коллекцией возвращают массив :[
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>JSSDK: Model</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model</h2>
+		<pre class="js-code compact-s">
+			var Letter = Model.extend({
+				#! findUrl: "letters/all",
+				#! findOneUrl: "letters/letter",
+				#!+ defaults: {
+					prev: "",
+					next: "",
+					subject: "",
+					flags: {
+						unread: false,
+						flagged: false
+					}
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Letter.find</h2>
+		<pre class="js-code">
+			Letter.find({ folder: 1 }).then(function (models) {
+				#! models instanceof Letter.List; // true
+				#! models instanceof Letter.List; // true
+				#!+ // Получаем список всех id
+				#!- var ids = models.pluck("id");
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Letter.findOne</h2>
+		<pre class="js-code">
+			Letter.findOne(req.params.id).then(function (model) {
+				#!+ if (model.is("flags.unread")) {
+					// Письмо непрочитанно, помечаем как прочитанное
+					return model.save("flags.unread", false);
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model.staticts</h2>
+		<ul>
+			<li><b>find</b>({}) — получить список моделей по запросу</li>
+			<li><b>findOne</b>(id) — получить модель</li>
+			<li><b>mock</b>({}) — создание моков</li>
+			<li><b>List</b> — каласс коллекции</li>
+			<li><b>all</b> — глобальная коллекция</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK</h2>
+		<pre class="js-code">
+			// Есть два месте, где запрашиваем одни и теже данные
+			#!+ Promise.all([Model.find(), Model.find()])
+				.then(function (results) {
+				  #!+ var listA = results[0];
+				  #!- var listB = results[1];
+				  #!+ log(listA !== listB); // Коллекции разные
+				  #!- log(listA[0] === listB[0]); // Но модели одинаковые
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model#public</h2>
+		<ul>
+			<li><b>is</b>(key) — проверить свойство на истинность</li>
+			<li><b>get</b>(key) — получить свйоство</li>
+			<li><b>set</b>(attrs) — изменить свйоство или свойства</li>
+			<li><b>save</b>(attrs) — сохранить изменения</li>
+			<li><b>remove</b>() — удалить модель</li>
+			<li>&hellip;</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model и неполные данные</h2>
+		<pre class="js-code compact">
+			var Letter = Model.extend({
+				url: "/letter/:id/"
+			});
+
+			Letter.find().then(function () { // GET /letter/
+				Letter.findOne( 123 )  // runtime cache
+					.then(function (model) {
+						log(model.get("body")); // undefined
+					});
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model и неполные данные</h2>
+		<pre class="js-code compact-s">
+			var Letter = Model.extend({
+				url: "/letter/:id/",
+				#!+ <mark class="next">isDataFully</mark>: function () {
+					#! return this.is("body");
+				#!- }
+			});
+
+			Letter.find().then(function () { // GET /letter/
+				#!+ Letter.findOne( 123 )  // GET /letter/123/
+					.then(function (model) {
+						log(model.get("body")); // "Пару дней назад я познакомился с..."
+					#!- });
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model & RPC</h2>
+		<pre class="js-code">
+			#!+ // Расширяем модель для работы со RPC
+			var RPCModel = Model.extend({
+				request: RPC
+			#!- });
+			#!+ // Используем (+ Хранилище)
+			var Folder = RPCModel.extend({
+				storage: new Storage.Local("folders")
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>JSSDK: Model & RPC</h2>
+		<div>
+			Имеем мульти-источник данных: <code>mailbox/status</code><br/>
+			{ status: 200, body: { folders: [..], letters: [..] } }
+		</div>
+		<pre class="js-code compact-s next">
+			define(["RPC", "Folder", "Letter"], function (RPC, Folder, Letter) {
+				// Export: функция получения статуса ящика
+				return function () {
+					#!+ return RPC.call("mailbox/status").then(function (req) {
+						#!+ return req.map({
+							#! folders: Folder,
+							#! letters: Letter
+						#!- });
+					#!- });
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Performance</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="left: 15%; top: 10%;" src="https://photos-1.dropbox.com/t/0/AABsN7u2t05bICGB-lJUgge7uDohAEZEVJKc984oGd7OvQ/12/42505328/png/2048x1536/3/1404468000/0/2/Model.bench-01.png/V29oFCWb56z0ucDwSQ3KjKn9R15xvOH3mHa8oV_wJu4"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="left: 15%; top: 10%;" src="https://photos-5.dropbox.com/t/0/AAAdPn_S0WJQp-hEKm5J0V_m37FVOfhlVQa0MJQKbVY2Tw/12/42505328/png/1024x768/3/1404468000/0/2/Model.bench-02.png/0SuP7qGwpZ1scjXuqk6QREE6hsIUfEyJ3kAD83e6b24"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
