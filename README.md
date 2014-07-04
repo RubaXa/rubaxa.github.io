@@ -1,7 +1,7 @@
 ## Пятница
 
- * [04.07.2014](http://rubaxa.github.io/friday/2014-05-08-jssdk.html): JSSDK: Model, Model.List
- * [04.07.2014](http://rubaxa.github.io/friday/2014-05-08.html): Глобальные события (коротко о главном)
+ * [04.07.2014](http://rubaxa.github.io/friday/2014-07-08-jssdk.html): JSSDK: Model, Model.List
+ * [04.07.2014](http://rubaxa.github.io/friday/2014-07-08.html): Глобальные события (коротко о главном)
  * [11.04.2014](http://rubaxa.github.io/friday/2014-04-11.html): Pilot 1.5 / Пример одностраничного приложения (SAP).
  * [28.03.2014](http://rubaxa.github.io/friday/2014-03-28.html): JSSDK. config, Emitter, Promise, request.
  * [21.03.2014](http://rubaxa.github.io/friday/2014-03-21.html): JSSDK. Введение.
