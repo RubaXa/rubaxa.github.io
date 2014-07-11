@@ -57,6 +57,8 @@
 			color: #3e999f;
 			font-weight: bold;
 		}
+		.slide pre,
+		.slide pre code { background-color: #fff; box-shadow: none }
 	</style>
 </head>
 <body class="list">
@@ -251,8 +253,60 @@
 	</div></section>
 
 
+	<section class="slide shout"><div>
+		<h2>Так нужны события или нет?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Нужны :]</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Нужны</h2>
+		<div>Но только там, где нет обратной связи, либо это синхронная цепочка.</div>
+		<pre class="js-code compact-xs">
+			// foo.js
+			$(document).on("click", "a", function (evt) {
+				#! var url = evt.currentTarget.href;
+				#! var event = $.Event("check:url");
+				#! $(window).triggerHandler(event, url);
+				#! evt.isDefaultPrevented() && evt.preventDefault();
+			});
+			#!+ // bar.js
+			$(window).bind("check:url", function (evt, url) {
+				#!+ if (/secret/i.test(url)) {
+					evt.preventDefault();
+					// бла-бла
+				#!- }
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Нужны</h2>
+		<div>Но только там, где нет обратной связи, либо это синхронная цепочка.</div>
+		<pre class="js-code compact-s">
+			// foo.js
+			// ..
+
+			// bar.js
+			$(window).bind("check:url", function (evt, url) {
+				if (/secret/i.test(url)) {
+					// Обрабатываем сами, дальше не пускаем
+					evt.stopImmediatePropagation();
+				}
+			});
+		</pre>
+	</div></section>
+
+
+
 	<section class="slide shout">
 		<h2>The End</h2>
+		<p>Всё это только моё мнение.</p>
 	</section>
 
 
