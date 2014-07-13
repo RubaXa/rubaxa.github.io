@@ -1059,7 +1059,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\barguments|true|false\b)/g, '<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\b(jQuery|Array|Math|this|typeof|instanceof)\b)/g, '<span class="tomorrow-orange">$1</span>')
+						.replace(/(\b(jQuery|Array|Math|this|typeof|instanceof|try|catch)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/(\s\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
