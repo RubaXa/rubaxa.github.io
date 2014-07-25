@@ -183,7 +183,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			if ( ! slide.isFinished()) {
 				nextSteps = getEl(slide.id).querySelectorAll('.next:not(.active)');
 				nextSteps[0].classList.add('active');
-				
+
 //				if ( slide.innerComplete == 0 ) {
 //					getEl(slide.id).classList.remove('shout');
 //				}
@@ -1013,30 +1013,9 @@ window.shower = window.shower || (function(window, document, undefined) {
 	document.addEventListener('mousewheel', shower.wheel, false);
 
 
-	(function (){
-		// .js-code
-		[].forEach.call(document.querySelectorAll('.js-code,.pre'), function (pre) {
-			var isCode = pre.classList.contains('js-code');
-			var lines = pre.innerHTML.split('\n').slice(+!isCode, -1);
-			var pad = lines[0].match(/^\s*/)[0].length;
-			var groups = 0;
-
-			pre.innerHTML = lines.map(function (line) {
-				line = line
-					.substr(pad)
-					.replace(/\t/g, '  ')
-				;
-
-				if (isCode) {
-					var html = [], classes = '', before = '', after = '';
-
-					if (/^[\+\-]/.test(line)) {
-						classes += ' diff-' + (line.charAt(0) == '+' ? 'plus' : 'minus');
-						line = line.substr(1);
-					}
-
-					line = line
-						.replace(/<\/?.*?>/g, function (tag) {
+	(function () {
+		function hl(line, html) {
+			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
 						.replace(/(\s-?\d+|(?=[^=])".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val) {
@@ -1059,7 +1038,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\barguments|true|false\b)/g, '<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\b(jQuery|Array|Math|this|typeof|instanceof|try|catch)\b)/g, '<span class="tomorrow-orange">$1</span>')
+						.replace(/(\b(jQuery|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/(\s\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
@@ -1068,6 +1047,56 @@ window.shower = window.shower || (function(window, document, undefined) {
 							return html[i-1];
 						})
 					;
+		}
+
+
+		function xtpl(line) {
+			return line.replace(/(\|[^$]+)/, function (_, val){
+					return val.replace(/&/g, '&amp;');
+				})
+				.replace(/(".*?")/g, '<span class="code-str">$1</span>')
+				.replace(/((?:^\s*| > | = ))(\w+)([\.\s#[])/g, '$1<span class="code-node">$2</span>$3')
+				.replace(/ > (\w+)/g, ' > <span class="code-node">$1</span>')
+				.replace(/(&amp;\w+\s)/, '<span class="code-decl">$1</span>')
+				.replace(/(#\w+)/, '<span class="code-id">$1</span>')
+				.replace(/((?:^\s*|>)\.)([.\w-]+)/g, '$1<span class="code-class">$2</span>')
+				.replace(/(\s)(x-\w+:)/g, '$1<span class="code-xprop">$2</span>')
+				.replace(/(\s)([\w-]+:)/g, '$1<span class="code-prop">$2</span>')
+				.replace(/\[(\w[^=\]]+)/g, '[<span class="code-prop">$1</span>')
+				.replace(/\t/g, '&nbsp; &nbsp;')
+				.replace(/\s{2}/g, '&nbsp; &nbsp;')
+				.replace(/(\/\/[^$]+)/, '<span class="code-comment">$1</span>')
+				.replace(/(>|\s)(if|else|for|in)(\s|<)/g, '$1<span class="code-keyword">$2</span>$3')
+			;
+		}
+
+
+		// .js-code
+		[].forEach.call(document.querySelectorAll('.js-code,.pre'), function (pre) {
+			var isCode = pre.classList.contains('js-code');
+			var lines = pre.innerHTML.split('\n').slice(+!isCode, -1);
+			var pad = lines[0].match(/^\s*/)[0].length;
+			var groups = 0;
+
+			pre.innerHTML = lines.map(function (line) {
+				line = line
+					.substr(pad)
+					.replace(/\t/g, '  ')
+				;
+
+				if (isCode) {
+					var html = [], classes = '', before = '', after = '';
+
+					if (/^[\+\-]/.test(line)) {
+						classes += ' diff-' + (line.charAt(0) == '+' ? 'plus' : 'minus');
+						line = line.substr(1);
+					}
+
+					if (/xtpl/.test(pre.className)) {
+						line = xtpl(line, html);
+					} else {
+						line = hl(line, html);
+					}
 
 
 					if (line.indexOf('#!') != -1) {

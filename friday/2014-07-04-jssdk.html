@@ -211,7 +211,7 @@
 
 
 	<section class="slide"><div>
-		<h2>JSSDK: Model & RPC</h2>
+		<h2>JSSDK: Model & RPC + Storage</h2>
 		<pre class="js-code">
 			#!+ // Расширяем модель для работы со RPC
 			var RPCModel = Model.extend({
@@ -242,6 +242,71 @@
 						#!- });
 					#!- });
 				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>«Пачка»</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Имеем</h2>
+		<pre class="js-code compact">
+			Promise.all([
+				#! Folder.find(), // получаем все папки
+				#! Letter.findOne(123), // получаем письмо по id
+				#! Files.find({ letter_id: 123 }) // список файлов для письма
+			]).then(function (results) {
+				#!+ var folders = results[0];
+				var letter = results[1];
+				#!- var files = results[2];
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Улучшаем<br/><u class="next">Promise.map</u></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Promise.map</h2>
+		<div style="margin-top: -20px; margin-bottom: 20px;">— это простая обертка над Promise.all</div>
+		<pre class="js-code compact">
+			#!+ Promise.map({
+				#! folders: Folder.find(),
+				#! letter: Letter.findOne(123),
+				#! files: Files.find({ letter_id: 123 })
+			}).then(function (data) {
+				#!+ data.folders; // список папок
+				data.letter; // письмо
+				#!- data.files; // список файлов
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>RPC.batch</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Объеденяем запросы в «пачку»</h2>
+		<pre class="js-code compact">
+			RPC.batch(function () {
+				#!+ return Promise.map({
+					folders: Folder.find(),
+					letter: Letter.findOne(123),
+					files: Files.find({ letter_id: 123 })
+				#!- });
+			}).then(function (data) {
+				#!+ // POST /batch/
+				#!- // [{url:"/folders/",data:{}},..]
 			});
 		</pre>
 	</div></section>

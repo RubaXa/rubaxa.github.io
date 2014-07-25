@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>25.07.2014: История одного шаблонизатора, от xml к xtpl и data-binding</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>25.07.2014</h1>
+		<p>История одного шаблонизатора, от xml к xtpl и data-binding</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Задача</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Задача</h2>
+		<ul>
+			<li><b>Сделать самый быстрый, пербыстрый шаблонизатор</b>. Чтобы он с одинаковым успехом работал,
+			как на сервере, так и клиенте.</li>
+			<li class="next"><b>Стабильность</b>. В случае ошибки, не падать, а выводить что и где случилось (файл, строка, символ и описание ошибки)</li>
+			<li class="next"><b>Ошибки</b>, как компиляции, так и runtime.</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И началось ;]</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Синтаксис?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Я знаю Smarty!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Smarty</h2>
+		<pre class="js-code">
+			&lt;div&gt;
+				{{if expr }}
+					Вот поэтому Smarty и подобные плохи, {{$username}}.
+			&lt;/span&gt;
+				{{/if}}
+		</pre>
+		<p>Очень велика степень ошибки, а сам шаблонизатор никак не проверяет валидность получаемого html.</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><img width="400" src="../st/sumin-xml.png" style="border-radius: 5px"/></h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><img width="500" src="http://www.fm-base.co.uk/forum/attachments/football-manager-2013-best-players/338955d1367867900-challenge-accepted-8ccab893d3c14177249c3f1fc88168cc-challenge-accepted-guy.jpg"/></h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/RubaXa/AsyncTpl">AsyncTpl</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/RubaXa/AsyncTpl">AsyncTpl</a></h2>
+		<ul>
+			<li>Поддержка двух синтаксисов (XML, Smarty)</li>
+			<li class="next">Стриминг</li>
+			<li class="next">Ошибки компиляции и выполенения</li>
+			<li class="next">Очень быстрый :]</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Синтаксис</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Синтаксис: поддрежка XML & Smarty</h2>
+		<p>Что у них общего?</p>
+		<pre class="js-code compact">
+			#!+ &lt;!-- XML --&gt;
+			&lt;xtpl:if test="expr"&gt; .. &lt;/xtpl:if&gt;
+			#!- &lt;xtpl:value&gt; expr &lt;/xtpl:value&gt;
+
+			#!+ &lt;!-- Smarty --&gt;
+			{{if expr }} .. {{/if}}
+			#!- {{ expr }}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Ничего!<br/><b class="next">Но :]</b></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>XML Парсер</h2>
+		<pre class="js-code compact">
+			new Parser({
+				#! left: "&lt;"
+				#! right: "&gt;"
+				#!+ c_open: "&lt;!--"
+				c_close: "--&gt;"
+				tags: false
+				trim: true
+				#!- firstLine: true
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Smarty Парсер</h2>
+		<pre class="js-code compact">
+			new Parser({
+				#! left: "{{"
+				#! right: "}}"
+				#! tags: "foreach include extends block ..."
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Пример парсинга</h2>
+		<pre class="js-code compact">
+			&lt;!-- XML --&gt;
+			&lt;div&gt;
+				&lt;xtpl:if test="expr"&gt;OK&lt;/xtpl:if&gt;
+			&lt;/div&gt;
+
+			&lt;!-- Smarty --&gt;
+			&lt;div&gt;
+				{{if expr}}OK{{/if}}
+			&lt;/div&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Резльтат парсинга XML</h2>
+		<pre class="js-code compact-xs">
+			[{
+				#! name: "div", type: 1, <mark class="next">__open: true</mark> // &lt;div&gt;
+			}, {
+				#! name: "if", ns: "xtpl", type: 1, <mark class="next">__open: true</mark>, // &lt;xtpl:if
+				#!+ attributes: [{
+					#! name: "test", type: 2, value: "expr" // test="expr"&gt;
+				#!- }]
+			}, {
+				#! name: "#text", type: 3, value: "OK" // текст в if
+			}, {
+				#! name: "if", ns: "xtpl", type: 1, <mark class="next">__close: true</mark> // &lt;/xtpl:if&gt;
+			}, {
+				#! name: "div", type: 1, <mark class="next">__close: true</mark> // &lt;/div&gt;
+			}]
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Резльтат парсинга Smarty</h2>
+		<pre class="js-code compact-s">
+			[{
+				#! name: "#text", type: 3, value: "&lt;div&gt;" // &lt;div&gt;
+			}, {
+				#! name: "if", type: 1, __open: true, // {{if
+				#! <mark class="next">attributes: "expr"</mark> // expr}}
+			}, {
+				#! name: "#text", type: 3, value: "OK" // текст в if
+			}, {
+				#! name: "if", type: 1, __close: true // {{/if}}
+			}, {
+				#! name: "#text", type: 3, value: "&lt;/div&gt;" // &lt;/div&gt;
+			}]
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>По мимого этого</h2>
+		<div>Массив состоял не из простых объектов, а был экземпляром класса <b>Node</b></div>
+		<ul>
+			<li><b>ns</b>:String — пространство имен узла</li>
+			<li><b>name</b>:String — имя узла</li>
+			<li><b>type</b>:Number — тип</li>
+			<li><b>value</b>:String — значение</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Node</h2>
+		<ul>
+			<li><b>__open</b>:Boolean — открывающий узел</li>
+			<li><b>__close</b>:Boolean — закрывающий</li>
+			<li><b>__empty</b>:Boolean — пустой</li>
+			<li><b>__file</b>:String — откуда узел</li>
+			<li><b>__line</b>:Number — номер строки</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Node</h2>
+		<ul>
+			<li><b>attr(name)</b>:String — получить значение атрибута, в случае его отсутствия, бросить исключение</li>
+			<li><b>attrAny(name)</b>:String|undefined</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Трансформация</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Трансформация</h2>
+		<pre class="js-code compact-xxs" style="margin-left: -50px">
+			_trans: function (node, input, stack) {
+				var val;
+				switch (node.name) {
+					#!+ case "if": // if test="expr"
+						#! val = node.__open
+							#! ? "__XIF=0;" + _try("__XIF=(" + node.attr("test") + ")", node) + "if(__XIF){";
+							#! : "}"
+					 	#!- break;
+					#!+ case "foreach": // foreach data="array" item="val"
+						val	= node.__open
+								#! ? ("__XFOR=0;" + this._try("__XFOR=" + node.attr("data"), node)
+								#!+	+ "__buf.each(__XFOR, function (" + (node.attrAny("item", "__v")) + "){"
+								#!- )
+								#! : "});"
+						#!- break;
+				}
+				// ..
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Итого v1</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>AsyncTpl::XML</h2>
+		<pre class="js-code">
+			var xtpl = require("AsyncTpl").engine("XML");
+			xtpl.NS     = "xtpl";   // namespace
+			xtpl.ASYNC  = true;     // async include templates
+			xtpl.STREAM = false;    // streaming
+			xtpl.ESCAPE = true;     // html escape all variables
+			xtpl.DEBUG  = true;     // compile & run-time errors (console.log)
+			xtpl.ROOT_DIR       = "./tpl/";
+			xtpl.COMPILE_DIR    = "./tpl_c/";
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>AsyncTpl::Smarty</h2>
+		<pre class="js-code">
+			var smarty = require("AsyncTpl").engine("Smarty");
+			smarty.LEFT = "{{";
+			smarty.RIGHT = "}}";
+			#!+ smarty.modifiers({ // {{ctx.expr|lower}}
+				lower: function (val) {
+					return val.toLowerCase();
+				}
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Основные моменты</h2>
+		<ul>
+			<li>Он мог стримить</li>
+			<li>Работал в браузере и nodejs</li>
+			<li>Был быстрым, очень</li>
+			<li>Не зависел от сторонних библиотек</li>
+			<li>Выводил ошибки</li>
+			<li>Поддерживал два синтаксиса Smarty и XML</li>
+			<li>Весил 10KB (minified + gzipped)</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Пример</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>hello.xml</h2>
+		<pre class="js-code">
+			&lt;div&gt;
+				&lt;xtpl:if test="ctx.expr"&gt;
+					Hello!
+				&lt;/xtpl:if&gt;
+			&lt;/div&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>hello.js</h2>
+		<pre class="js-code compact-s">
+			function (ctx, __buf) {
+				var __XIF;
+				#! __buf.w("&lt;div&gt;");
+				#!+ __XIF = 0;
+				try { __XIF = ctx.expr; }  //  &lt;xtpl:if test="ctx.expr"&gt;
+				#!- catch (e) { xtpl.error(e, 1, "path/to.xml"); }
+				#!+ if (__XIF) {
+					__buf.w("Hello!");
+				#!- }
+				#! __buf.w("&lt;/div&gt;");
+				return __buf.toStr();
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>А потом началось</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>А потом началось</h2>
+		<p>Я начал пробовать шаблонизатор на реальных задача. Взял Backbone, написал простенький SAP и...</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Список.js</h2>
+		<pre class="js-code compact">
+			var List = new Backbone.View.extend({
+				#! template: xtpl.compile("list.xml"),
+				#!+ initialize: function () {
+					this.listenTo(this.collection, "change", this.render);
+				#!- },
+				#!+ render: function () {
+					#! var html = this.template({ items: this.collection.models });
+					#! this.$el.html(html);
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Список.xml</h2>
+		<pre class="js-code">
+			&lt;ul&gt;
+				#!+ &lt;x:each data="ctx.items" as="item"&gt;
+					#!+ &lt;li&gt;
+						#! &lt;x:value&gt;item.get("name")&lt;/x:value&gt;
+					#!- &lt;/li&gt;
+				#!- &lt;/x:each&gt;
+			&lt;/ul&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>App</h2>
+		<pre class="js-code compact">
+			// Где-то в приложении
+			users.fetch({
+				success: function () {
+					#!+ var list = new List({
+						el: "#users",
+						collection: users
+					#!- });
+					#! list.render();
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>:[</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Зачем?</h2>
+		<pre class="js-code">
+			#!+ // это?
+			#!- this.listenTo(this.collection, "change", this.render);
+
+			#!+ // и это?
+			var html = this.template({ items: this.collection.models });
+			#!- this.$el.html(html);
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Я знаю,<br/>что нужно ;]</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Версия 2.0</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Версия 2.0</h2>
+		<ul>
+			<li>Выкинул поддерку Smarty</li>
+			<li>Переписан парсер</li>
+			<li>Убрал namesapce (оставил просто &lt;x:if/&gt;</li>
+			<li class="next">Data binding ;] Yeah!</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Data binding + Backbone</h2>
+		<pre class="js-code compact">
+			#!+ &lt;x:bind data="ctx.items" as="list"&gt;
+				&lt;ul&gt;
+					#!+ &lt;x:each data="list" as="item"&gt;
+						#!+ &lt;li&gt;
+							&lt;x:value&gt;item.get("name")&lt;/x:value&gt;
+						#!- &lt;/li&gt;
+					#!- &lt;/x:each&gt;
+				&lt;/ul&gt;
+			#!- &lt;/x:bind&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Data binding + Backbone</h2>
+		<div><code>&lt;x:bind/&gt;</code> — создавал замыкание (микро шаблон), подписывался на все события коллекции,
+		при изменении которой, заново рендерил весь блок.</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Data binding + Backbone</h2>
+		<pre class="js-code compact">
+			#!+ __buf.w("&lt;div id='uniqId'&gt;"); // &lt;x:bind
+			#! try { __xbind = ctx.items; } catch (e) {} // data="ctx.items"
+			#!+ __buf.bind(__xbind, <mark class="next">"uniqId"</mark>, function (list) { // as="list"
+				__buf.w("&lt;ul&gt;"); // &lt;ul>
+				#!+ __buf.each(list, function (item) { // &lt;x:each/>
+					// вывод элементов
+				#!- });
+				__buf.w("&lt;/ul&gt;"); // &lt;/ul>
+			#!- });
+			#!- __buf.w("&lt;/div&gt;"); // &lt;/x:bind&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>А дальше хуже</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>А дальше хуже</h2>
+		<ul>
+			<li>Зачем &lt;x:bind/>?</li>
+			<li class="next">Хочу без backbone</li>
+			<li class="next">Биндинг везде</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>А дальше хуже</h2>
+		<p>Это был очень долгий и сложный путь, как внедрить data binding в обычный js шаблон,
+		чтобы он работал как на сервере так и браузере.</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Шаблон</h2>
+		<pre class="js-code compact">
+			&lt;ul&gt;
+				&lt;x:each <mark class="next">bind="ctx.list"</mark> as="item"&gt;
+					#!+ &lt;li&gt;
+						&lt;x:value <mark class="next">bind</mark>&gt;item.name&lt;/x:value&gt;
+					#!- &lt;/li&gt;
+				&lt;/x:each&gt;
+			&lt;/ul&gt;
+			#! &lt;b>total: &lt;x:value <mark>bind</mark>>ctx.list.length&lt;/x:value>&lt;/b>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Считаем позицую</h2>
+		<pre class="js-code compact">
+			&lt;ul&gt;
+				&lt;x:each bind/&gt;  <span class="next">// [0]</span>
+					&lt;li&gt;
+						&lt;x:value bind/&gt; <span class="next">// [0, $idx, 0]</span>
+					&lt;/li&gt;
+				&lt;/x:each&gt;
+			&lt;/ul&gt;
+			&lt;b>total: &lt;x:value bind/>&lt;/b> <span class="next">// [1, 1]</span>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Шаблон.js</h2>
+		<pre class="js-code compact-xxs">
+			__buf.w("&lt;ul&gt;");
+			#!+ __buf.bind("each", <mark>[0]</mark>, // &lt;x:each bind/&gt;
+					#!+ function () { // getter
+						try { return ctx.list; } catch (e) {}
+					#!- },
+					#!+ function (<mark class="next">__xbind0</mark>) { // микро шаблон
+						__buf.w("&lt;li&gt;");
+						#!+ __buf.bind("value", <mark>[0]</mark>, function () { // &lt;x:value bind/&gt;
+							#! try { return <mark class="next">__xbind0.name</mark>; } catch (e) {} // getter
+						}, function (__xbind0) { // микро шаблон
+							#! __buf.v(__xbind0);
+						#!- });
+						__buf.w("&lt;/li&gt;");
+					#!- }
+			#!- );
+			__buf.w("&lt;/ul&gt;");
+			#! // и так далее
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Прошло два года</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="http://xtpl.ru">xtpl</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl</h2>
+		<ul>
+			<li class="next">«Уникальный» синтаксис (спорный, но свой :])</li>
+			<li class="next">Быстрый парсер на <b>str.charCodeAt(i)</b></li>
+			<li class="next">Custom elements</li>
+			<li class="next">Data binding по умолчанию</li>
+			<li class="next">Больше не считаю ноды :]</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl</h2>
+		<pre class="js-code xtpl">
+			input.btn.btn-success.xlarge[type="button"] {
+			   on-tap: ctx.counter++;
+			   value: ctx.counter || "Click me"
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Custom elements</h2>
+		<pre class="js-code xtpl compact">
+			&btn = button.btn {
+			   #!+ class: "btn-{{ctx.mod || 'default'}}"
+			   | {{ctx.text}} // это текстовая нода
+			   if ctx.icon {
+				  #! &icon { x-name: ctx.icon }
+			   #!- }
+			}
+			#! &btn { x-text: "Fine", x-mod: "success", type: "reset" }
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Продолжение следует&hellip;</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

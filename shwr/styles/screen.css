@@ -831,3 +831,18 @@ s { color: #666; }
 .slide .diff-minus {
 	background-color: #ffe5e5;
 }
+
+
+/* xtpl */
+.code-id { color: #f5871f; }
+.code-node { color: #4271ae; }
+.code-decl { color: #c82829 }
+
+.code-str,
+.code-class { color: #080; }
+
+.code-prop,
+.code-xprop { color: #8959a8; }
+.code-xprop { font-style: italic; }
+
+.code-comment { color: #999; }
