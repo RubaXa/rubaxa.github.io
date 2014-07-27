@@ -1,6 +1,6 @@
 ## Пятница
 
- * [28.07.2014](http://rubaxa.github.io/friday/2014-07-28.html): История одного шаблонизатора, от xml к xtpl и data-binding
+ * [25.07.2014](http://rubaxa.github.io/friday/2014-07-25.html): История одного шаблонизатора, от xml к xtpl и data-binding
  * [11.07.2014](http://rubaxa.github.io/friday/2014-07-11.html): RequireJS и Dependency Injection (DI)
  * [04.07.2014](http://rubaxa.github.io/friday/2014-07-04-jssdk.html): JSSDK: Model, Model.List
  * [04.07.2014](http://rubaxa.github.io/friday/2014-07-04.html): Глобальные события (коротко о главном)
