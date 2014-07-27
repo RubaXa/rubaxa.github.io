@@ -434,8 +434,8 @@
 		<h2>Версия 2.0</h2>
 		<ul>
 			<li>Выкинул поддерку Smarty</li>
-			<li>Переписан парсер</li>
-			<li>Убрал namesapce (оставил просто &lt;x:if/&gt;</li>
+			<li>Переписал парсер</li>
+			<li>Убрал настраиваемый namesapce (оставил просто &lt;x:if/&gt;</li>
 			<li class="next">Data binding ;] Yeah!</li>
 		</ul>
 	</div></section>
@@ -448,13 +448,8 @@
 
 	<section class="slide"><div>
 		<h2>Прасер</h2>
-		<div>Главное изменение в том, что на выходе мы получали дерево (наподобие DOM) c соответсвующими методами</div>
-		<pre class="js-code">
-			{
-				name: "#fragemnt",
-				type:
-			}
-		</pre>
+		<div>Главное изменение в том, что на выходе терперь получалось дерево (наподобие DOM),
+		c соответсвующими методами для работы с ним.</div>
 	</div></section>
 
 
@@ -476,8 +471,8 @@
 
 	<section class="slide"><div>
 		<h2>Data binding + Backbone</h2>
-		<div><code>&lt;x:bind/&gt;</code> — создавал замыкание (микро шаблон), подписывался на все события коллекции,
-		при изменении которой, заново рендерил весь блок.</div>
+		<div><code>&lt;x:bind/&gt;</code> — создает замыкание (микро шаблон), подписывается на все события коллекции,
+		при изменении которой, заново рендерил связанный блок.</div>
 	</div></section>
 
 
@@ -589,15 +584,21 @@
 		<ul>
 			<li class="next">«Уникальный» синтаксис (спорный, но свой :])</li>
 			<li class="next">Быстрый парсер на <b>str.charCodeAt(i)</b></li>
-			<li class="next">Custom elements</li>
+			<li class="next">Максимальная расширяемость</b></li>
 			<li class="next">Data binding по умолчанию</li>
+			<li class="next">Custom elements</li>
 			<li class="next">Больше не считаю ноды :]</li>
 		</ul>
 	</div></section>
 
 
+	<section class="slide shout"><div>
+		<h2>Cинтаксис</h2>
+	</div></section>
+
+
 	<section class="slide"><div>
-		<h2>xtpl</h2>
+		<h2>Cинтаксис</h2>
 		<pre class="js-code xtpl">
 			input.btn.btn-success.xlarge[type="button"] {
 			   on-tap: ctx.counter++;
@@ -608,9 +609,9 @@
 
 
 	<section class="slide"><div>
-		<h2>Custom elements</h2>
+		<h2>Cинтаксис: Custom elements</h2>
 		<pre class="js-code xtpl compact">
-			&btn = button.btn {
+			&btn = button.btn { // Обявляем элемент «btn»
 			   #!+ class: "btn-{{ctx.mod || 'default'}}"
 			   | {{ctx.text}} // это текстовая нода
 			   if ctx.icon {
@@ -622,9 +623,322 @@
 	</div></section>
 
 
-	<section class="slide shout"><div>
-		<h2>Продолжение следует&hellip;</h2>
+	<section class="slide"><div>
+		<h2>Cинтаксис</h2>
+		<p>Если вы решили создать свой синтаксис, то позаботьтесь о поддержки им хоть в одной IDE,
+		иначе оно не имеет смысла. Конечно это только мое мнение, но без этого будет крайне трудно использовать
+		подобную поделку.</p>
 	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://pbs.twimg.com/media/BPJc1WdCMAIhdN8.png:large" width="100%"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://pbs.twimg.com/media/BPJhkLCCMAERJmV.png:large" width="100%"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://pbs.twimg.com/media/BPJhzyTCEAANp1Z.png:large" width="100%"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://pbs.twimg.com/media/BPJiDbMCEAAUkYn.png:large" width="100%"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Расширяемость</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>xtpl.tag</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.tag</h2>
+		<pre class="js-code compact">
+			xtpl.tag({
+				"nodeName": {
+					#!+ // Препроцессин
+					#!- pre: function (node, attrs) { },
+					#!+ // JavaScript код
+					code: function (node, attrs) {
+						#! return ["begin", "end"];
+					#!- }
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.tag: Пример</h2>
+		<pre class="js-code">
+			xtpl.tag({ // loop[from=1][to=3] | {{$i}}
+				#!+ "loop": function () {
+					return [
+						#! "for (var i = $from; i < $to; i++) {",
+						#! "}"
+					];
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.tag и атрибуты</h2>
+		<ul>
+			<li><b>&attr</b> — получить атрибут по имени, в случае отсутсвия бросить исключение + try catch</li>
+			<li class="next"><b>&attr</b> — взять атрибут «как есть» без try catch</li>
+			<li class="next"><b>@attr</b> — получить занчение атрибута строкой</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>xtpl.decl</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.decl</h2>
+		<pre class="js-code compact-s">
+			xtpl.decl("name", {
+				#!+ compile: function (node, expr) {
+					// Вызывается в момент компиляции
+				#!- },
+				#!+ init: function (el, value) {
+					// Инициализация элемента (добавление в DOM)
+				#!- },
+				#!+ update: function (el, newValue, oldValue) {
+					// Изменение значения
+				#!- },
+				#!+ remove: function (el) {
+					// Удаления из DOM
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.decl: пример #1</h2>
+		<pre class="js-code compact">
+			xtpl.decl("x:show", {
+				#!+ compile: function (node, expr) {
+					var attrs = node.attrs;
+
+					attrs.style = (attrs.style || "")
+						+ ";{{" + expr + " ? '' : 'display: none;'}}";
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.decl: пример #2</h2>
+		<pre class="js-code compact">
+			// init(el, state) & update(el, state)
+			xtpl.decl("x:autofocus", function (node, state) {
+				#!+ if (state) {
+					setTimeout(function () {
+						#! el.focus();
+						#!+ el.selectionStart =
+						#!- el.selectionEnd = (el.value ? el.value.length : 0);
+					}, 1);
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>xtpl.mod</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.mod</h2>
+		<pre class="js-code">
+			xtpl.mod("name", function (value, ...rest) {
+				// Модификатор значения
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.mod: пример #1</h2>
+		<pre class="js-code">
+			// <u>Нужно</u>: &lt;b>Всего 2 письма&lt;/b>
+			#! // <u>Шаблон</u>: b | Всего {{ctx.total | plural:"letters"}}
+			#!+ xtpl.mod("plural", function (total, name) {
+					#! // total — значение пеменной
+					#! // name — название языковой константы
+					#! return total + " " + i18n.plural(total, name);
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>xtpl.mod: пример #2</h2>
+		<pre class="js-code">
+			// <u>Нужно</u>: &lt;pre>{ &amp;quot;foo&amp;quot;: &amp;quot;bar&amp;quot; }&lt;/pre>
+			// <u>Шаблон</u>: pre | {{ctx.data | pretty }}
+			#!+ xtpl.mod("pretty", function (value) {
+				return JSON.stringify(value, null, "\t");
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Binding</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Binding</h2>
+		<p>Как я говорил раньше, основное отличие в том, что теперь не нужно считать ноды,
+		а шаблон всё также представляет из себя фунцию.</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Binding: пример шаблона</h2>
+		<div>Рассмотри пример ввода имени его его вывода:</div>
+		<pre class="js-code xtpl">
+			#! input { x-model: **ctx.name**, placeholder: "Enter your name" }
+			#! h2 | Hello **{{ctx.name}}**!
+		</pre>
+		<pre class="js-code next">
+			var el = document.getElementById("target");
+			xtpl.bind(el, templateStr, { name: "" });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Binding: результат работы</h2>
+		<pre class="js-code">
+			&lt;div id="target">
+				#!+ &lt;!--attrs-->
+					&lt;input placeholder="Enter your name"/>
+				#!- &lt;!--/attrs-->
+				#! &lt;h2>Hello &lt;!--x:value-->&lt;!--/x:value-->!&lt;/h2>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Binding: js-шаблон</h2>
+		<pre class="js-code compact-xxs">
+			__buf.bindOpen("attrs"); // &lt;!--attrs-->
+			#! __buf.s("&lt;input");
+			#!+ __buf.bindEvent("input", // x-model="ctx.name"
+				#!+ function (el, evt) { // слушатель
+					try { ctx.name = el.value } // получение значения
+					catch (e) { __xerr(e, "hello.xtpl", 2); }
+				#!- }
+			#!- );
+			#!+ __buf.bindAttr("value", // x-model="ctx.name"
+				#!+ function (__xargs) { // getter
+					try { __xargs[0] = ctx.name }
+					catch (e) { __xerr(e, "hello.xtpl", 2) }
+				#!- },
+				#!+ function (__xbind0) {  // setter
+					__buf.w(__xbind0)
+				#!-}
+			#!- );
+			#! __buf.s(" placeholder='Enter your name'/>")
+			__buf.bindClose("attrs"); // &lt;!--/attrs-->
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Binding: js-шаблон</h2>
+		<pre class="js-code compact-s">
+			__buf.s("&lt;h2>Hello ")
+			#!+ __buf.b("x:value", // {{ctx.name}}
+				#!+ function (__xargs) {  // getter
+					try { __xargs[0] = ctx.name }
+					catch (e) { __xerr(e, "hello.xtpl", 3) }
+				#!- },
+				#!+ function (__xbind0) { // setter
+					try { __xval0 = __xbind0 }
+					catch (e) { __xval0 = void 0; __xerr(e, "hello.xtpl", 3) }
+					__buf.w(__xval0);
+				#!- }
+			#!- );
+			__buf.s("!&lt;/h2>")
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Эпилог</h2>
+		<p>По-большому счету, это не готовый продукт, а исследование на тему,
+		возможно ли доработать обычную js-функцию-шаблон до поддержки data binding, заставив всё это работать,
+		как на сервере, так и клиенте. Как оказалось такой подход достаточно производительный
+		и не уступает таким проектам как Angular или React, есдинственно что ему не хватает, это довести до ума :]</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="http://jsfiddle.net/RubaXa/2keRL/show/">Производительность</a></h2>
+	</div></section>
+
+
+	<section class="slide" id="bench100"><div>
+		<style>#bench100 td { padding-left: 30px; }</style>
+		<h2>Производительность</h2>
+		<div>Performed 3000 iterations</div>
+		<table>
+			<tr>
+				<th></th>
+				<th>total, ms</th>
+				<th>avg. per loop, ms</th>
+			</tr>
+			<tr class="next">
+				<td>Reactive</td>
+				<td>69 984</td>
+				<td>23.33</td>
+			</tr>
+			<tr class="next">
+				<td>React</td>
+				<td>52 950</td>
+				<td>17.65</td>
+			</tr>
+			<tr class="next">
+				<td>AngularJS</td>
+				<td>49 815</td>
+				<td>16.61</td>
+			</tr>
+			<tr class="next">
+				<td>Vue</td>
+				<td>43 141</td>
+				<td>14.38</td>
+			</tr>
+			<tr class="next" style="background-color: #c8e6ab">
+				<td>xtpl</td>
+				<td>33 458</td>
+				<td>11.15</td>
+			</tr>
+		</table>
+	</div></section>
+
 
 
 	<script src="../shwr/shower.js"></script>

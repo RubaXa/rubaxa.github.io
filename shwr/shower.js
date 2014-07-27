@@ -1098,6 +1098,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						line = hl(line, html);
 					}
 
+					line = line.replace(/\*\*(.*?)\*\*/g, '<mark class="next">$1</mark>');
 
 					if (line.indexOf('#!') != -1) {
 						if (line.indexOf('#!+') != -1) {
