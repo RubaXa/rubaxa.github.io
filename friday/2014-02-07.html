@@ -28,8 +28,8 @@
 	<section class="slide"><div>
 		<h2>Введение</h2>
 		<p>
-			Всем хорошо известно, что любое упомнание об «классах» в JavaScript приводит
-			к обильномой нецензурной брани и обвинением опонента, что он не понимает JS
+			Всем хорошо известно, что любое упоминание об «классах» в JavaScript приводит
+			к обильной нецензурной брани и обвинением оппонента, что он не понимает JS
 			и ему не место среди «них».
 		</p>
 		<p class="next">
@@ -193,11 +193,11 @@
 	<section class="slide"><div>
 		<h2>Основные реализации parent/super</h2>
 		<ul>
-			<li class="next"><b>Vanilla</b> &mdash; вызов метода из протипа «класса» от котрого наследовались</li>
+			<li class="next"><b>Vanilla</b> &mdash; вызов метода из протипа «класса» от которого наследовались</li>
 			<li class="next"><b>SimpleClass</b> &mdash; завернуть вызов каждой переопределенной функции в дополнительную функцию в которой реализовать метод this.parent</li>
-			<li class="next"><b>Foo.$superp</b> &mdash; запомнить ссылку на прототип родилея в свойстве $superp у функции-конструктара наследника</li>
+			<li class="next"><b>Foo.$superp</b> &mdash; запомнить ссылку на прототип родителя в свойстве $superp у функции-конструктора наследника</li>
 			<li class="next"><b>arguments.callee.caller</b> &mdash; похоже на Foo.$super, только «хитрей»</li>
-			<li class="next"><b>funcName.parent</b> &mdash; вызов родительского метода через ссылку у именнованой функции</li>
+			<li class="next"><b>funcName.parent</b> &mdash; вызов родительского метода через ссылку у именованной функции</li>
 		</ul>
 	</div></section>
 
@@ -228,7 +228,7 @@
 
 			var Bar = Foo.extend({
 				toString: function (){
-					return <mark>this._super()</mark> + " bar";
+					return <mark>this.parent()</mark> + " bar";
 				}
 			});
 		</pre>
@@ -300,7 +300,7 @@
 
 
 	<section class="slide"><div>
-		<h2>Benchmarks: call (<a href="http://jsperf.com/bench-oop-call">jsperf</a>)</h2>
+		<h2>Benchmarks: parent (<a href="http://jsperf.com/bench-oop-call">jsperf</a>)</h2>
 		<div align="center"><img src="https://dl.dropboxusercontent.com/s/p7k0js363g6e0e2/Screenshot%202014-02-07%2010.38.32.png"/></div>
 	</div></section>
 
