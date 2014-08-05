@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>08.08.2014: Реализация Singleton</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>08.08.2014</h1>
+		<p>Реализация Singleton</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="http://ru.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%BE%D1%87%D0%BA%D0%B0_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F)">Singleton</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="http://ru.wikipedia.org/wiki/%D0%9E%D0%B4%D0%B8%D0%BD%D0%BE%D1%87%D0%BA%D0%B0_(%D1%88%D0%B0%D0%B1%D0%BB%D0%BE%D0%BD_%D0%BF%D1%80%D0%BE%D0%B5%D0%BA%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D1%8F)">Singleton</a></h2>
+		<p><b>Одиночка</b> (англ. Singleton) — порождающий шаблон проектирования, гарантирующий,
+		что в однопоточном приложении будет единственный экземпляр класса с глобальной точкой доступа.</p>
+		<div style="text-align: right">&copy; wiki</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Реализация</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Реализация</h2>
+		<p>Если открыть wiki, то можно увидеть 5 примеров реализации, нормальный из них только один :]</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Реализация #1.</h2>
+		<pre class="js-code compact">
+			function Singleton() {
+				#!+ if (!Singleton.__instance) {
+					#! Singleton.__instance = this;
+				} else {
+					#! return Singleton.__instance;
+				#!- }
+				#! // Код конструктора
+			}
+			console.log(new Singleton === new Singleton);
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Реализация #1.</h2>
+		<p>Это классический способ, но в нем слишком много завязок на имени класса.
+		Так что доведем его до логического конца и отвяжись от имени. </p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Реализация #1.1</h2>
+		<pre class="js-code compact">
+			function Singleton() {
+				var self = this.constructor;
+				#!+ if (!self.__instance) {
+					#! self.__instance = this;
+				} else {
+					#! return self.__instance;
+				#!- }
+				#! // Код конструктора
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Проблемы?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Проблемы</h2>
+		<pre class="js-code">
+			console.log(new Singleton()); // [object Singleton]
+			#! console.log(Singleton()); // undefined
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение #1.1.1: use strict</h2>
+		<pre class="js-code">
+			function Singleton() {
+				#!+ "use strict"
+				#!- // остальной код
+			}
+			#!+ console.log(Singleton());
+			#!- // TypeError: Cannot read property 'constructor' of undefined
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение #1.1.2: Самовызывающийся конструктор</h2>
+		<pre class="js-code compact">
+			function Singleton() {
+				"use strict"
+				#!+ if (!(this instanceof Singleton)) {
+					#! return new Singleton;
+				#!- } else ...
+			}
+			#! console.log(Singleton()); // [object Singleton]
+			#! console.log(Singleton() === new Singleton()); // true
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение #1.1.2: Самовызывающийся конструктор</h2>
+		<p>
+			Как видите, мы решили проблемы, но опять пришлось завязаться на название функции, но уже только два раза.
+		</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Решение #2</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение #2</h2>
+		<pre class="js-code compact">
+			function Singleton() {
+				#! return Singleton.prototype.init();
+			}
+			#!+ Singleton.prototype.init = function () {
+				#! // код конструктора
+				#! this.init = function () { return this; };
+				#! return this;
+			#!- }
+			#! console.log(Singleton() === new Singleton()); // true
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Решение #2</h2>
+		<p>Просто и красиво, но:</p>
+		<pre class="js-code">
+			var foo = Singleton();
+			var bar = new Singleton();
+			#! console.log(foo instanceof Singleton); // false :[
+			#! console.log(bar instanceof Singleton); // false :[
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Решение #2.0.1</h2>
+		<pre class="js-code compact-s">
+			function Singleton() {
+				return Singleton.prototype.init();
+			}
+			Singleton.prototype.init = function () {
+				 // код конструктора
+				#! var _this = Object.create(this);
+				#!+ _this.init = function () { return this; };
+				#!- return _this;
+			}
+			#!+ var foo = Singleton();
+			#!- var bar = new Singleton();
+			#! console.log(foo === bar); // true
+			#! console.log(foo instanceof Singleton); // Bingo!
+			#! console.log(bar instanceof Singleton); // Combo!
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout">
+		<h2>The End</h2>
+	</section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
