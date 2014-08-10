@@ -53,14 +53,14 @@
 				#!- }
 				#! // Код конструктора
 			}
-			console.log(new Singleton === new Singleton);
+			console.log(new Singleton === new Singleton); // true
 		</pre>
 	</div></section>
 
 
 	<section class="slide"><div>
 		<h2>Реализация #1.</h2>
-		<p>Это классический способ, но в нем слишком много завязок на имени класса.
+		<p>Это классический способ, но в нем слишком много завязок на имя класса.
 		Так что доведем его до логического конца и отвяжись от имени. </p>
 	</div></section>
 
@@ -69,7 +69,7 @@
 		<h2>Реализация #1.1</h2>
 		<pre class="js-code compact">
 			function Singleton() {
-				var self = this.constructor;
+				var self = this.constructor; // ссылка на Singleton
 				#!+ if (!self.__instance) {
 					#! self.__instance = this;
 				} else {
@@ -92,6 +92,11 @@
 			console.log(new Singleton()); // [object Singleton]
 			#! console.log(Singleton()); // undefined
 		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Улучшаем</h2>
 	</div></section>
 
 
@@ -126,7 +131,7 @@
 	<section class="slide"><div>
 		<h2>Решение #1.1.2: Самовызывающийся конструктор</h2>
 		<p>
-			Как видите, мы решили проблемы, но опять пришлось завязаться на название функции, но уже только два раза.
+			Как видите, мы решили проблемы, но опять пришлось завязаться на название функции.
 		</p>
 	</div></section>
 
