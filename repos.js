@@ -1,4 +1,4 @@
-(function (window){
+(function (window, document) {
 	var _rname = /^(.*?)\s+([-—]+\s+)/,
 		_repos = [
 			{
@@ -71,12 +71,53 @@
 							'<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a> / ' +
 							'<a href="https://github.com/RubaXa/">github</a>:'
 						)) +
-					'</li>' + html + '</ul>'
+					'</li>' + html + '</ul>' +
+					this.publishSocial(el.getAttribute('data-social'))
 				;
 			}
+		},
+
+		publishSocial: function (id) {
+			var url = location.toString();
+
+			setTimeout(function () {
+				// G+
+				window.___gcfg = { lang: 'en' };
+				(function() {
+					var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+					po.src = 'https://apis.google.com/js/platform.js';
+					var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+				})();
+
+				// FB
+				(function(d, s, id) {
+					var js, fjs = d.getElementsByTagName(s)[0];
+					if (d.getElementById(id)) return;
+					js = d.createElement(s); js.id = id;
+					js.src = "//connect.facebook.net/ru_RU/sdk.js#xfbml=1&appId=195510670486521&version=v2.0";
+					fjs.parentNode.insertBefore(js, fjs);
+				}(document, 'script', 'facebook-jssdk'));
+			}, 1);
+
+			var el = document.getElementById(id);
+
+			var html = (
+				'<div id="fb-root"></div>' +
+				'<div style="margin-top: 40px; text-align: center">' +
+				'  <div style="top: -5px" class="fb-like" data-href="' + url +  '" data-layout="button" data-show-faces="true" data-action="' + (el && el.getAttribute('data-fb-action') || 'recommend') + '" ></div>' +
+				'  <div" class="g-plusone" data-size="medium" data-href="' + url + '"></div>' +
+				'</div>'
+			);
+
+			if (el) {
+				el.innerHTML = html;
+				return '';
+			}
+
+			return html;
 		}
 	};
 
-
+	// Publish
 	rubaxa.repos.publish(document.getElementById('rubaxa-repos'));
-})(window);
+})(window, document);
