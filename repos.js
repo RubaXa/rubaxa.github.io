@@ -103,7 +103,7 @@
 
 			var html = (
 				'<div id="fb-root"></div>' +
-				'<div style="margin-top: 40px; text-align: center">' +
+				'<div style="padding: 40px 0; text-align: center">' +
 				'  <div style="top: -5px" class="fb-like" data-href="' + url +  '" data-layout="button" data-show-faces="true" data-action="' + (el && el.getAttribute('data-fb-action') || 'recommend') + '" ></div>' +
 				'  <div" class="g-plusone" data-size="medium" data-href="' + url + '"></div>' +
 				'</div>'
