@@ -1,4 +1,5 @@
 ## Пятница
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/RubaXa/rubaxa.github.io?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
  * [08.08.2014](http://rubaxa.github.io/friday/2014-08-08.html): Реализация Singleton
  * [25.07.2014](http://rubaxa.github.io/friday/2014-07-25.html): История одного шаблонизатора, от xml к xtpl и data-binding
