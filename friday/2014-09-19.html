@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>19.09.2014: wormhole.js — общение между табами/окнами браузера</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>19.09.2014</h1>
+		<p>wormhole.js — общение между табами/окнами браузера</p>
+	</header>
+
+
+	<section class="slide"><div>
+		<h2>Задача</h2>
+		<p>Нужно общаться между вкладками/окнами браузера.</p>
+		<p class="next">А ещё различать, кто сейчас master.</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Технологии</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Технологии</h2>
+		<ul>
+			<li class="next"><b>SharedWorker</b></li>
+			<li class="next"><b>localStorage</b></li>
+			<li class="next"><b>document.cookie</b></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>SharedWorker</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>SharedWorker</h2>
+		<pre class="js-code compact-xs">
+			#!+ // tab.js
+			#!- var worker = new SharedWorker("shared-resource.js");
+			#!+ worker.port.addEventListener("message", function (evt) {
+				console.log(evt.data);
+			#!- });
+
+			#! worker.port.start();
+			#!+ // shared-resource.js
+			var ports = [];
+			window.onconnect = function (evt) {
+				var port = evt.ports[0];
+				ports.push(port); // добавляем port
+				#!+ port.onmessage = function (evt) {
+					#! broadcast(evt.data); // рассылаем всем табам
+				#!- };
+			#!- };
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>SharedWorker</h2>
+		<pre class="js-code">
+			// shared-resource.js
+			function broadcast(data) {
+				ports.forEach(function (port) {
+					port.postMessage(data);
+				});
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>SharedWorker</h2>
+		<pre class="js-code">
+			// tab.js
+			// ... создаем воркер
+			// Отправляем сообщение через воркер
+			worker.port.postMessage("any data");
+			// теперь все табы получат переданные данные
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>localStorage</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>localStorage</h2>
+		<pre class="js-code compact-s">
+			// tab.js
+			#!+ // Индекс последнего события
+			#!- var lastIndex = localStorage.getItem("index")|0;
+
+			#!+ function emit(data) {
+				#! var events = localStorage.getItem("events") || [];
+				#! var nextIndex = (localStorage.getItem("index")|0) + 1;
+				#!+ events.push({
+					index: nextIndex,
+					data: data
+				#!- });
+				#! localStorage.setItem("index", nextIndex);
+				#! localStorage.setItem("events", JSON.stringify(events));
+			#!- }
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>localStorage</h2>
+		<pre class="js-code compact-s">
+			// tab.js
+			// Подписываемся на изменение хранилища
+			window.onstorage = function (evt) {
+				#!+ if (evt.key === "events") {
+					#! var events = JSON.parse(localStorage.getItem(evt.key));
+					#!+ events.forEach(function (evt) {
+						#!+ if (evt.idx > lastIndex) {
+							// Актуальное для нас событие
+							#! lastIndex = evt.idx;
+							#! console.log(evt.data);
+						#!- }
+					#!- });
+				#!- }
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>document.cookie</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>document.cookie</h2>
+		<p>Куки, как куки...</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Какие решения уже есть?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Какие решения уже есть?</h2>
+		<ul>
+			<li><b>Intercom</b> — https://github.com/diy/intercom.js (Apache License, Version 2.0)</li>
+			<li class="next"><b>BNC Connector</b> — http://theprivateland.com/bncconnector/home.htm (LGPL)</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Intercom.js</h2>
+		<p>Стандартное решение решение на основе localStorage.</p>
+		<ul>
+			<li>не умеет определять мастер</li>
+			<li>нет тестов</li>
+			<li>последнее изменение 2 года назад</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>BNC Connector</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>BNC Connector</h2>
+		<ul>
+			<li class="next">Interruptions</li>
+			<li class="next">Simple TCP/IP</li>
+			<li class="next">Multiple senders</li>
+			<li class="next">Network errors handling for lost packets or timed breaks</li>
+			<li class="next">Performance settings</li>
+			<li class="next">Partial multicasting for presence announcing</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>BNC Connector</h2>
+		<div>
+			<b>"Once upon a time at home ..."</b><br/>
+			<br/>
+			Once upon a time at evening I have decided to properly brake the famous
+			browsers communication problem and as a result you have landed in here.
+			I have created implementation of BNC networks model with <b>simple TCP/IP layer</b>,
+			that as transport packet it will  <b>use browser's cookie</b> object.
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И всё.</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что делать?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Сделать самому,<br/>что же ещё.</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/ruondzmk8xq0exg/Screenshot%202014-09-18%2021.17.27.png?dl=0" />
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole.js</h2>
+		<pre class="js-code">
+			// X.js
+			#!+ wormhole().on("message", function (data) {
+				console.log(data);
+			#!- });
+
+			#!+ wormhole().on("peers", function (peers) {
+				console.log(peers); // ["X"], а потом ["X", "Y"]
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole.js</h2>
+		<pre class="js-code">
+			// Y.js
+			wormhole().emit("message", "any data");
+
+			#!+ wormhole().on("master", function () {
+				console.log("Wow! I'm master!");
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Master/Slave</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Master/Slave</h2>
+		<pre class="js-code">
+			#!+ // регистрируем команду `foo`
+			wormhole()["foo"] = function (array, next) {
+				#! next(null, array.reverse());
+			#!- };
+			#!+ // Выполняем команду (на мастере)
+			wormhole().call("foo", [1, 2, 3], function (err, result) {
+				console.log(result);
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole.js</h2>
+		<ul>
+			<li class="next"><b>now.js</b> — получение текущего времени</li>
+			<li class="next"><b>uuid.js</b> — генерация уникального идентификатор</li>
+			<li class="next"><b>debounce.js</b> — дребезжалка</li>
+			<li class="next"><b>cors.js</b> — общение методу iframe</li>
+			<li class="next"><b>emitter.js</b> — микро event emitter</li>
+			<li class="next"><b>store.js</b> — обертка над хранилищем</li>
+			<li class="next"><b>worker.js</b> — код для SharedWorker</li>
+			<li class="next"><b>hole.js</b> — непосредственное общение между табами</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="http://rubaxa.github.io/wormhole/">DEMO</a></h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Как это работает?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<style>
+			.full .slide .next.del {
+				display: inline-block;
+				opacity: 1;
+			}
+			.del.next.active {
+				text-decoration: line-through;
+			}
+		</style>
+		<h2><b class="next del">SharedWorker</b><br/>+<br/>localStorage</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole: localStorage</h2>
+		<div>В хранилище хранится:</div>
+		<pre class="js-code">
+			// `meta` — мета информация
+			{
+				#! id: null, // идентификатор мастера
+				#! ts: 0, // время последнего обновления
+				#! peers: {..} // список табов и время обновления (id => ts)
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole: localStorage</h2>
+		<div>В хранилище хранится:</div>
+		<pre class="js-code">
+			// `queue` — очередь событий
+			{
+				#! idx: 0, // текущий индекс события
+				#! items: [] // массив событий
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole: localStorage</h2>
+		<pre class="js-code compact">
+			function emit(type, args) {
+				var queue = this._store("queue");
+				#!+ queue.items.push({
+					#! idx: ++queue.idx, // увеличим индекс
+					#! type: type,
+					#! args: args,
+					#! source: this.id // идентификатор «дырки»
+				#!- });
+				#! this._store("queue", queue);
+				#! this._processingQueue(queue.items);
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole: localStorage</h2>
+		<pre class="js-code">
+			// Обработка изменения в хранилище
+			#!+ store.on("change", function (key, data) {
+				#!+ if (key === "queue") {
+					this._processingQueue(queue.items);
+				#!- }
+				#!+ else if (key === "meta") {
+					this._checkMeta();
+				#!- }
+			#!- }.bind(this));
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>wormhole: localStorage</h2>
+		<pre class="js-code">
+			function _processingQueue(queue) {
+				for (var i = 0, n = queue.length, evt; i < n; i++) {
+					evt = queue[i];
+					#!+ if (this._idx < evt.idx) {
+						#! this._idx = evt.idx;
+						#! _emitterEmit.call(this, evt.type, evt.args);
+					#!- }
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

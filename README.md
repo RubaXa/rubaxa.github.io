@@ -1,5 +1,6 @@
 ## Пятница
 
+ * [09.19.2014](http://rubaxa.github.io/friday/2014-09-19.html): wormhole.js — общение между табами/окнами браузера
  * [08.08.2014](http://rubaxa.github.io/friday/2014-08-08.html): Реализация Singleton
  * [25.07.2014](http://rubaxa.github.io/friday/2014-07-25.html): История одного шаблонизатора, от xml к xtpl и data-binding
  * [11.07.2014](http://rubaxa.github.io/friday/2014-07-11.html): RequireJS и Dependency Injection (DI)
