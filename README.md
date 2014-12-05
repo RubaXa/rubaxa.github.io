@@ -1,7 +1,7 @@
 ## Пятница
 
- * [05.12.2014](http://rubaxa.github.io/friday/2014-09-19.html): Горячие <s>головы</s>клавиши: Часть 2.
- * [31.10.2014](http://rubaxa.github.io/friday/2014-09-19.html): JSDoc3, fest.bem
+ * [05.12.2014](http://rubaxa.github.io/friday/2014-12-05.html): Горячие <s>головы</s>клавиши: Часть 2.
+ * [31.10.2014](http://rubaxa.github.io/friday/2014-10-31.html): JSDoc3, fest.bem
  * [09.19.2014](http://rubaxa.github.io/friday/2014-09-19.html): wormhole.js — общение между табами/окнами браузера
  * [08.08.2014](http://rubaxa.github.io/friday/2014-08-08.html): Реализация Singleton
  * [25.07.2014](http://rubaxa.github.io/friday/2014-07-25.html): История одного шаблонизатора, от xml к xtpl и data-binding
