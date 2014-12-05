@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>05.12.2014: Горячие клавиши: Часть 2.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>31.10.2014</h1>
+		<p>Горячие <s>головы</s>клавиши: Часть 2.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Горячие клавиши: Часть 2.</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Выбор решения</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin-left: 140px" src="https://dl.dropbox.com/s/2lbda303su29edb/Screenshot%202014-12-05%2016.35.48.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Итого</h2>
+
+		<ul>
+			<li><a href="https://github.com/ccampbell/mousetrap">Mousetrap</a></li>
+			<li><a href="https://github.com/madrobby/keymaster">keymaster</a></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/ccampbell/mousetrap">Mousetrap</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Mousetrap</h2>
+		<pre class="js-code compact">
+			// Подписываемся на событие
+			Mousetrap.bind("a", function() { console.log("Это a"); });
+			#!+ // нажимаем «Это a»
+			#!- // log: «Это a»
+
+			#!+ // Подписываемся ещё раз
+			#!- Mousetrap.bind("a", function() { console.log("Да, это a!"); });
+			#!+ // нажимаем «a»
+			#!- // log: «Да, это a!»
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Где «Это a»?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Мда&hellip;</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/madrobby/keymaster">keymaster</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>keymaster: bind</h2>
+		<pre class="js-code compact">
+			// Подписываемся на событие
+			key("a", function() { console.log("Это a"); });
+			#!+ // нажимаем «Это a»
+			#!- // log: «Это a»
+
+			#!+ // Подписываемся ещё раз
+			#!- key("a", function() { console.log("Да, это a!"); });
+			#!+ // нажимаем «a»
+			 // log: «Это a»
+			#!- // log: «Да, это a!»
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>unbind?</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin: 100px 0 0 150px" src="https://dl.dropbox.com/s/qrczvt43znq5saw/Screenshot%202014-12-05%2017.09.47.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin: 0px 0 0 150px" src="http://smart-lab.ru/uploads/images/00/94/79/2013/01/06/fdeb5b.png"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>keymaster: scope</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin: 100px 0 0 150px" src="https://dl.dropbox.com/s/m3sh410akfwbjrt/Screenshot%202014-12-05%2017.13.52.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin: 150px 0 0 350px" src="http://habrastorage.org/storage2/307/0bb/4c0/3070bb4c04ad6bd94c18fba2fbf05531.jpg"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/RubaXa/keymaster">Делам форк</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Делам форк</h2>
+		<ul>
+			<li>Поддержка интерфейса on/off</li>
+			<li class="next">Никаких скопуов</li>
+			<li class="next">Слушать события только для тех элементов, которые в доме</li>
+			<li class="next">Возможность остановки события</li>
+			<li class="next">Обратные порядок вызова слушателей</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/RubaXa/keymaster">rubaxa:keymaster</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>rubaxa:keymaster</h2>
+		<pre class="js-code">
+			key.on("esc", function () { console.log("первый"); });
+			#! key.on("esc", function () { console.log("второй"); });
+			#! // нажимаем esc
+			#! // log: «первый»
+			#! // log: «второй»
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>rubaxa:keymaster</h2>
+		<pre class="js-code">
+			key.on("esc", logFirst);
+			#! key.on("esc", logSecond);
+			#! key.on("esc", logFirst);
+			#! // нажимаем esc
+			#! // log: «второй»
+			#! // log: «первый»
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>rubaxa:keymaster</h2>
+		<pre class="js-code compact">
+			key.on("esc", function () { console.log("первый"); });
+			#! key.on("esc", function () { console.log("второй"); });
+			#!+ key.on("esc", function (evt) {
+				#! evt.preventDefault(); // отменяем действие по умолчанию
+				#! evt.stopImmediatePropagation(); // Остановить!!1
+				#! console.log("только я");
+			#!- });
+			#! // нажимаем esc
+			#! // log: «только я»
+			#! всё
+		</pre>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>rubaxa:keymaster</h2>
+		<pre class="js-code compact">
+			var el = documment.getElementById("foo");
+			key.on("esc", el, function () { console.log("OK"); });
+			#!+ // нажимаем esc
+			#!- // log: «OK»
+			#! el.parentNode.removeChild(el);
+			#!+ // нажимаем esc
+			#! documment.body.appendChild(el);
+			#!+ // нажимаем esc
+			#!- // log: «OK»
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<ul>
+			<li><a href="https://github.com/RubaXa/keymaster">rubaxa:keymaster</a></li>
+		</ul>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

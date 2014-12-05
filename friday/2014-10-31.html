@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>31.10.2014: JSDoc3, fest.bem</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>31.10.2014</h1>
+		<p>JSDoc3, fest.bem</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>JSDoc3</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Зачем?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Зачем?</h2>
+		<ul>
+			<li>Подсказки со стороны / IDE</li>
+			<li class="next">Быстрый переход к свойствам и методам / IDE</li>
+			<li class="next">Документирование кода</li>
+			<li class="next">Генерация документации</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Как?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -80px">
+			#!+ /**
+			 * @class Folder
+			 * @param {Object} [attrs] аттрибуты (опционально)
+			#!-  */
+			var Folder = function (attrs) {
+				this.attrs = attrs;
+			};
+			Folder.prototype = <span class="next">/** @lends Folder.prototype */</span>{
+				#!+ /**
+				 * Установить свойство
+				 * @param {string} key   имя свойства (обязательно)
+				 * @param {*}     value  значение (обязательно)
+				 * @returns {Folder}
+				#!-  */
+				set: function (key) { ... },
+				#!+ /**
+				 * Получить свойство
+				 * @param {string} key  имя свойства (обязательно)
+				 * @returns {*}
+				#!-  */
+				get: function (key) { ... }
+			};
+		</pre>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -80px">
+			/**
+			 * @class Folder
+			 * @param {Object} [attrs] аттрибуты (опционально)
+			 */
+			var Folder = function (attrs) {
+				this.attrs = attrs;
+			};
+			Folder.prototype = <mark>/** @lends Folder# */</mark>{
+				/**
+				 * Установить свойство
+				 * @param {string} key   имя свойства (обязательно)
+				 * @param {*}     value  значение (обязательно)
+				 * @returns {Folder}
+				 */
+				set: function (key) { ... },
+				/**
+				 * Получить свойство
+				 * @param {string} key  имя свойства (обязательно)
+				 * @returns {*}
+				 */
+				get: function (key) { ... }
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Документируем недокументируемое</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Документируем недокументируемое</h2>
+		<pre class="js-code">
+			var Folder = Model.extend(/** Folder# */{
+
+				method:	_createFunction("...")
+
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Документируем недокументируемое</h2>
+		<pre class="js-code compact">
+			var Folder = Model.extend(/** Folder# */{
+				/**
+				 #! * @method Folder#method
+				 #!+ * @param {string} foo
+				 * @param {number} bar
+				 #!- * @returns {*}
+				 */
+				method:	_createFunction("...")
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>RequireJS</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>RequireJS</h2>
+		<pre class="js-code">
+			define(["Folder", "Letter"], function (Folder, Letter) {
+				// ...
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>RequireJS & inline doc</h2>
+		<pre class="js-code">
+			define(["Folder", "Letter"], function (
+				/** Folder */Folder,
+				/** Letter */Letter
+			) {
+				// ...
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/mailru/fest/tree/codechunk">fest/codechunk</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest/codechunk: <a href="https://github.com/mailru/fest/tree/codechunk/lib/tags">tags</a></h2>
+		<ul>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/fest:if.js">fest:if.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/fest:doctype.js">fest:doctype.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/fest:comment.js">fest:comment.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/fest:cdata.js">fest:cdata.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/fest:attribute.js">fest:attribute.js</a></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest:comment</h2>
+		<pre class="js-code">
+			module.exports = {
+				open: function (chunk) {
+					#! chunk.pushStr("&gt;!--", true);
+				},
+				close: function (chunk) {
+					#! chunk.pushStr("--&lt;", true);
+				}
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>CodeChunk</h2>
+		<ul>
+			<li><b>vars</b> — объявить блок переменных</li>
+			<li class="next"><b>add</b> — добавить кусок js-кода</li>
+			<li class="next"><b>openPushStr</b> — открыть pushStr</li>
+			<li class="next"><b>closePushStr</b> — закрыть pushStr</li>
+			<li class="next"><b>pushStr</b> — openPushStr() + add(str) + closePushStr()</li>
+			<li class="next"><b>closePushStr</b> — закрыть pushStr</li>
+		</ul>
+	</div></section>
+
+
+
+	<section class="slide"><div>
+		<h2>fest:if</h2>
+		<pre class="js-code compact-xs">
+			module.exports = {
+				open: function (chunk, node) {
+					chunk
+					#!+	.vars("__fest_if", {
+							#! value: this.getAttr(node, "test", "expr"),
+							#! defaults: false
+					#!-	})
+					#!	.add("if(__fest_if) {")
+					;
+				},
+
+				close: function (chunk) {
+					#! chunk.add("}");
+				}
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/mailru/fest/blob/codechunk/spec/templates/bem:block.xml">fest:bem</a></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest:bem</h2>
+		<ul>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/bem:block.js">bem:block.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/bem:elem.js">bem:elem.js</a></li>
+			<li><a href="https://github.com/mailru/fest/blob/codechunk/lib/tags/bem:mod.js">bem:mod.js</a></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/mailru/fest/blob/codechunk/spec/templates/bem:block.xml">fest:bem</a> — определение блока</h2>
+		<pre class="js-code html compact-s">
+			&lt;!-- Определяем блок "btn" --&gt;
+			&lt;div bem:block="btn"&gt;
+				#!+ &lt;!-- Добавляем модификатор "btn_icon" в зависимости от параметров --&gt;
+				#!- &lt;bem:mod name="icon" test="params.icon"/&gt;
+
+				#!+ &lt;!-- Определяем элемент "btn__text" --&gt;
+				&lt;span bem:elem="text"&gt;
+					#!+ &lt;!-- Добавляем модификатор "btn__text_pad" в зависимости от модификатора "btn_icon" --&gt;
+					#!- &lt;bem:mod name="pad" has-mod="icon"/&gt;
+
+					&lt;fest:value&gt;params.text&lt;/fest:value&gt;
+				#!- &lt;/span&gt;
+			&lt;/div&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/mailru/fest/blob/codechunk/spec/templates/bem:block.xml">fest:bem</a> — использование блока</h2>
+		<pre class="js-code html">
+			&lt;!-- Используем блок "btn" --&gt;
+			#! &lt;bem:btn&gt;{ text: "foo", mods: ["main"] }&lt;/bem:btn&gt;
+			#! &lt;bem:btn&gt;{ text: "bar", icon: true }&lt;/bem:btn&gt;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<ul>
+			<li><a href="http://usejsdoc.org/">http://usejsdoc.org/</a></li>
+			<li><a href="https://github.com/jsdoc3/jsdoc">https://github.com/jsdoc3/jsdoc</a></li>
+			<li><a href="https://github.com/mailru/fest/tree/codechunk">https://github.com/mailru/fest/tree/codechunk</a></li>
+		</ul>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
