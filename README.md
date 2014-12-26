@@ -1,5 +1,6 @@
 ## Пятница
 
+ * [26.12.2014](http://rubaxa.github.io/friday/2014-12-26.html): Почему Native Promise лучше всех.
  * [05.12.2014](http://rubaxa.github.io/friday/2014-12-05.html): Горячие <s>головы</s>клавиши: Часть 2.
  * [31.10.2014](http://rubaxa.github.io/friday/2014-10-31.html): JSDoc3, fest.bem
  * [09.19.2014](http://rubaxa.github.io/friday/2014-09-19.html): wormhole.js — общение между табами/окнами браузера

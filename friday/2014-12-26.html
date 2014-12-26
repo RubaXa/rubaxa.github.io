@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>26.12.2014: Почему Native Promise лучше всех.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>26.12.2014</h1>
+		<p>Почему Native Promise лучше всех.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Простой пример</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jQuery</h2>
+		<pre class="js-code compact">
+			function deferredExec(func) {
+				#! var dfd = $.Deferred();
+				#! dfd.resolve(func());
+				#! return dfd.promise();
+			}
+			deferredExec(function () { return "jquery"; })
+				.then(function (res) {
+					console.log(res); // "jquery"
+				});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Promise</h2>
+		<pre class="js-code compact">
+			function promiseExec(func) {
+				#!+ return new Promise(function (resolve) {
+					#! resolve(func());
+				#!- });
+			}
+			promiseExec(function () { return "promise"; })
+				.then(function (res) {
+					console.log(res); // "promise"
+				});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Сравним</h2>
+		<pre class="js-code">
+			deferredExec("fail") <span class="next">// TypeError: string is not a function</span>
+
+			promiseExec("fail") <span class="next">// Тишина</span>
+				#!+ .catch(function (err) {
+					console.log(err); // TypeError: string is not a function
+				#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Пффф, это легко исправить</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>jQuery и try catch</h2>
+		<pre class="js-code compact-s">
+			function deferredExec(func) {
+				var dfd = $.Deferred();
+				#!+ try {
+					dfd.resolve(func());
+				} catch (err) {
+					dfd.reject(err);
+				#!- }
+				return dfd.promise();
+			}
+			#!+ deferredExec("fail").fail(function (res) {
+				#! console.log(res); // TypeError: string is not a function
+			#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Очевидные минусы</h2>
+		<ul>
+			<li>Кода стало больше</li>
+			<li>Это нужно всегда держать в голове</li>
+			<li>Такая же проблема будет в then/done/fail/awlays</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И это не всё</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pause on exceptions</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<h2 style="opacity: .3; font-size: 500%; margin-top: 100px">Promise</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/6au9m7lx3u6anvt/Screenshot%202014-12-26%2014.01.12.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<h2 style="opacity: .3; font-size: 500%; margin-top: 100px">jQuery</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/h7b5qy5nblztif6/Screenshot%202014-12-26%2014.06.40.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Опять минусы</h2>
+		<div>
+			Как видите «Pause on exceptions» не работает для try catch и это логично, чтобы перехватить это исключение
+			нужно включить «Pause On Caught Exceptions», но это перехват вообще всех исключений, что будет только мешать.
+		</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Ещё раз сравним код</h2>
+		<pre class="js-code compact-s" style="position: absolute; left: 70px;">
+			function promiseExec(func) {
+				return new Promise(function (resolve) {
+					resolve(func());
+				});
+			}
+		</pre>
+		<pre class="js-code compact-s" style="margin-left: 510px;">
+			function deferredExec(func) {
+				var dfd = $.Deferred();
+				try {
+					dfd.resolve(func());
+				} catch (err) {
+					dfd.reject(err);
+				}
+				return dfd.promise();
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Важно!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Важно!</h2>
+		<pre class="js-code compact-s" style="position: absolute; left: 100px;">
+			Promise.reject(1)
+				#!+ .then(null, function (val) {
+					return val + 1;
+				#!- })
+				#!+ .then(function () {
+					// ?
+				}, function () {
+					// ?
+				#!- });
+		</pre>
+		<pre class="js-code compact-s" style="margin-left: 410px;">
+			$.Deferred().reject(1)
+				#!+ .then(null, function (val) {
+					return val + 1;
+				#!- })
+				#!+ .then(function () {
+					// ?
+				}, function () {
+					// ?
+				#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Важно!</h2>
+		<pre class="js-code compact-s" style="position: absolute; left: 100px;">
+			Promise.reject(1)
+				.then(null, function (val) {
+					return val + 1;
+				})
+				.then(function (val) {
+					// 2 -- success
+				}, function () {
+					// ?
+				});
+		</pre>
+		<pre class="js-code compact-s" style="margin-left: 410px;">
+			$.Deferred().reject(1)
+				.then(null, function (val) {
+					return val + 1;
+				})
+				.then(function () {
+					// ?
+				}, function (val) {
+					// 2 -- fail
+				});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Важно!</h2>
+		<pre class="js-code compact-s" style="position: absolute; left: 100px;">
+			Promise.reject(1)
+				.then(null, function (val) {
+					return val + 1;
+				})
+				.then(function (val) {
+					// 2 -- success
+				});
+		</pre>
+		<pre class="js-code compact-s" style="margin-left: 410px;">
+			$.Deferred().reject(1)
+				.then(null, function (val) {
+					#! return $.Deferred().resolve(val + 1);
+				})
+				#!+ .then(function (val) {
+					// 2 -- success
+				#!- });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Важно! Итого</h2>
+		<pre class="js-code compact-s" style="position: absolute; left: 100px;">
+			Promise.reject(1)
+				.catch(function (val) {
+					return val + 1;
+				})
+				.then(function (val) {
+					// 2 -- success
+				});
+		</pre>
+		<pre class="js-code compact-s" style="margin-left: 410px;">
+			$.Deferred().reject(1)
+				.then(null, function (val) {
+					return $.Deferred().resolve(val + 1);
+				})
+				.then(function (val) {
+					// 2 -- success
+				});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Минусы Promise</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Минусы Promise (с натяжкой)</h2>
+		<ul>
+			<li><b>always/finally</b> — метод, который бы выполнялся в не зависимости от результата</li>
+			<li><b>done/fail</b> — методы не порождающие новое «обещание»</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Способы исправить их</h2>
+		<ol>
+			<li>Написать wrapper</li>
+			<li>Расширить прототип</li>
+			<li>Создать наследника</li>
+		</ol>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Создаем наследника</h2>
+		<pre class="js-code compact-s">
+			function MyPromise() {
+				Promise.apply(this, arguments);
+			}
+			MyPromise.prototype = Object.create(Promise.prototype);
+			MyPromise.prototype.constructor = MyPromise;
+			MyPromise.prototype.always = function (fn) {
+				this.then(fn, fn);
+				return this;
+			};
+
+			#! var promise = new MyPromise(function () { /* >__< */ });
+			#! // TypeError: #&lt;MyPromise> is not a promise
+		</pre>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="http://nagualclub.ru/uploads/posts/2012-02/1330511296_uninie.jpg" width="100%"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Но! Есть трюк</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Но! Есть трюк</h2>
+		<pre class="js-code compact-s">
+			function MyPromise(executor) {
+				#! var promise = new Promise(executor);
+				#! promise.__proto__ = this.__proto__; // ТРЮК!
+				#! return promise;
+			}
+
+			MyPromise.prototype = Object.create(Promise.prototype);
+			MyPromise.prototype.constructor = MyPromise;
+
+			MyPromise.prototype.always = function (fn) {
+				this.then(fn, fn);
+				return this;
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>FireFox</h2>
+		<pre class="js-code compact-s">
+			new MyPromise(function (resolve) {
+				resolve("OK");
+			})
+				#! .always(function (val) { console.log([1, val]); })
+				#! .then(function (val) { return val + "!"; })
+				#! .always(function (val) { console.log([2, val]);})
+			;
+
+			#!+ // TypeError: (intermediate value).always(...).then(...).always is not a function
+			#!- [1, "OK"]
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>FireFix: then</h2>
+		<pre class="js-code">
+			MyPromise.prototype.then = function () {
+				var promise = Promise.prototype.then.apply(this, arguments);
+				promise.__proto__ = this.__proto__; // FireFix
+				return promise;
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>FireFix: then & catch</h2>
+		<pre class="js-code">
+			["then", "catch"].forEach(function (method) {
+				MyPromise.prototype[method] = function () {
+					var promise = Promise.prototype[method].apply(this, arguments);
+					promise.__proto__ = this.__proto__; // FireFix
+					return promise;
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
