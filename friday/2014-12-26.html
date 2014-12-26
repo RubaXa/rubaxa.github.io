@@ -79,9 +79,9 @@
 			function deferredExec(func) {
 				var dfd = $.Deferred();
 				#!+ try {
-					dfd.resolve(func());
+					#! dfd.resolve(func());
 				} catch (err) {
-					dfd.reject(err);
+					#! dfd.reject(err);
 				#!- }
 				return dfd.promise();
 			}
@@ -96,7 +96,7 @@
 		<h2>Очевидные минусы</h2>
 		<ul>
 			<li>Кода стало больше</li>
-			<li>Это нужно всегда держать в голове</li>
+			<li>Это нужно всегда держать в голове (try catch)</li>
 			<li>Такая же проблема будет в then/done/fail/awlays</li>
 		</ul>
 	</div></section>
@@ -108,7 +108,7 @@
 
 
 	<section class="slide shout"><div>
-		<h2>Pause on exceptions</h2>
+		<h2 style="font-size: 500%">Pause on exceptions</h2>
 	</div></section>
 
 
