@@ -58,9 +58,9 @@
 	<section class="slide"><div>
 		<h2>Сравним</h2>
 		<pre class="js-code">
-			deferredExec("fail") <span class="next">// TypeError: string is not a function</span>
+			deferredExec("jquery") <span class="next">// TypeError: string is not a function</span>
 
-			promiseExec("fail") <span class="next">// Тишина</span>
+			promiseExec("promise") <span class="next">// Тишина</span>
 				#!+ .catch(function (err) {
 					console.log(err); // TypeError: string is not a function
 				#!- });
