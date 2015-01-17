@@ -57,10 +57,13 @@
 
 		ul {
 			margin: 0;
-			padding: 0;
+			padding: 0 0 0 20px;
 			list-style: none;
 			line-height: 145%;
 		}
+			ul sup {
+				margin-left: 5px;
+			}
 	</style>
 </head>
 <body>
@@ -87,9 +90,80 @@
 
 		<div style="height: 40px;"></div>
 
+		<h3>Articles</h3>
+		<ul id="articles"></ul>
+
+		<div style="height: 40px;"></div>
+
 		<h3>Friday</h3>
 		<ul id="rubaxa-friday" style="font-size: 18px; margin-top: 10px"></ul>
 		<script>
+			// Articles
+			(function (lang) {
+				articles.innerHTML = [
+					{
+						ru: {
+							title: 'Загрузка файлов на сервер в 2012 году',
+							href: 'http://habrahabr.ru/company/mailru/blog/159587/'
+						},
+						en: {
+							title: 'So We Wanted To Build A File Uploader… (A Case Study)',
+							href: 'http://www.smashingmagazine.com/2013/10/11/so-we-wanted-to-build-a-file-uploader-a-case-study/'
+						}
+					}, {
+						ru: {
+							title: 'Pilot: многофункциональный JavaScript роутер',
+							href: 'http://habrahabr.ru/company/mailru/blog/172333/'
+						},
+						en: {
+							title: 'Pilot: a multifunctional JavaScript router',
+							href: 'http://ibnrubaxa.blogspot.ru/2013/09/pilot-multifunctional-javascript-router.html'
+						}
+					}, {
+						ru: {
+							title: 'FileAPI 2.0: Загрузка файлов на сервер год спустя',
+							href: 'http://habrahabr.ru/company/mailru/blog/201010/'
+						}
+					}, {
+						ru: {
+							title: 'Сортировка при помощи HTML5 Drag\'n\'Drop API',
+							href: 'http://habrahabr.ru/company/mailru/blog/207048/'
+						},
+						en: {
+							title: 'Sorting with the help of HTML5 Drag\'n\'Drop API',
+							href: 'https://github.com/RubaXa/Sortable/wiki/Sorting-with-the-help-of-HTML5-Drag\'n\'Drop-API'
+						}
+					}, {
+						ru: {
+							title: 'Sortable v1.0: Новые возможности',
+							href: 'http://habrahabr.ru/post/246373/'
+						},
+						en: {
+							title: 'Sortable v1.0 — New capabilities',
+							href: 'https://github.com/RubaXa/Sortable/wiki/Sortable-v1.0-%E2%80%94-New-capabilities'
+						}
+					}
+				].reverse().map(function (articles) {
+					var article = articles[lang] || articles.en || articles.ru,
+						langs = [];
+
+					function link(article, title) {
+						return '<a href="' + article.href + '" title=' + JSON.stringify(article.title) + '>' + (title || article.title) + '</a>'
+					}
+
+					for (var key in articles) {
+						if (key != lang) {
+							langs.push('<sup>' + link(articles[key], key) + '</sup>');
+						}
+					}
+					articles[lang] && langs.push('<sup>' + link(articles[lang], lang) + '</sup>');
+
+					return '<li>' + link(article) + (langs.length > 1 ? langs.join('') : '') +  '</li>';
+				}).join('');
+			})((navigator.userLanguage || navigator.language).split('-')[0]);
+
+
+			// Friday
 			(function (){
 				var date = new Date;
 				var xhr = new XMLHttpRequest();
@@ -104,7 +178,7 @@
 					;
 
 					while( match = regexp.exec(content) ){
-						list.push('<li style="padding-left: 20px"><a href="'+match[2]+'">'+match[1]+'</a>: '+match[3]+'</li>');
+						list.push('<li><a href="'+match[2]+'">'+match[1]+'</a>: '+match[3]+'</li>');
 					}
 
 					document.getElementById('rubaxa-friday').innerHTML = list.join('\n');
