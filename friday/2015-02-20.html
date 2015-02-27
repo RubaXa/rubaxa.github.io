@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>20.02.2015: Fest, BEM и data-binding.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<style>
+		strike,
+		strike * {
+			color: #ccc !important;
+			text-decoration: none;
+		}
+	</style>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>20.02.2015</h1>
+		<p>Fest, BEM и data-binding.</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			Fest и BEM
+			<div class="next" style="color: #333;">неудобно!</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Fest и BEM: Создание блока button.xml</h2>
+		<pre class="js-code">
+			&lt;?xml version="1.0"?>
+			&lt;fest:template>
+				#!+ &lt;fest:set <mark class="next">name="button"</mark>>
+					#!+ &lt;div <mark class="next">class="button"</mark>>  <span class="next tomorrow-red">боль</span>
+						&lt;fest:value>params.text&lt;/fest:value>
+					#!- &lt;/div>
+				#!- &lt;/fest:set>
+			&lt;/fest:template>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Fest и BEM: Создаем мастер шаблон со всеми блоками</h2>
+		<pre class="js-code">
+			&lt;?xml version="1.0"?>
+			&lt;fest:template context_name="ctx">
+				#! &lt;fest:include src="buttom.xml"/>
+				#!+ &lt;!-- Динамически подключаем блок по его имени -->
+				#!- &lt;fest:get select="ctx.block">ctx.params&lt;/fest:get>
+			&lt;/fest:template>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Fest и BEM: Использование</h2>
+		<pre class="js-code compact">
+			&lt;script src="fest/lego.js">&lt;/script>
+			&lt;script>
+				#! var template = window.fest["lego"];
+				#!+ var html = template({
+					#! block: "button",
+					#!+ params: {
+						text: "Click me!"
+					#!- }
+				#!- });
+			&lt;/script>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Fest и BEM</h2>
+		<div>Тут не удобно всё:</div>
+		<ul>
+			<li>Дулирование названия блока</li>
+			<li>Использование тоже не ахти, но терпимо</li>
+			<li>Нет никакой работы с модификаторами, её нужно самому сделать через fest:attributes, а это очень не удобно</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Что же делать?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>bem:block="&hellip;"</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>bem:elem="&hellip;"</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>&lt;bem:mod /></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Кнопка</h2>
+		<pre class="js-code">
+			&lt;?xml version="1.0"?>
+			&lt;fest:template>
+				#!+ &lt;div <mark class="next">bem:block="button"</mark>>
+					&lt;fest:value>params.text&lt;/fest:value>
+				#!- &lt;/div>
+			&lt;/fest:template>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Мастер шаблон</h2>
+		<pre class="js-code">
+			&lt;?xml version="1.0"?>
+			&lt;fest:template context_name="ctx">
+				#! &lt;fest:include src="buttom.xml"/>
+				#! &lt;fest:include src="icon.xml"/>
+				#! &lt;!-- только include, ничего лишнего -->
+			&lt;/fest:template>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Используем</h2>
+		<pre class="js-code">
+			&lt;script src="fest/lego.js">&lt;/script>
+			&lt;script>
+				#! var template = window.fest["lego"];
+				#!+ var html = template["button"]{
+						#! text: "Click me!"
+				#!- });
+				#! // Ничего лишнего!
+			&lt;/script>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest:block</h2>
+		<div>Да, это сахар над блоками, но не только!</div>
+		<div style="margin-top: 20px">Усложним пример и добавим:</div>
+		<ul>
+			<li>Иконку</li>
+			<li>В звисимости от наличия иконки добавляем модификатор `icon`</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Кнопка + Иконка</h2>
+		<pre class="js-code compact">
+			&lt;?xml version="1.0"?>
+			&lt;fest:template>
+				&lt;div bem:block="button">
+					#! &lt;bem:mod name="icon" test="ctx.icon"/>
+					#!+ &lt;fest:if test="ctx.icon">
+						#! &lt;bem:icon>{ mods: ctx.icon }&lt;/bem:icon>
+					#!- &lt;/fest:if>
+					&lt;fest:value>params.text&lt;/fest:value>
+				&lt;/div>
+			&lt;/fest:template>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Кнопка + Иконка</h2>
+		<p>Думаю продолжать не нужно и так всё понятно, теперь работа с модифкаторами встроена в сам fest
+		(при помощи системы расширений). Помимо этого, когда сильно прооптемизирован по сравнению с нашим текущим подходом.</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Ну, и!</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img width="100%" src="http://risovach.ru/upload/2014/05/mem/zheleznyy-chelovek_50240140_big_.jpeg"/>
+		<h2 style="color: #fff; opacity: .9; text-shadow: 0 2px #000;">BINDING!</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>В чем же суть?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Посмотрите на этот пример:</h2>
+		<pre class="js-code">
+			&lt;fest:set name="hello">
+				&lt;div class="hello">
+					#!+ &lt;h2>
+						#! Hello&lt:fest:space/>
+						#! &lt;fest:value>ctx.name || "%username%"&lt;/fest:value>!
+					#!- &lt;/h2>
+				&lt;/div>
+			&lt;/fest:set>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Fest сгенерирует это:</h2>
+		<pre class="js-code compact">
+			__fest_blocks.hello = function (ctx) {
+				#! var __fest_buf = "";
+				#! __fest_buf += ("&lt;div>&lt;h2>Hello ");
+				#!+ try {
+					#! __fest_buf += (__fest_escapeHTML(ctx.name || "%username%"))
+				} catch (e) {
+					#! __fest_log_error(e.message + "5");
+				#!- }
+				#! __fest_buf += ("!&lt;/h2>&lt;/div>");
+				#! return __fest_buf;
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Реальная работа: полный цикл</h2>
+		<pre class="js-code">
+			var data = { name: "" };
+			#! var lego = fest["lego"];
+			#! var el = document.getElementById("playground");
+			#! el.innerHTML = lego({ block: "hello", params: data });
+			#! data.name = "Fest";
+			#! el.innerHTML = lego({ block: "hello", params: data });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>BINDING</h2>
+		<p>Для этого нам необходимо</p>
+		<ul>
+			<li class="next">Перейти на bem:block</li>
+			<li class="next">а дальше посмотрим</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Используем bem:block:</h2>
+		<pre class="js-code">
+			&lt;div bem:block="hello">
+				#!+ &lt;h2>
+					Hello&lt:fest:space/>
+					&lt;fest:value>ctx.name || "%username%"&lt;/fest:value>!
+				#!- &lt;/h2>
+			&lt;/div>
+		</pre>
+		<div style="margin-top: -30px;" class="next">Как видите, это все изменения в шаблоне</div>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>А теперь самое интересно!</h2>
+		<pre class="js-code">
+			#! var lego = fest.withBindings("lego");
+			#! var el = document.getElementById("playground");
+			#! var hello = new fest.ModelView({ text: "" });
+			#! el.innerHTML = lego["hello"](hello);
+			#! hello.$set("name", "Fest");
+			#! hello.$set("name", "Binding");
+			#! // Красота!
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout">
+		<h2>Но как?</h2>
+	</section>
+
+
+	<section class="slide"><div>
+		<h2>Но как?</h2>
+		<pre class="js-code compact">
+			__fest_blocks.hello = function (ctx) {
+				#! var __fest_buf = "", <mark class="next">xid = "-" + __gid++</mark>;
+				#! __fest_buf += ("&lt;div id='"+<mark class="next">xid</mark>+"'>&lt;h2>Hello ");
+				#!+ <mark class="next">/*$V*/</mark> try {
+					__fest_buf += (__fest_escapeHTML(ctx.name || "%username%"))
+				} catch (e) {
+					__fest_log_error(e.message + "5");
+				} <mark class="next">/*V$*/</mark>
+				__fest_buf += ("!&lt;/h2>&lt;/div>");
+				#!- return __fest_buf;
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>fest.withBindings</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -40px">fest.withBindings("lego")</h2>
+		<pre class="js-code compact-s" style="margin-top: -20px">
+			__fest_blocks.hello = function (ctx) {
+				var __fest_buf = "", xid = "-" + __gid++, <mark class="next">__xb = [], __bid</mark>;
+				<strike>__fest_buf += ("&lt;div id='"+xid+"'>&lt;h2>Hello ");</strike>
+				#! __bid = __xb.push({}) - 1; // добавлям связку
+				#! __xb[__bid].name = "V"; // название
+				#!+ __xb[__bid].$render = function () {
+					#! var __fest_buf = "";
+					#! try { .. } catch (e) { .. }
+					#! return __fest_buf;
+				#!- };
+				#!+ __fest_buf += "&lt;!--" + __bid + "-->";
+					// Тут тот же самый код с try-catch, как и в функции $render
+				#!- __fest_buf += "&lt;!--/" + __bid + "-->";
+				#! ctx && ctx.$bind && <mark class="next">ctx.$bind(xid, __xb);</mark>
+				return __fest_buf;
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>API: fest.withBindings</h2>
+		<pre class="js-code c">
+			fest.withBindings.add({
+				#! id: "V", // fest:value
+				#! dom: "wrap", // обернуть код коментарием для связи
+				#! render: true, // создать функцию $render
+				#!+ expr: function (value) {
+					// Для $render нам больше не нужно экранирование
+					return value.replace(/\b__fest_escape[^(]+/g, '');
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>API: fest.withBindings</h2>
+		<pre class="js-code compact-s">
+			fest.withBindings.add({
+				id: "IF", // fest:if
+				dom: "wrap",
+				render: true, // всё что внутри if'а
+				props: { last: '!!__fest_if' },
+				test: function () { // функция проверки изменений
+					var __fest_if;
+					this.getter(); // вместо этого будет вставлен try..catch
+					if (this.last !== !!__fest_if) {
+						this.last = !!__fest_if;
+						return true;
+					}
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>fest.ModelView</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>new fest.ModelView(attrs)</h2>
+		<ul>
+			<li><b>$bind</b>(id, binds) — привязать элемент и связки</li>
+			<li class="next"><b>$set</b>(attrs) — обновить данные</li>
+			<li class="next"><b>$set</b>(key, value)</li>
+			<li class="next"><b>$apply</b>() — применить изменения</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>modelView.$bind(...)</h2>
+		<pre class="js-code">
+			// Идем по всему DOM и связываем комментарии
+			if (node.nodeType === 8) {
+				var idx = node.nodeValue;
+				if (idx.charAt(0) !== "/") {
+					this.$binds[idx].startEl = node; // начало
+				} else {
+					this.$binds[idx.substr(1)].endEl = node; // конец
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>А дальше...</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest.ModelView.register</h2>
+		<pre class="js-code">
+			// Описываем компонент
+			fest.ModelView.register("b-dropdown", {
+				mount: function () { /* в DOM'е */ },
+				unmount: function () { /* удалил из DOM'а */ },
+				chooseItem: function (item) {
+					/* обработка клина на item */
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>fest.ModelView.register("b-dropdown",{..})</h2>
+		<pre class="js-code">
+			&lt;div bem:block="b-dropdown">
+				&lt;div bem:elem="ctrl">&lt;fest:value>ctx.ctrl&lt;/fest:value>&lt;/div>
+				&lt;fest:for-each data="ctx.items" as="item">
+					&lt;div bem:elem="item" <mark>on-click="ctx.chooseItem(item);"</mark>>
+						item.text
+					&lt;/div>
+				&lt;/fest:for-each>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
