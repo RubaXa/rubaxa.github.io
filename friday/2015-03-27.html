@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>27.03.2015: JSSDK: logger и Error.stack</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<style>
+		strike,
+		strike * {
+			color: #ccc !important;
+			text-decoration: none;
+		}
+	</style>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>27.03.2015</h1>
+		<p>JSSDK: logger и Error.stack</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Логирование</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Логирование</h2>
+		<pre class="js-code">
+			// Добавляем запись в логер
+			logger.add("метка", { /* какие-то даныне */ });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Логирование</h2>
+		<pre class="js-code compact-s">
+			// На самом деле в лог будет добавлен экземляр logger.Entry
+			{
+				#! type: "log", // Тип записи `scope` или `log`
+				#! label: "...", // какая-то метка
+				#! args: ..., // какие-то даныне
+				#!+ meta: {
+					#! fn: "add", // имя функции
+					#! file: "module.js", // файл в которым был
+					#! line: 123, // строка в которой был вызван лог
+					#! column: 1 // символ
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Scope</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Scope</h2>
+		<pre class="js-code compact-s">
+			var model = {
+				#!+ fetch: function (query) {
+					#! logger.add("data", query);
+					#!+ return logger.<mark>wrap</mark>(fetch("path/to", { body: query })).then(
+						function (response) {
+							#!+ logger.add("success", response.status);
+							#!- return response.json();
+						},
+						function (response) {
+							#!+ logger.add("fail", response.status);
+							#!- return Promise.rejected(response.status);
+						}
+					#!- );
+				#!- }.<mark>logger</mark>("model.fetch")
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Scope</h2>
+		<pre class="js-code">
+			// Где-то в коде
+			$("#button").on("click", function () {
+				#!+ model.fetch({ offset: 0, limit: 20 }).then(function () {
+					#! logger.add("Model fetched");
+				#!- });
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И чё?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>А вот че!</h2>
+		<img src="https://dl.dropbox.com/s/el2s6mrjlg2zycn/Screenshot%202015-03-27%2017.04.02.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>И всё?</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>И конечно нет!</h2>
+		<pre class="js-code">
+			Folder.findOne(123).then(function (folder) {
+				#! logger.add("folder.loaded", folder.id);
+				#!+ // А сейчас мы будем делать что-то не хорошое
+				#!- folder.save("name", "Wow!");
+				#!+ // или
+				setTimeout(function () {
+					folder.remove();
+				#!- }, 10);
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin-top: 50px" width="100%" src="https://dl.dropbox.com/s/chrzsci9lrplcea/Screenshot%202015-03-27%2017.25.06.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img style="margin-top: 150px" width="100%" src="https://dl.dropbox.com/s/5soeu9edx8zq76t/Screenshot%202015-03-27%2017.27.27.png?dl=0"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Минусы</h2>
+		<p>Да, я знаю, что много «лишней» информации, но это только пока</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Эээ, это всё?</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Ха-ха, нет!</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 200%">
+			logger.mailTo("trash@rubaxa.org")
+			<div style="font-size: 300%; color: #ccc;">+</div>
+			<a style="font-size: 200%" href="http://rubaxa.github.io/Error.stack/">Error.stack</a>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2><a href="http://rubaxa.github.io/Error.stack/">Error.stack</a></h2>
+		<p>Это веб-интерфейс для анализа стека ошибки, а теперь и лога.</p>
+		<ul>
+			<li class="next">Открываем почту</li>
+			<li class="next">Читаем письмо, Помечаем непрочитанным и Удаляем</li>
+			<li class="next">logger.mailTo("trash@rubaxa.org")</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/nb170kjjbaaywux/Screenshot%202015-03-27%2017.59.57.png?dl=0"/>
+	</div></section>
+
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
