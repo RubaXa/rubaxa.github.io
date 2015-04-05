@@ -91,10 +91,16 @@
 	</div>
 
 	<div class="alert alert-danger " role="alert" style="font-size: 200%;">
-		<strong>{{total | number}}</strong>
-		или в
-		<strong>{{(total / (credit * 1e6)).toFixed(2) | number}}</strong>
-		раз больше
+		<div>
+			<strong>{{total | number}}</strong>
+			или в
+			<strong>{{(total / (credit * 1e6)).toFixed(2) | number}}</strong>
+			раз больше
+		</div>
+		<hr/>
+		<div>
+			Выплотив {{totalPrecents | number}} по процентам
+		</div>
 	</div>
 
 	<div class="alert alert-warning" role="alert" style="font-size: 130%;">
@@ -125,6 +131,14 @@
 				<td>{{item.remain | number}}</td>
 				<td><input ng-model="payments[item.id]" ng-blur="recalc();" type="text" class="form-control"></td>
 			</tr>
+			<tr>
+				<td><b>Итого</b>:</td>
+				<td>{{year.payment | number }}</td>
+				<td>{{year.precents | number}}</td>
+				<td>{{year.body | number}}</td>
+				<td></td>
+				<td></td>
+			</tr>
 		</table>
 	</div>
 </div>
@@ -148,6 +162,7 @@
 				});
 
 				$scope.payments = {};
+				$scope.totalPrecents = 0;
 				$scope.recalc = recalc;
 
 
@@ -174,6 +189,7 @@
 
 
 					$scope.payYears = [];
+					$scope.totalPrecents = 0;
 
 					do {
 						var OAP = percent + percent / (Math.pow(1 + percent, months) - 1),
@@ -186,7 +202,10 @@
 						if (itr % 12 === 0) {
 							$scope.payYears.push(year = {
 								num: $scope.payYears.length + 1,
-								items: []
+								items: [],
+								payment: 0,
+								precents: 0,
+								body: 0
 							});
 						}
 
@@ -203,12 +222,17 @@
 						t += dc + dp;
 						ozs -= dc;
 
+						year.payment += _sum;
+						year.precents += dp;
+						year.body += (_sum - dp);
+						$scope.totalPrecents += dp;
+
 						year.items.push({
 							id: itr,
 							num: (itr + 1 - (itr / 12 | 0) * 12),
 							payment: _sum.toFixed(),
 							precents: dp.toFixed(),
-							body: dc.toFixed(),
+							body: (_sum - dp).toFixed(),
 							remain: ozs.toFixed()
 						});
 

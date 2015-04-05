@@ -86,6 +86,27 @@
 		</pre>
 	</div></section>
 
+	<section class="slide"><div>
+		<h2>Или scope</h2>
+		<pre class="js-code compact-s">
+			var model = {
+				fetch: function (query) {
+					#! var logScope = logger.scope("model.fetch", query);
+					#!+ return logScope.<mark>wrap</mark>(fetch("path/to", { body: query })).then(
+						function (response) {
+							#!+ logger.add("success", response.status);
+							#!- return response.json();
+						},
+						function (response) {
+							#!+ logger.add("fail", response.status);
+							#!- return Promise.rejected(response.status);
+						}
+					#!- );
+				}
+			};
+		</pre>
+	</div></section>
+
 
 	<section class="slide"><div>
 		<h2>Scope</h2>
