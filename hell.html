@@ -102,7 +102,7 @@
 		</div>
 		<hr/>
 		<div>
-			<strong>{{total | number}}</strong>
+			Итого <strong>{{total | number}}</strong>
 			или в
 			<strong>{{(total / (credit * 1e6)).toFixed(2) | number}}</strong>
 			раз больше
@@ -112,7 +112,7 @@
 	<div class="alert alert-warning" role="alert" style="font-size: 130%;">
 		За эти деньги вы могли бы снимать ещё
 		<strong>{{(total / (rent * 1e3 * 12)) | number}}</strong>
-		лет и накопили бы
+		лет и накопить
 		<strong>{{(period * (income - costs - rent) * 1e3) | number}}</strong>
 	</div>
 
