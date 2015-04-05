@@ -98,14 +98,14 @@
 
 	<div class="alert alert-danger " role="alert" style="font-size: 200%;">
 		<div>
+			{{totalPrecents | number}} по процентам и {{totalInsurance | number}} страховке
+		</div>
+		<hr/>
+		<div>
 			<strong>{{total | number}}</strong>
 			или в
 			<strong>{{(total / (credit * 1e6)).toFixed(2) | number}}</strong>
 			раз больше
-		</div>
-		<hr/>
-		<div>
-			Выплатив {{totalPrecents | number}} по процентам
 		</div>
 	</div>
 
@@ -144,7 +144,7 @@
 				<td>{{year.body | number}}</td>
 				<td colspan="2">
 					<b>Страховочка:</b>
-					{{(year.items[0].remain + year.items[0].body) * insurance / 100 | number}}
+					{{year.insurance | number}}
 				</td>
 			</tr>
 		</table>
@@ -173,7 +173,6 @@
 
 
 				$scope.payments = {};
-				$scope.totalPrecents = 0;
 				$scope.recalc = recalc;
 
 
@@ -190,7 +189,7 @@
 						ozs = parseFloat($scope.credit) * 1e6,
 						itr = 0,
 						year = 0,
-						t = 0,
+						total = 0,
 						parts = $scope.payments,
 						payment = parseFloat($scope.payment) * 1e3;
 
@@ -202,14 +201,15 @@
 
 					$scope.payYears = [];
 					$scope.totalPrecents = 0;
+					$scope.totalInsurance = 0;
 
 					do {
 						var OAP = percent + percent / (Math.pow(1 + percent, months) - 1),
-								sum = ozs * OAP,
-								dp = percent * ozs, // оплата процентов
-								dc = sum - dp,	// оплата тела
-								_dc = dc,
-								_sum = sum;
+							sum = ozs * OAP,
+							dp = percent * ozs, // оплата процентов
+							dc = sum - dp,	// оплата тела
+							_dc = dc,
+							_sum = sum;
 
 						if (itr % 12 === 0) {
 							$scope.payYears.push(year = {
@@ -217,8 +217,12 @@
 								items: [],
 								payment: 0,
 								precents: 0,
-								body: 0
+								body: 0,
+								insurance: 0
 							});
+
+							year.insurance = ozs * $scope.insurance / 100;
+							$scope.totalInsurance += year.insurance;
 						}
 
 						if (parts && parts[itr]) { // Переплата
@@ -231,12 +235,13 @@
 						}
 
 
-						t += dc + dp;
+						total += dc + dp;
 						ozs -= dc;
 
 						year.payment += _sum;
 						year.precents += dp;
 						year.body += (_sum - dp);
+
 						$scope.totalPrecents += dp;
 
 						year.items.push({
@@ -252,7 +257,7 @@
 						months--;
 					} while (ozs > 1000);
 
-					$scope.total = t;
+					$scope.total = total + $scope.totalInsurance;
 					$scope.remYears = Math.floor(itr / 12) + ' лет';
 					$scope.remMonths = itr - Math.floor(itr / 12) * 12 + ' месяцев';
 					$scope.period = itr;
