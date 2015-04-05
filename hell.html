@@ -84,6 +84,12 @@
 			<input ng-model="costs" type="text" class="form-control">
 			<span class="input-group-addon">x 1000 Р</span>
 		</div>
+
+		<div class="input-group">
+			<span class="input-group-addon">Cтраховка</span>
+			<input ng-model="insurance" type="text" class="form-control">
+			<span class="input-group-addon">%</span>
+		</div>
 	</form>
 
 	<div class="alert alert-info" role="alert" style="font-size: 130%;">
@@ -125,10 +131,10 @@
 			</tr>
 			<tr ng-repeat="item in year.items">
 				<td>{{item.num}}</td>
-				<td>{{item.payment | number }}</td>
-				<td>{{item.precents | number}}</td>
-				<td>{{item.body | number}}</td>
-				<td>{{item.remain | number}}</td>
+				<td>{{item.payment.toFixed(2) | number }}</td>
+				<td>{{item.precents.toFixed(2) | number}}</td>
+				<td>{{item.body.toFixed(2) | number}}</td>
+				<td>{{item.remain.toFixed(2) | number}}</td>
 				<td><input ng-model="payments[item.id]" ng-blur="recalc();" type="text" class="form-control"></td>
 			</tr>
 			<tr>
@@ -136,8 +142,10 @@
 				<td>{{year.payment | number }}</td>
 				<td>{{year.precents | number}}</td>
 				<td>{{year.body | number}}</td>
-				<td></td>
-				<td></td>
+				<td colspan="2">
+					<b>Страховочка:</b>
+					{{(year.items[0].remain + year.items[0].body) * insurance / 100 | number}}
+				</td>
 			</tr>
 		</table>
 	</div>
@@ -154,12 +162,15 @@
 					payment: 50,
 					rent: 40,
 					income: 100,
-					costs: 50
+					costs: 50,
+					insurance: 1.25
 				};
+
 
 				Object.keys(defaults).forEach(function (key) {
 					$scope[key] = localStorage.getItem(key) || defaults[key];
 				});
+
 
 				$scope.payments = {};
 				$scope.totalPrecents = 0;
@@ -170,6 +181,7 @@
 				$scope.$watch('credit', recalc);
 				$scope.$watch('percent', recalc);
 				$scope.$watch('payment', recalc);
+				$scope.$watch('insurance', recalc);
 
 
 				function recalc() {
@@ -230,10 +242,10 @@
 						year.items.push({
 							id: itr,
 							num: (itr + 1 - (itr / 12 | 0) * 12),
-							payment: _sum.toFixed(),
-							precents: dp.toFixed(),
-							body: (_sum - dp).toFixed(),
-							remain: ozs.toFixed()
+							payment: _sum,
+							precents: dp,
+							body: (_sum - dp),
+							remain: ozs
 						});
 
 						itr++;
