@@ -132,7 +132,7 @@
 				<th>Проценты</th>
 				<th>Тело</th>
 				<th>Осталось</th>
-				<th>Переплата?</th>
+				<th>Переплата x 1000Р?</th>
 			</tr>
 			<tr ng-repeat="item in year.items">
 				<td>{{item.num}}</td>
@@ -140,7 +140,8 @@
 				<td>{{item.precents.toFixed(2) | number}}</td>
 				<td>{{item.body.toFixed(2) | number}}</td>
 				<td>{{item.remain.toFixed(2) | number}}</td>
-				<td><input ng-model="payments[item.id]" ng-blur="recalc();" type="text" class="form-control"></td>
+				<td>
+					<input ng-model="payments[item.id]" ng-keydown="($event.keyCode == 13) && recalc()" ng-blur="recalc();" type="text" class="form-control"/></td>
 			</tr>
 			<tr>
 				<td><b>Итого</b>:</td>
@@ -213,7 +214,6 @@
 							sum = ozs * OAP,
 							dp = percent * ozs, // оплата процентов
 							dc = sum - dp,	// оплата тела
-							_dc = dc,
 							_sum = sum;
 
 						if (itr % 12 === 0) {
@@ -231,12 +231,17 @@
 						}
 
 						if (parts && parts[itr]) { // Переплата
-							sum = parts[itr];
-							dc = sum - dp;
+							_sum = parts[itr] * 1000;
+							dc = _sum - dp;
 						}
 						else if (payment > sum) {
-							if (payment > ozs) dc = ozs;
-							else dc = (sum = payment) - dp;
+							if (payment > ozs) {
+								dc = ozs;
+							}
+							else {
+								dc = payment - dp;
+								_sum = payment;
+							}
 						}
 
 
