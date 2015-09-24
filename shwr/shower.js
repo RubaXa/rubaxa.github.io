@@ -1037,9 +1037,9 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/\b(else\s)?if\s\(/g, '<span class="function">$1if </span>(')
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\barguments|true|false\b)/g, '<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\b(null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
-						.replace(/(&lt;)(\/?[\w:]+)/g, '$1<span class="tomorrow-blue">$2</span>')
+						.replace(/\b(default|arguments|true|false)\b/g, '<span class="tomorrow-aqua">$1</span>')
+						.replace(/(\b(import|from|export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
+						.replace(/(&lt;)(\/?[\w:-]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/(\s\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
 //						.replace(/(\/\/.+)/, '<mark class="comment">$1</mark>')
@@ -1125,6 +1125,10 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 
 	shower.init();
+
+	var hash = location.hash;
+	location.hash = Math.random();
+	location.hash = hash;
 
 	return shower;
 

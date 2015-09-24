@@ -22,6 +22,11 @@
 				"url": "http://rubaxa.github.io/Sortable/"
 			},
 			{
+				"name": "wormhole",
+				"desc": "Wormhole — Is EventEmitter for communication between tabs.",
+				"url": "http://rubaxa.github.io/wormhole/"
+			},
+			{
 				"name": "callStack",
 				"desc": "Call stack controller",
 				"url": "https://github.com/RubaXa/callStack"
