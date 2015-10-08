@@ -1018,7 +1018,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
-						.replace(/(\s-?\d+|(?=[^=])".*?"|\/\/.+|(?:new|function|return|var))/g, function (_, val) {
+						.replace(/(\s-?\d+|(?=[^=])".*?[^\\]"|\/\/.+|(?:new|function|return|var))/g, function (_, val) {
 							var type = '';
 							if (/^-?\d+$/.test(val)) {
 								type = 'number';
@@ -1057,9 +1057,10 @@ window.shower = window.shower || (function(window, document, undefined) {
 				.replace(/(".*?")/g, '<span class="code-str">$1</span>')
 				.replace(/((?:^\s*| > | = ))(\w+)([\.\s#[])/g, '$1<span class="code-node">$2</span>$3')
 				.replace(/ > (\w+)/g, ' > <span class="code-node">$1</span>')
-				.replace(/(&amp;\w+\s)/, '<span class="code-decl">$1</span>')
+				.replace(/([^\.])(&amp;\w+\s)/g, '$1<span class="code-decl">$2</span>')
+				.replace(/(&amp;\w+)( = )/g, '<span class="code-decl">$1</span>$2')
 				.replace(/(#\w+)/, '<span class="code-id">$1</span>')
-				.replace(/((?:^\s*|>)\.)([.\w-]+)/g, '$1<span class="code-class">$2</span>')
+				.replace(/((?:^\s*|>)\.)((?:&amp;_*)?[\.\w\{\}-]+)/g, '$1<span class="code-class">$2</span>')
 				.replace(/(\s)(x-\w+:)/g, '$1<span class="code-xprop">$2</span>')
 				.replace(/(\s)([\w-]+:)/g, '$1<span class="code-prop">$2</span>')
 				.replace(/\[(\w[^=\]]+)/g, '[<span class="code-prop">$1</span>')
@@ -1100,7 +1101,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 					line = line.replace(/\*\*(.*?)\*\*/g, '<mark class="next">$1</mark>');
 
-					if (line.indexOf('#!') != -1) {
+					if (/\s#!/.test('#!')) {
 						if (line.indexOf('#!+') != -1) {
 							before = '<div class="next">';
 						}
