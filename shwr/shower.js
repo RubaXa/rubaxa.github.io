@@ -1018,7 +1018,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
-						.replace(/(\s-?\d+|(?=[^=])".*?[^\\]"|\/\/.+|(?:new|function|return|var))/g, function (_, val) {
+						.replace(/(\s-?\d+|(?=[^=])".*?[^\\]"|\/\/.+|(?:new|function|return|var|import|from|const|let))/g, function (_, val) {
 							var type = '';
 							if (/^-?\d+$/.test(val)) {
 								type = 'number';
@@ -1038,7 +1038,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
 						.replace(/\b(default|arguments|true|false)\b/g, '<span class="tomorrow-aqua">$1</span>')
-						.replace(/(\b(import|from|export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
+						.replace(/(\b(export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:-]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/(\s\d+)/, '<span class="number">$1</span>')
 //						.replace(/(".*?")/, '<span class="string">$1</span>')
@@ -1086,11 +1086,19 @@ window.shower = window.shower || (function(window, document, undefined) {
 				;
 
 				if (isCode) {
-					var html = [], classes = '', before = '', after = '';
+					var html = [];
+					var classes = '';
+					var before = '';
+					var after = '';
+					var next = line.match(/^\s*#!([-+ ])/);
 
 					if (/^[\+\-]/.test(line)) {
 						classes += ' diff-' + (line.charAt(0) == '+' ? 'plus' : 'minus');
 						line = line.substr(1);
+					}
+
+					if (next) {
+						line = line.replace(/(^\s*)#![-+]?\s?/, '$1');
 					}
 
 					if (/xtpl/.test(pre.className)) {
@@ -1101,19 +1109,17 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 					line = line.replace(/\*\*(.*?)\*\*/g, '<mark class="next">$1</mark>');
 
-					if (/\s#!/.test('#!')) {
-						if (line.indexOf('#!+') != -1) {
+					if (next) {
+						if (next[1] === '+') {
 							before = '<div class="next">';
 						}
-						else if (line.indexOf('#!-') != -1) {
+						else if (next[1] === '-') {
 							after = '</div>';
 						}
 						else {
 							before = '<div class="next">';
 							after = '</div>';
 						}
-
-						line = line.replace(/#![+-]*\s?/, '');
 					}
 
 					return before + '<code class="'+classes+'">' + (line || '&nbsp;') + '</code>' + after;

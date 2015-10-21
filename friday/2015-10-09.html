@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>09.10.2015: Feast</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Feast</h1>
+		<p>Live coding & components</p>
+	</header>
+
+	<section class="slide shout"><div>
+		<h2>Fest vs. Fe<u>a</u>st</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Fest vs. Fe<u>a</u>st</h2>
+		<table>
+			<tr>
+				<th></th>
+				<th>Fe<u>a</u>st</th>
+				<th>Fest</th>
+			</tr>
+			<tr>
+				<td>Компиляция</td>
+				<td>runtime</td>
+				<td>server/proxy</td>
+			</tr>
+			<tr>
+				<td>Компоненты</td>
+				<td>есть</td>
+				<td>нет</td>
+			</tr>
+			<tr>
+				<td>Поддержка BEM</td>
+				<td>есть</td>
+				<td>нет</td>
+			</tr>
+			<tr>
+				<td>Расширяемость</td>
+				<td>максимальная</td>
+				<td>нет (только PR)</td>
+			</tr>
+			<tr>
+				<td>Синтаксис</td>
+				<td>любой</td>
+				<td>fat-xml</td>
+			</tr>
+			<tr>
+				<td>Рендер</td>
+				<td>VDOM</td>
+				<td>string</td>
+			</tr>
+			<tr>
+				<td>и так далее...</td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Компиляция</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Компиляция</h2>
+		<pre class="js-code compact">
+			// Прасим шаблон в подобие DOM дерева
+			var template = feast.parse("&lt;img src=\"{attrs.src}\"/>");
+			#!+ // Создаем фнукцию генерации VDOM
+			#!- var compiledTemplate = feast.compile(template);
+			#!+ // Получаем фрагмент VDOM
+			var fragment = compiledTemplate({src: "foo.png"});
+			#!- // fragment: {tag: "img", attrs: {src: "foo.png"}}
+			#!+
+			// Присоединяем фрагмент-vdom к body
+			#!- var virtualNode = feast.vdom.append(document.body, fragment);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div style="padding: 105px 40px 0; width: 940px;">
+		<h2>Компиляция: Fe<u>a</u>st vs. Fest</h2>
+		<table>
+			<tr>
+				<th></th>
+				<th>Fe<u>a</u>st</th>
+				<th>Fest</th>
+			</tr>
+			<tr>
+				<td>Настройка сервера (proxy/watch)</td>
+				<td>не требуется</td>
+				<td>обязательна</td>
+			</tr>
+			<tr>
+				<td>Размер итогового шаблона</td>
+				<td>неизменен, либо меньше</td>
+				<td>увеличивается</td>
+			</tr>
+			<tr>
+				<td>Работа в браузере</td>
+				<td>да</td>
+				<td>нет</td>
+			</tr>
+		</table>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Синтаксис</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Синтаксис</h2>
+		<div style="margin: 0 -60px">
+			<div style="float: left; width: 65%">
+				<div>Fest</div>
+				<pre class="js-code compact-s">
+					#!+ &lt;a>
+						#!+ &lt;fest:attributes>
+							#!+ &lt;fest:if test="params.href">
+								#!+ &lt;fest:attribute name="href">
+									#! &lt;fest:value>params.href&lt;/fest:value>
+								#!- &lt;/fest:attribute>
+							#!- &lt;/fest:if>
+						#!- &lt;/fest:attributes>
+						#! &lt;span>link&lt;/span>
+					#!- &lt;/a>
+				</pre>
+				<img class="next" style="position: absolute; margin-top: -120px; margin-left: 250px; transform: scaleX(-1);" width="130" src="https://dl.dropboxusercontent.com/s/areypettczi55s7/why.png?dl=0"/>
+			</div>
+
+			<div style="float: left; width: 35%">
+				<div>Fe<u>a</u>st</div>
+				<pre class="js-code compact-s">
+					#!+ &lt;a>
+						#! &lt;fn:attr
+							#! name="href"
+							#! value="{attrs.href}"
+							#! test="attrs.href"/>
+						#! &lt;span>link&lt;/span>
+					#!- &lt;/a>
+				</pre>
+			</div>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Ещё один синтаксис</h2>
+		<div style="margin: 0px -60px">
+			<div style="float: left; width: 55%">
+				<div>xhtml</div>
+				<pre class="js-code compact-s">
+					&lt;!-- Комментарий к верстке -->
+					&lt;a bem:block="btn">
+						&lt;fn:attr
+							name="href"
+							value="#!{attrs.href}"/>
+
+						&lt;fn:if test="attrs.icon">
+							&lt;b:icon name="{attrs.icon}"/>
+						&lt;/fn:if>
+
+						&lt;span bem:elem="text">link&lt;/span>
+					&lt;/a>
+				</pre>
+			</div>
+
+			<div style="float: left; width: 45%">
+				<div>xtpl</div>
+				<pre class="js-code compact-s xtpl" style="position: relative; z-index: 3">
+					#! // Комментарий к верстке
+					#!+ a.btn {
+						#! href: "#!" + attrs.href
+
+						#!+ if attrs.icon {
+							#! &icon { name: attrs.icon }
+						#!- }
+
+						#! span.&__text | link
+					#!- }
+				</pre>
+				<img class="next" style="position: absolute; width: 200px; margin: -150px 0 0 250px; z-index: 2; " src="https://dl.dropboxusercontent.com/s/fx1692y91e3huer/oh%21.jpg?dl=0"/>
+			</div>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code xtpl compact-s" style="position: relative; z-index: 3">
+			// Определяем блок
+			&ctrl = a.ctrl | {{attrs.name}}
+
+			table **>** tr {
+				td {
+					input[type="checkbox"] {
+						id: "cbx"
+						on-change: attrs.handleChecked(evt)
+						checked: attrs.state
+					}
+
+					label[for="cbx"] | check me
+				}
+
+				td > &ctrl { name: "edit" } **+** &ctrl { name: "remove" }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Свой синтаксис</h2>
+		<p>Это большая отдельная тема, о который можно поговорить отдельно, если будет интерес.</p>
+		<p>Основная проблема не прасинге, а именно описательной возможности синтаксиса.</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Расширяемость</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Расширяемость</h2>
+		<p>Как я уже говорил, fest можно расширить только через Pull Request, что согласитесь не очень удобно.</p>
+		<p class="next" style="font-size: 200%">А fe<u>a</u>st?</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st: Модификаторы вывода</h2>
+		<pre class="js-code compact">
+			&lt;!-- Выведем время -->
+			&lt;fn:value>params.time&lt;/fn:value>
+			#!+
+			&lt;!-- Форматируем -->
+			#!- &lt;fn:value>moment(params.time).fromNow()&lt;/fn:value>
+			#!+
+			&lt;!-- Эээ, а как пробросить moment? -->
+			&lt;!-- Так? -->
+			#!- &lt;fn:value>require("momentjs")(params.time).fromNow()&lt;/fn:value>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>feast: Модификаторы вывода</h2>
+		<pre class="js-code compact">
+			import feast from "feast";
+			import moment from "momentjs";
+			#!+ // Определяем модификатор
+			feast.mods["time:fromNow"] = function (value) {
+				#! return moment(value).fromNow();
+			#!- };
+			#!+
+			&lt;!-- Используем -->
+			#!- &lt;fn:value **mod="time:fromNow"**>params.time&lt;/fn:value>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>CustomTags</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st: CustomTags</h2>
+		<pre class="js-code" style="margin-left: -60px">
+			&lt;my:loop from="1" to="{attrs.max}" as="val" test="attrs.enabled">
+				&lt;fn:value>val&lt;/fn:value>
+			&lt;/my:loop>
+		</pre>
+		<ul>
+			<li><b>from</b> — начало цикла (интерполируемое значение, обязательно)</li>
+			<li><b>to</b> — конец (тоже интерполируемое, обязательно)</li>
+			<li><b>test</b> — javascript выражение</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact" style="margin-left: -60px">
+			import feast from "feast";
+			// Определяем тег с namespace (можно и без него)
+			feast.tags["my:loop"] = {
+				#! scope: true, // означает, что тег выводу не подлежит
+				#! required: ["from", "to"], // обязательные атрибуты
+				#! expressions: ["test"], // javascript выражения
+				#!+ toCode() {
+					#!+ return [
+						#! "if ($test) for (var &as = $from; &as <= $to; &as++) {",
+						#! "}"
+					#!- ];
+				#!- }
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st: CustomTags</h2>
+		<pre class="js-code">
+			// А что, если я хочу использовать namespace?
+			&lt;use:foo/>
+			&lt;use:bar/>
+			&lt;use:baz/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st: Custom namespace</h2>
+		<pre class="js-code compact">
+			import feast from "feast";
+			// Совпадение на любой тег в определенном namespace
+			feast.tags["use:*"] = {
+				scope: true,
+				toCode(attrs, node) {
+					const [ns, name] = node.name.split(":");
+					// ...
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st: CustomTags</h2>
+		<p>Приоритеты поиска совпадений</p>
+		<pre class="js-code">
+			feast.tags["ns:tag-name"] = {}; // максимальный приоритет
+			feast.tags["ns:*"] = {}; // средний
+			feast.tags["*:tag-name"] = {}; // минимальный
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Компоненты</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fe<u>a</u>st</h2>
+		<p>
+			В первую очередь, fe<u>a</u>st — это <em>инструмент</em>, который помогает быстро и гибко
+			разрабатывать и поддерживать блоки проекта, а не очередной шаблонизатор и тем более framework.
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Запуск GUI для работы</h2>
+		<pre class="js-code">
+			cd ./feast/
+			npm start
+
+			> feast@0.10.0 start /Users/RubaXa/Dropbox/git/feast
+			> node feast --playground=./blocks/
+
+			Feast running at <a href="http://127.0.0.1:2015/">http://127.0.0.1:2015/</a>
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/z0zz65l259wykv8/Screenshot%202015-10-08%2018.01.10.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/2k3odlw48e6mst3/Screenshot%202015-10-08%2018.02.53.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/vc8gbsny9nhziok/Screenshot%202015-10-08%2018.05.08.png?dl=0"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Создание блока (по умолчанию)</h2>
+		<pre class="js-code">
+			./blocks/
+				./checkbox/
+						checkbox.html     // шаблон
+						checkbox.js       // js-реализация
+						checkbox.scss     // стили
+						checkbox.spec.js  // спецификация
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>checkbox.html и checkbox.scss</h2>
+		<pre class="js-code">
+			&lt;div>
+				&lt;!-- содержимое блока <small style="font-size: 50%;">(если честно, этого комментария нет)</small> -->
+			&lt;/div>
+		</pre>
+		<pre class="js-code">
+			.checkbox {
+				padding: 10px;
+				background: red;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Пока всё</h2>
+		<p>Сейчас я покажу, как происходит верстка и тестирование верстки.</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>checkbox.spec.js</h2>
+		<pre class="js-code compact-xxs">
+			export default {
+				cases: {
+					"base": {attrs: {}},
+					"checked": {
+						attrs: {
+							checked: true,
+							$tests: [ // тесты
+							{
+								msg: "выделен",
+								mods: ["checked"]
+							},
+							{trigger: "click"},
+							{
+								msg: "невыделен",
+								mods: []
+							}]
+						}
+					}
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>checkbox.html</h2>
+		<pre class="js-code">
+			&lt;div on-click="_this.set('checked', !attrs.checked)">
+				&lt;bem:mod name="checked" test="attrs.checked"/>
+				&lt;div bem:elem="checkmark">&lt;/div>
+			&lt;/div>
+		</pre>
+		<p style="font-size: 200%"><b>on-click</b> — отстой, фу так писать!</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>remit:{event}</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>remit:{event}</h2>
+		<pre class="js-code">
+			&lt;div **remit:click="toggle"**>
+				&lt;bem:mod name="checked" test="attrs.checked"/>
+				&lt;div bem:elem="checkmark">&lt;/div>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>remit:{event}</h2>
+		<pre class="js-code compact-s">
+			import feast from "feast";
+			import template from "feast-tpl!./checkbox.html";
+			/** @class UICheckbox */
+			export default feast.Block.extend(/** UICheckbox# */{
+				#! name: "checkbox",    // название блока
+				#! template: template,  // шаблон
+				#!+ events: {            // обработка событий (не DOM)
+					#! "toggle": "handleToggle"
+				#!- },
+				#!+ handleToggle() { 
+					this.set("checked", !this.attrs.checked);
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Использование</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Использование</h2>
+		<pre class="js-code">
+			&lt;!-- Было: -->
+			&lt;fest:get name="checkbox">{checked: true}&lt;/fest:get>
+			&lt;fest:get name="checkbox">{checked: attrs.state}&lt;/fest:get>
+
+			&lt;!-- Стало: -->
+			&lt;b:checkbox checked/>
+			&lt;b:checkbox checked="{attrs.state}"/>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2><a href="http://www.youtube.com/watch?v=uP5gra8YllM">Screencast</a></h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

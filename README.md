@@ -1,5 +1,6 @@
 ## Пятница
 
+ * [09.10.2015](http://rubaxa.github.io/friday/2015-10-09.html): Fe<u>a</u>st — Live coding & components
  * [27.03.2015](http://rubaxa.github.io/friday/2015-03-27.html): JSSDK: logger и Error.stack
  * [20.02.2015](http://rubaxa.github.io/friday/2015-02-20.html): Fest, BEM и data-binding.
  * [26.12.2014](http://rubaxa.github.io/friday/2014-12-26.html): Почему Native Promise лучше всех.
