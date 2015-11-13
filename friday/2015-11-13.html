@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>13.11.2015: Переходим на Feast</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Переводим проект на Fe<u>a</u>st</h1>
+	</header>
+	<section class="slide"><div>
+		<h2>Цели</h2>
+		<ul>
+			<li>Только Feast (никаких jQuery)</li>
+			<li>Выбрать проект жертву</li>
+			<li>Перевести на Feast</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>И это!</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 500%">ОТВЕТЫ@MAIL.RU</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Что дальше?</h2>
+		<ul>
+			<li class="next">mkdir otvet.mail.ru</li>
+			<li class="next">cd otvet.mail.ru</li>
+			<li class="next">git clone git@github.com:RubaXa/feast-simple-app.git</li>
+			<li class="next">npm init</li>
+			<li class="next">npm start</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Что это дало?</h2>
+		<pre class="js-code compact-xs">
+			#! ./public
+			#!   ./app/
+			#!      ./blocks/
+			#!         ./application/   // корневой блок
+			#!            application.html
+			#!            application.scss
+			#!            application.js
+			#!            application.spec.js
+			#!      ./vendors/
+			#!         ./feast/
+			#!         ./pilotjs/
+			#!      boot.js // файл запуска проект
+			#!      sitemap.js // карта сайта
+			#!   index.html // точка входа
+			#! index.js // простенький сервер
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>index.js</h2>
+		<pre class="js-code">
+			"use strict";
+			#! const feast = require("feast");
+			#!+ const app = feast.createSimpleApp({
+				#! name: "Ответы@Mail.Ru"
+			#!- });
+			#! // Всё, вот и весь сервер ;]
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>index.html</h2>
+		<p>Тут ничего интересного</p>
+		<ul>
+			<li>Конфигурация RequireJS</li>
+			<li>Инициализация Socket.io и горячей замены</li>
+			<li>Подключение boot.js и запуск приложения</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">boot.js</h2>
+		<pre class="js-code compact-xs">
+			#! import Pilot from "pilotjs";
+			#! import sitemap from "./sitemap";
+			#! import UIApplication from "./blocks/application/application";
+			#! const router = Pilot.create(sitemap);
+			#!+ export default function (el, data) {
+				#!+ const getViewAttrs = () => ({
+					#! name: data.name,
+					#! router: router,
+					#! route: router.route,
+					#! request: router.request
+				#!- });
+				#! const view = new UIApplication(getViewAttrs());
+				#! router.view = view;
+				#! router.on("route", () => view.set(getViewAttrs()));
+				#! view.renderTo(el);
+				#! // ...History API...
+				#! return router.nav(location.toString().split("#!").pop()).then(() => router);
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>sitemap.js</h2>
+		<pre class="js-code">
+			export default {
+				"#index": {
+					url: "/"
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2>«Бьем»</h2>
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/zz685sdkhpwg90m/Screenshot%202015-11-13%2011.14.31.png?dl=0"/>
+	</div></section>
+
+	<style>
+		.b-block {
+			top: 0;
+			left: 0;
+			position: absolute;
+			border: 3px solid red;
+			z-index: 2000;
+			color: #333;
+			text-align: center;
+			background-color: rgba(255,255,255,.5);
+			box-sizing: border-box;
+			line-height: 30px;
+			xopacity: 0;
+			transition: opacity .3s;
+		}
+
+		.b-block.active {
+			opacity: 1;
+		}
+	</style>
+
+	<section class="slide cover"><div>
+		<div class="b-block next" style="right: 0; height: 23px; line-height: 18px; font-size: 80%">headline</div>
+		<div class="b-block next" style="top: 23px; right: 0; height: 43px; line-height: 35px">portal-menu</div>
+
+		<div class="b-block next" style="top: 66px; width: 230px; height: 385px; padding-top: 130px;">
+			leaders<br/>
+			(type: question)
+		</div>
+
+		<div class="b-block next" style="top: 451px; width: 230px; height: 180px; padding-top: 45px;">
+			leaders<br/>
+			(type: category)
+		</div>
+
+		<div class="b-block next" style="top: 66px; left: 230px; width: 565px; height: 115px; padding-top: 20px;">
+			form<br/>
+			(mode: fast-ask)
+		</div>
+
+		<div class="b-block next" style="top: 230px; left: 230px; width: 565px; height: 27px; line-height: 20px; font-size: 80%;">
+			tabs
+		</div>
+
+		<div class="b-block next" style="top: 256px; left: 230px; width: 565px; height: 375px; padding-top: 160px; font-size: 100px;">
+			questions
+		</div>
+
+		<img width="100%" src="https://dl.dropboxusercontent.com/s/zz685sdkhpwg90m/Screenshot%202015-11-13%2011.14.31.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<div class="b-block next" style="top: 66px; width: 230px; height: 155px; padding-top: 60px;">
+			categories-nav
+		</div>
+
+		<div class="b-block next" style="top: 66px; left: 230px; width: 565px; height: 540px; padding-top: 50px; font-size: 80px;">
+			question
+		</div>
+
+		<div class="b-block next" style="top: 250px; left: 230px; width: 565px; height: 100px; padding-top: 20px; font-size: 60px; border-color: green">
+			answer
+		</div>
+
+		<img width="100%" src="https://dl.dropbox.com/s/d9tmsgx20tpq6bo/Screenshot%202015-11-13%2012.04.37.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<div class="b-block next" style="top: 66px; left: 230px; width: 565px; height: 535px; padding-top: 160px; font-size: 100px;">
+			leaders<br/><br/>
+			<span style="font-size: 50%">(type: project)</span>
+		</div>
+
+		<img width="100%" src="https://dl.dropbox.com/s/wq1e1u307z0ftfx/Screenshot%202015-11-13%2011.58.00.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<div class="b-block next" style="top: 66px; width: 230px; height: 280px; padding-top: 100px;">
+			user-card
+		</div>
+
+		<div class="b-block next" style="top: 66px; left: 230px; width: 565px; height: 500px; padding-top: 160px; font-size: 100px;">
+			form<br/><br/>
+			<span style="font-size: 50%">(mode: ask)</span>
+		</div>
+
+		<img width="100%" src="https://dl.dropbox.com/s/p59de70ly0j1myj/Screenshot%202015-11-13%2011.57.43.png?dl=0"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Готово!</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Верстаем</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 580%">Х часов спустя</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<style>
+			.sh {
+				transition: opacity .3s
+			}
+		</style>
+		<img width="100%" src="https://dl.dropbox.com/s/cycchiz7z35xtvh/Screenshot%202015-11-13%2012.13.25.png?dl=0"/>
+		<img class="sh next" width="100%" src="https://dl.dropbox.com/s/82lgo23ksznq7xe/Screenshot%202015-11-13%2012.13.47.png?dl=0"/>
+		<img class="sh next" width="100%" src="https://dl.dropbox.com/s/ro88yc8dx1cqu3z/Screenshot%202015-11-13%2012.14.13.png?dl=0"/>
+		<img class="sh next" width="100%" src="https://dl.dropbox.com/s/0vow78jaw0h7wdx/Screenshot%202015-11-13%2012.14.49.png?dl=0"/>
+		<img class="sh next" width="100%" src="https://dl.dropbox.com/s/e88qt2zhbip01oz/Screenshot%202015-11-13%2012.15.01.png?dl=0"/>
+		<img class="sh next" width="100%" src="https://dl.dropbox.com/s/8mbz03b57oyzetj/Screenshot%202015-11-13%2012.13.05.png?dl=0"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>«Оживляем»</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Работа c API: api.js</h2>
+		<pre class="js-code" style="margin-left: -105px">
+			#! import feast from "feast";
+			#! const api = (path, opts) => feast.resource(`/api/v2/${path}`, opts);
+			#!+ export default {
+				#!+ leaders: {
+					#! users: api("usrrating", {body: "rating"}),
+					#! questions: api("leadqst", {body: "qst"})
+				#!- },
+				#! question: api("question", {id: "qid"}),
+				#! questions: api("questlist", {body: "qst"})
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Маршрутизация: sitemap.js</h2>
+		<pre class="js-code compact-s" style="margin-left: -105px">
+			#! import api from "./api";
+			#! import {mock as user} from "./blocks/user-card/user-card.spec";
+			#! import {default as categories, index as categoriesIndex} from "./categories";
+			#!+ export default {
+				#! model: {/* модели доступные всем маршрутам */},
+
+				#!+ "#index": {
+					#! url: {/* описание маски */},
+					#! model: {/* доп. модели */}
+				#!- },
+
+				#!+ "#ask": { ... }
+				"#top": { ... }
+				#!- "#question": { ... }
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Модели доступные всем маршрутам</h2>
+		<pre class="js-code compact-s" style="margin-left: -105px">
+			export default {
+				model: {
+					#! categories: () => categories,
+					#! currentUser: () => currentUser,
+					#!+ leaders: {
+						#! match: ["#index", "#question"], // список машрутов
+						#! fetch: () =>
+							#!+ Promise.all([
+								#! api.leaders.users.find({n: 8}),
+								#! api.leaders.questions.find({n: 5})
+							#!- ])
+							#!+		.then(results => ({
+										users: results[0],
+										questions: results[1]
+							#!- 	}))
+					#!- }
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Машрутизация: #index</h2>
+		<pre class="js-code compact-s" style="margin-left: -105px">
+			"#index": {
+				url: {
+					#! pattern: "/:category?",
+					#!+ params: {
+						#!+ category: {
+							#! validate: (value) => !!categoriesIndex[value]
+						#!- }
+					#!- }
+				},
+				model: {
+					#! questions: (req) =>
+						#! api.questions.find({n: 20, cat: req.params.category}),
+					#! category: (req) =>
+						#! ({root: categoriesIndex[req.params.category]})
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Машрутизация: #ask, #top</h2>
+		<pre class="js-code" style="margin-left: -105px">
+			"#ask": {
+				url: "/ask"
+			},
+
+			"#top": {
+				url: "/top",
+				model: {
+					top: () => api.leaders.users.find({n: 20})
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-left: -105px; margin-top: -60px">Машрутизация: #question</h2>
+		<pre class="js-code" style="margin-left: -105px">
+			url: "/question/:id",
+			model: {
+				#! question: (req) =>
+				#!		api.question.findOne(req.params.id),
+				#! category: (req, <mark class="next">waitFor</mark>) =>
+					#! waitFor("question").then(q =>
+						#!+ ({
+								active: q.cid,
+								root: categoriesIndex[categoriesIndex[q.cid].parent]
+						#!- }))
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Готово</h2>
+	</div></section>
+	
+	<section class="slide shout"><div>
+		<h2>Pilot v2.0</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Pilot v2.0</h2>
+		<pre class="js-code">
+			router.getUrl("#index", {category: "auto"});
+			// → "/auto"
+
+			router.getUrl("#index", {category: 305});
+			// → "/auto"
+
+			router.nav(router.getUrl("#index", {category: "auto"}));
+			router.go("#index", {category: 305});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Pilot v2.0</h2>
+		<pre class="js-code compact">
+			"#index": {
+				url: {
+					pattern: "/:category?",
+					params: {
+						category: {
+							validate: (value) => !!categoriesIndex[value],
+							#! <mark>encode</mark>: (value) => categoriesIndex[value].urlmame
+						}
+					}
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Pilot v2.0</h2>
+		<pre class="js-code compact-s">
+			url: {
+				pattern: "path/:toName",
+				params: {
+					toName: {
+						validate: (value) => ...,
+						decode: (value) => ...,
+						encode: (value) => ...,
+					}
+				},
+				query: {
+					// аналогично
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>application.html</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<pre class="js-code compact">
+			&lt;div>
+				#! &lt;b:headline key="hl" .../>
+				#! &lt;b:portal-menu key="pm" .../>
+				#!+ &lt;b:layout key="grid">
+					#!+ &lt;fn:match name="left" args="layoutAttrs">
+						...
+					#!- &lt;/fn:match>
+					#!+ &lt;fn:match name="center" args="layoutAttrs">
+						...
+					#!- &lt;/fn:match>
+				#!- &lt;/b:layout>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -60px">
+			&lt;fn:match name="left" args="layoutAttrs">
+				#!+ &lt;fn:if test="**attrs.route.model**.category.root">
+					&lt;b:categories-nav key="nav"
+						active="{attrs.route.model.category.active}"
+						model="{attrs.route.model.category.root}"
+					/>
+				#!- &lt;/fn:if>
+
+				#!+ &lt;fn:if test="attrs.route.model.leaders.questions">
+					&lt;b:leaders key="q" type="question"
+						models="{attrs.route.model.leaders.questions}"
+					/>
+				#!-&lt;/fn:if>
+
+				#!+ &lt;fn:if test="attrs.route.model.leaders.users">
+					&lt;b:leaders key="cat" type="category"
+						models="{attrs.route.model.leaders.users}"
+					/>
+				#!-&lt;/fn:if>
+
+				#!+ &lt;fn:if test="**attrs.route.is('#ask')**">
+					&lt;b:user-card key="cu" model="{attrs.currentUser}" />
+				#!- &lt;/fn:if>
+			&lt;/fn:match>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -50px">
+			&lt;fn:match name="center" args="layoutAttrs">
+				&lt;div class="page">
+					&lt;fn:choose>
+						#!+ &lt;fn:when test="attrs.route.is('#index')">
+							#! &lt;b:form key="fa" mode="fast-ask"/>
+							#! &lt;h1 class="page-index--h1 bordered">Вопросы участников&lt;/h1>
+							#! &lt;b:questions key="qlist" items="{attrs.route.model.questions}"/>
+						#!- &lt;/fn:when>
+	
+						#!+ &lt;fn:when test="attrs.route.is('#ask')">
+							&lt;b:form key="ask" mode="ask" type="question"/>
+						#!- &lt;/fn:when>
+	
+						#!+ &lt;fn:when test="attrs.route.is('#question')">
+							&lt;b:question key="q" model="{attrs.route.model.question}"/>
+						#!- &lt;/fn:when>
+	
+						#!+ &lt;fn:when test="attrs.route.is('#top')">
+							&lt;b:leaders key="top" type="project" models="{attrs.route.model.top}"/>
+						#!- &lt;/fn:when>
+					&lt;/fn:choose>
+				&lt;/div>
+			&lt;/fn:match>
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>fn:add-class</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>fn:add-class</h2>
+		<pre class="js-code" style="margin-top: -30px">
+			&lt;!-- Bad -->
+			&lt;div class="item {attrs.selected ? 'selected' : ''}">
+				&lt;span>text&lt;/span>
+			&lt;/div>
+			#!+ &lt;!-- Good -->
+			&lt;div class="item">
+				&lt;fn:add-class **name="selected"** **test="attrs.selected"**/>
+				&lt;span>text&lt;/span>
+			#!- &lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

@@ -2,6 +2,11 @@
 	var _rname = /^(.*?)\s+([-—]+\s+)/,
 		_repos = [
 			{
+				"name": "JSBench",
+				"desc": "JSBench — JavaScript benchmark playground. User-friendly interface, sync with your github, code highlighting and etc.",
+				"url": "http://jsbench.github.io/"
+			},
+			{
 				"name": "Ply",
 				"desc": "Ply — Amazing layer/modal/dialog system. Wow!",
 				"url": "http://rubaxa.github.io/Ply/"
