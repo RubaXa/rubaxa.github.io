@@ -467,7 +467,7 @@
 				#!-&lt;/fn:if>
 
 				#!+ &lt;fn:if test="**attrs.route.is('#ask')**">
-					&lt;b:user-card key="cu" model="{attrs.currentUser}" />
+					&lt;b:user-card key="cu" model="{attrs.route.model.currentUser}" />
 				#!- &lt;/fn:if>
 			&lt;/fn:match>
 		</pre>
