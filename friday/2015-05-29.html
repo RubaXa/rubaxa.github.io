@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>29.05.2015: Dump — альтернативный web-клиент для mail.ru</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Dump — альтернативный web-клиент для mail.ru</h1>
+		<p>JSSDK, Pilot v2.0 и toolkit</p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2 style="color: #c00;">
+			ВНИМАНИЕ
+			<div style="font-size: 20%; opacity: .6">
+				Всё что вы прочтете дальше, просто размышления в слух и псевдо код,<br/>
+				хоть и рабочий, это только набор идей/подходов для<br/>дискуссиив поисках верного ответа.
+			</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Dump</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Нам понадобится</h2>
+		<ul>
+			<li>JSSDK — события, данные, действия</li>
+			<li>Pilot — роутинг (костяк приложения)</li>
+			<li>toolkit — что-то непонятное</li>
+			<li>Макет!</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Макет?!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Макет?!</h2>
+		<p>
+			Да, именно макет, идем на <a href="http://www.dribbl.com/">dribbl</a>,
+			ищем и выбираем понравишися, а потом делаем примерно что-то похожее.
+		</p>
+		<p>
+			А ещё иконки, я взял <a href="http://fortawesome.github.io/Font-Awesome/">Font Awesome</a>.
+		</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Характеристики прототипа</h2>
+		<ul>
+			<li>Три колонки</li>
+			<li>Список писем и чтение на одной страницы</li>
+			<li>Если не читаем, то две колонки</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<style>
+			.css-mock {
+				height: 500px;
+			}
+			.css-mock > div {
+				float: left;
+				height: 100%;
+				text-align: center;
+			}
+			.css-mock .b {
+				margin: 10px 10px;
+				padding: 10px;
+				border: 1px dashed #666;
+			}
+			.css-mock .c {
+				text-align: left;
+			}
+		</style>
+		<div class="css-mock">
+			<div style="width: 20%; background: #1B2224; color: #fff;">
+				<div class="b" style="margin-top: 115px; height: 200px;">Папки</div>
+			</div>
+			<div style="width: 70%;">
+				<div class="b c">Название папки</div>
+				<div class="b" style="margin-top: 30px; height: 300px;">Письма</div>
+			</div>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<div class="css-mock">
+			<div style="width: 20%; background: #1B2224; color: #fff;">
+				<div class="b" style="margin-top: 115px; height: 200px;">Папки</div>
+			</div>
+			<div style="width: 30%;">
+				<div class="b c">Название папки</div>
+				<div class="b" style="margin-top: 30px; height: 300px;">Письма</div>
+			</div>
+			<div style="width: 50%; background: #E9EDF0;">
+				<div class="b c">Название письма</div>
+				<div class="b" style="margin-top: 30px; height: 350px;">Тело письма</div>
+			</div>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Маршруты</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Маршруты</h2>
+		<ul>
+			<li><b>/:folder?</b> — список писем</li>
+			<li><b>/:folder/:message/</b> — чтение письма</li>
+			<li><em>&hellip;ну и всё, пока хватит</em></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pilot v2.0</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot v2.0</h2>
+		<ul>
+			<li>Никаких множественных маршрутов</li>
+			<li>Древовидное описание маршрутов</li>
+			<li>Вложенные модели</li>
+			<li>Регионы (это как марщрурт, но не он)</li>
+			<li>Ни каких Pilot.View, теперь это только роутинг</li>
+			<li>Но! Есть расширения (примиси) ;]</li>
+			<li>Без jQuery</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Проложенька</h2>
+		<pre class="js-code compact-xs">
+		var app = Pilot.create({
+			#!+ "#messages": { // список писем
+				#! url: "/:folder?",
+				#!+ "on:route": function (req) {
+					console.log("folder:", req.params.folder);
+				#!- }
+
+				#!+ "#message": { // письмо
+					#! url: "/:folder/:message/",
+					#!+ "on:route": function (req) {
+						console.log("message:", req.params.message);
+					#!- }
+				#!- }
+			#!- }
+		});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Проложенька: тестируем</h2>
+		<pre class="js-code">
+			#! app.nav("/"); // folder:
+			#! app.nav("/inbox/"); // folder: inbox
+			#! app.nav("/123/"); // folder: 123
+			#!+ app.nav("/trash/987/"); // folder: 123
+			#!-										  	// message: 987
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Эээээ...</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Эээээ...</h2>
+		<p><b><em>(пусто)</em>, inbox, trash и 123</b></p>
+		<p>Никуда не годиться, всегда нужен <b>id папки</b>!</p>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Разварачиваем URL</h2>
+		<pre class="js-code">
+			url: {
+				#! pattern: "/:folder?",
+				#! default: Folder.INBOX, // по умолчанию
+				#!+ decode: function (value) {
+					#! return Folder[value.toUpperCase()] // INBOX, TRASH, etc
+					#!			|| parseInt(value, 10);
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Проложенька: тестируем</h2>
+		<pre class="js-code">
+			app.nav("/"); // folder: 0
+			app.nav("/inbox/"); // folder: 0
+			app.nav("/123/"); // folder: 123
+			app.nav("/trash/987/"); // folder: 500002
+													  	// message: 987
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Модели/Данные</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs">
+			var app = Pilot.create({
+				model: {
+					#!+ folders: function (req) { // список папок
+						return Folder.find();
+					#!- },
+					#!+ folder: function (req) { // текущая папка
+						return Folder.findOne(req.params.folder);
+					#!- }
+				},
+				"#messages": { // список писем
+					model: {
+						#!+ messages: function (req) {
+							return Message.find({folder: req.params.folder});
+						#!- }
+					},
+					"#message": { // письмо
+						model: {
+							#!+ message: function (req) {
+								return Message.findOne(req.params.message);
+							#!- }
+						}
+					}
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code">
+			app.nav("/inbox/");
+				// GET /api/v1/folders
+				// GET /api/v1/folder?id=0
+
+			// или
+			app.nav("/trash/987/");
+				// GET /api/v1/folders
+				// GET /api/v1/folder?id=500002
+				// GET /api/v1/messages/message?id=987
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Много запросов!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Уменьшаем запросы (способы)</h2>
+		<ul>
+			<li>Через Pilot</li>
+			<li>При помощи JSSDK</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Уменьшаем запросы средствами Pilot</h2>
+		<pre class="js-code compact">
+			// Что имеем:
+			model: {
+				folders: function (req) {
+					// все папки
+					return Folder.find();
+				},
+				folder: function (req) {
+					// а тут как раз и нужна папка одна из «всех»
+					return Folder.findOne(req.params.folder);
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Уменьшаем запросы средствами Pilot</h2>
+		<pre class="js-code compact">
+			model: {
+				folders: function (req) {
+					return Folder.find();
+				},
+				folder: function (req, <mark>waitFor</mark>) {
+					#!+ // Дожидаемся загрузки `folders` и получаем папку
+					return waitFor("folders").then(function (list) {
+						return list.get(req.params.folder);
+					#!- });
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			RPC.batch
+			<div style="font-size: 70%; opacity: .7">JSSDK</div>
+		</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Без RPC.batch</h2>
+		<pre class="js-code">
+		RPC.call("some/method") // POST /v1/some/method
+			.then(function () { ... });
+
+		RPC.call("other/method") // POST /v1/other/method
+			.then(function () { ... });
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>RPC.batch</h2>
+		<pre class="js-code">
+		RPC.batch(function () {
+			RPC.call("some/method").then(function () { ... });
+			RPC.call("other/method").then(function () { ... });
+		});
+		// POST /v1/batch/?batch=[
+		//  {type:"post", url: "/v1/some/method", data:{}, headers:{}},
+		//  {type:"post", url: "/v1/other/method", data:{}, headers:{}}
+		// ]
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>RPC.batch</h2>
+		<ul>
+			<li>Группирует запросы в одну пачку</li>
+			<li>Поддерживается вложенность (в итоге всегда один запрос)</li>
+			<li>Разрешается только после выполнения всех запросов</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Pilot + RPC.batch</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot + RPC.batch</h2>
+		<pre class="js-code compact">
+		model: {
+			<mark>_batch: RPC.batch</mark>, // и всё!
+			folders: function (req) {
+				return Folder.find();
+			},
+			folder: function (req, waitFor) {
+				return waitFor("folders").then(function (list) {
+					return list.get(req.params.folder);
+				});
+			}
+		}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>View</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>View</h2>
+		<p>
+			Как я уже сказал раньше, в Pilot v2.0 — это только роутинг и никакого Pilot.View там больше нет,
+			но есть расширения, они же примиси.
+		</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Mixins</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Mixins (черновик)</h2>
+		<ul>
+			<li><b>dom</b> — бывший Pilot.View</li>
+			<li><b>fest</b> — интеграция с fest (использует dom)</li>
+			<li><em>&hellip;пока всё :]</em></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Mixins: dom (черновик)</h2>
+		<pre class="js-code">
+			var app = Pilot.create({
+				#! mixins: [require("pilot/mixin/dom")]
+				#! dom: "&lt;div>Layout&lt;/div>",
+				#! parentEl: "body", // default
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Mixins: dom (черновик)</h2>
+		<pre class="js-code">
+			// или
+			var app = Pilot.create({
+				mixins: [require("pilot/mixin/dom")]б
+				el: "#app"
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>toolkit/fest&hellip;</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Сетка</h2>
+		<pre class="js-code compact">
+			&lt;div bem:block="layout">
+				&lt;div class="layout__1">
+					&lt;div data-view-id="folders">&lt;/div>
+				&lt;/div>
+				&lt;div class="layout__2">
+					&lt;div data-view-id="messages">&lt;/div>
+				&lt;/div>
+				&lt;div class="layout__3">
+					&lt;div data-view-id="message">&lt;/div>
+				&lt;/div>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>ui блоки</h2>
+		<pre class="js-code">
+			var ui = {
+				nav: require("ui/nav/nav"),
+				caption: require("ui/caption/caption"),
+				toolbar: require("ui/toolbar/toolbar"),
+				datalist: require("ui/datalist/datalist"),
+				message: require("ui/message/message")
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			var app = Pilot.create({
+				dom: require("ui/block").render("layout"),
+				mixins: [require("pilot/mixin/dom")],
+
+				#!+ // Это регионы, это как маршруты, но не они ;]
+				"*": {
+					#!+ folders: {
+						#! mixins: [require("pilot/mixin/fest")],
+						#!+ components: {
+							#! nav: ui.nav({<mark>models: Folder.all</mark>}),
+						#!- },
+						#!+ "on:route": function () {
+							this.nav.active = this.model.folder.id;
+						#!- }
+					#!- }
+				#!- },
+				// ...
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -40px">
+			"#messages": {
+				mixins: [require("pilot/mixin/fest")],
+				components: {
+				#!	caption: ui.caption({}),
+				#!	datalist: ui.datalist({}),
+				#!	toolbar: ui.toolbar({})
+				},
+				"on:route": function () {
+					#! this.caption.text = this.model.folder.get("name");
+					#! this.datalist.setModels(this.model.messages);
+				},
+				"#message": {
+					mixins: [require("pilot/mixin/fest")],
+					components: {
+						#! message: ui.message({})
+					},
+					"on:route": function () {
+						#! this.letter.model = this.model.message;
+					}
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Медиаторы</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Медиаторы</h2>
+		<p>— это паттерн, позволяющий связать компоненты так, чтобы они не знали друг о друге.</p>
+		<pre class="js-code">
+			var action = require("mediator/action");
+			var selection = require("mediator/selection");
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -50px">
+			// Делегируем события медиаторам
+			components: {
+				caption: ui.caption({}),
+				datalist: ui.datalist({
+					#! onselect: selection.onSelect,
+					#! onunread: action.toggleUnread,
+					#! ondelete: action.delete
+				}),
+				toolbar: ui.toolbar({
+					hidden: true,
+					#!+ items: [{
+						#! icon: "check", text: "Прочитать",
+						#! onclick: action.markAsReadedSelected
+					}, {
+						#! icon: "trash-o", text: "Удалить",
+						#! onclick: action.deleteSelected
+					#!- }]
+				})
+			},
+			init: function () {
+				#! action.setSource(selection);
+				#! selection.setSource(this.datalist);
+				#! action.on("execution", () => { selection.clear(); });
+				#! selection.on("change", (evt) => { this.toolbar.hidden = !evt.selected; });
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Да, совсем забыл!</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Действия</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Помечаем письмо как прочитанное</h2>
+		<pre class="js-code compact">
+			"#message": {
+				// ...
+				"on:route": function () {
+					#!+ Action.execute("mail.MarkAs", {
+						#! flag: "unread",
+						#! state: false,
+						#! models: [this.model.message]
+					#!- });
+					this.letter.model = this.model.message;
+				}
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>О, а ещё права!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>О, а ещё права!</h2>
+		<pre class="js-code">
+			var app = Pilot.create({
+				// ...
+				access: require("service/auth")
+				// ...
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact">
+			define(["uuid", "RPC", "Ply"], function (uuid, RPC, Ply) {
+				var authPromise, loginPromise;
+				#!+ RPC.errorHandler.push({
+					#! status: "denied:user",
+					#! process: function (xhr) { ... }
+				#!- });
+				return function () {
+					if (!authPromise) {
+						authPromise = RPC.call("user");
+					}
+					return authPromise;
+				};
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs">
+			RPC.errorHandler.push({
+				status: "denied:user",
+				process: function (xhr) {
+					if (!loginPromise) {
+						#!+ loginPromise = Ply.dialog("prompt", {
+							#! onaction: function (ui) { .. }
+						}, {
+							#! title: "Log in",
+							#!+ form: {
+								email: "Email",
+								password: {hint: "Password", type: "password" }
+							#!- },
+							#! ok: "Yarrr!",
+							#! cancel: false
+						#!- });
+					}
+
+					return loginPromise;
+				}
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://dl.dropboxusercontent.com/s/yxe27iy6pzai6pl/Screenshot%202015-05-28%2016.42.10.png?dl=0" width="100%"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			onaction: function (ui) {
+				var layerEl = ui.widget.layerEl;
+				layerEl.classList.remove("shake"); // анимация
+
+				#!+ return RPC.call("user/login", ui.data).then(function () {
+					#! var email = ui.data.email;
+
+					#! xhr.data.email = email; // повторять будем уже с email
+					#! RPC.setup("email", email);
+
+					#! loginPromise = null;
+				}, function () {
+					layerEl.classList.add("animated shake"); // ошибка
+					return Promise.reject();
+				#!- });
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Иотого</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://dl.dropbox.com/s/zcgp3pogm52a0mm/Screenshot%202015-05-28%2016.46.19.png?dl=0" width="100%"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://dl.dropboxusercontent.com/s/67t2kch19f1ag4a/Screenshot%202015-05-28%2016.48.00.png?dl=0" width="100%"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Надеюсь понятно</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<div style="font-size: 200%; margin-top: 150px; text-align: center">
+			<a href="https://github.com/RubaXa/Dump/">github.com/RubaXa/Dump</a>
+		</div>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Проблемы!</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Проблемы!</h2>
+		<p>
+			На данный момент я вижу только одну самую большую проблему, это <b>layout/grid</b> и размещение в нем
+			компонентов, особенно если он динамический.
+		</p>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
