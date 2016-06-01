@@ -350,7 +350,6 @@ h2 b { color: #333; }
 }
 
 .slide pre code:only-child:before {
-	content: ''
 }
 
 .slide pre mark, markx {

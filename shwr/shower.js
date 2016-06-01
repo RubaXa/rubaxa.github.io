@@ -1018,11 +1018,11 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
-						.replace(/(\s-?\d+|(?=[^=])".*?[^\\]"|\/\/.+|(?:new|function|return|var|import|from|const|let))/g, function (_, val) {
+						.replace(/(\s[-+]?\d+|""|(?=[^=])(["`]).*?[^\\]\2|\/\/.+|\b(?:new|function|return|var|import|from|const|let|class|extends)\b)/g, function (_, val) {
 							var type = '';
-							if (/^-?\d+$/.test(val)) {
+							if (/^[-+]?\d+$/.test(val)) {
 								type = 'number';
-							} else if (/^"/.test(val)) {
+							} else if (/^["`]/.test(val)) {
 								type = 'string'
 							} else if (/\/\//.test(val)) {
 								type = 'comment';
@@ -1031,6 +1031,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 							}
 							return '<span class="' + type + '">' + val + '</span>';
 						})
+						.replace(/([\(\[,])(\d+)([,\)\]])/gi, '$1<span class="number">$2</span>$3')
 						.replace(/(\/\*.*?\*\/)/gi, '<span class="comment">$1</span>')
 						.replace(/(&lt;!--.*?--(&gt;|>))/gi, '<span class="comment">$1</span>')
 						.replace(/(\b\w+)\(/gi, '<span class="function">$1</span>(')
@@ -1040,8 +1041,9 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/\b(default|arguments|true|false)\b/g, '<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\b(export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:-]+)/g, '$1<span class="tomorrow-blue">$2</span>')
+						.replace(/\b(b|bem):([a-z0-9-]+)/g, '<span class="tomorrow-purple">$1</span>:<span class="tomorrow-aqua">$2</span>')
 						.replace(/(\s\d+)/, '<span class="number">$1</span>')
-//						.replace(/(".*?")/, '<span class="string">$1</span>')
+						.replace(/""/, '<span class="string">""</span>')
 //						.replace(/(\/\/.+)/, '<mark class="comment">$1</mark>')
 						.replace(/\$\$(\d+)\$\$/g, function (_, i) {
 							return html[i-1];
@@ -1054,6 +1056,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/(\|[^$]+)/, function (_, val){
 					return val.replace(/&/g, '&amp;');
 				})
+				.replace(/(".*?")/g, '<span class="code-str">$1</span>')
 				.replace(/(".*?")/g, '<span class="code-str">$1</span>')
 				.replace(/((?:^\s*| > | = ))(\w+)([\.\s#[])/g, '$1<span class="code-node">$2</span>$3')
 				.replace(/ > (\w+)/g, ' > <span class="code-node">$1</span>')
