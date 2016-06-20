@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>17.06.2016: React, где скорость?</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>React, где скорость?</h1>
+	</header>
+
+	<section class="slide"><div>
+		<h2>Предыстория</h2>
+		<p>
+			Третий год наблюдаю за развитием React и его окружением, которое меняет со скоростью света.
+			Ещё тогда пробовал писать свои тесты на производительность и они не впечатляли. Время шло, но хайп только усиливался,
+			вскоре появился Redux, который вывел React в бесспорные лидеры.
+		</p>
+		<p>Неделю назад, я подумал, а почему бы мне собрать текущий проект на Redux и проверить, насколько лучше стало.</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Условия эксперимента</h2>
+		<ul>
+			<li>Redux</li>
+			<li>ES/stage-0</li>
+			<li>Webpack/Hot Reload</li>
+			<li>Максимальная разбивка на компоненты (как у нас)</li>
+			<li>Использовать только готовые решения</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Первые проблемы</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Первые проблемы</h2>
+		<p>
+			Вселенная React/Redux гипер изменчива, поэтому любая документации как запустить всё это (с использованием
+			того же Webpack), статьи и скринкасты устаревают на глазах, а то, что месяц назад было best practicts, вполне возможно уже не так.
+		</p>
+		<p>
+			Поэтому, чтобы окончательно не запутаться и не терять время (а поверьте, часа 4 были безвозвратно потеряны,
+			в попытках с нуля поднять инфраструктуру) решил использовать один из популярных
+			<a href="https://github.com/search?o=desc&q=Redux+Boilerplate&s=stars&type=Repositories&utf8=%E2%9C%93">Redux Boilerplate</a>.
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Redux Boilerplate</h2>
+		<ol>
+			<li><a href="https://github.com/erikras/react-redux-universal-hot-example">erikras/react-redux-universal-hot-example</a></li>
+			<li><a href="https://github.com/tj/frontend-boilerplate">tj/frontend-boilerplate</a></li>
+		</ol>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>erikras/react-redux-universal-hot-example</h2>
+		<ul style="font-size: 40%">
+			<li><a href="https://medium.com/@mjackson/universal-javascript-4761051b7ae9">Universal</a> rendering</li>
+			<li>Both client and server make calls to load data from separate API server</li>
+			<li><a href="https://github.com/facebook/react">React</a></li>
+			<li><a href="https://github.com/rackt/react-router">React Router</a></li>
+			<li><a href="http://expressjs.com">Express</a></li>
+			<li><a href="http://babeljs.io">Babel</a> for ES6 and ES7 magic</li>
+			<li><a href="http://webpack.github.io">Webpack</a> for bundling</li>
+			<li><a href="http://webpack.github.io/docs/webpack-dev-middleware.html">Webpack Dev Middleware</a></li>
+			<li><a href="https://github.com/glenjamin/webpack-hot-middleware">Webpack Hot Middleware</a></li>
+			<li><a href="https://github.com/rackt/redux">Redux</a>'s futuristic <a href="https://facebook.github.io/react/blog/2014/05/06/flux.html">Flux</a> implementation</li>
+			<li><a href="https://github.com/gaearon/redux-devtools">Redux Dev Tools</a> for next generation DX (developer experience). Watch <a href="https://www.youtube.com/watch?v=xsSnOQynTHs">Dan Abramov's talk</a>.</li>
+			<li><a href="https://github.com/reactjs/react-router-redux">React Router Redux</a> Redux/React Router bindings.</li>
+			<li><a href="http://eslint.org">ESLint</a> to maintain a consistent code style</li>
+			<li><a href="https://github.com/erikras/redux-form">redux-form</a> to manage form state in Redux</li>
+			<li><a href="https://github.com/erikras/lru-memoize">lru-memoize</a> to speed up form validation</li>
+			<li><a href="https://github.com/erikras/multireducer">multireducer</a> to combine single reducers into one key-based reducer</li>
+			<li><a href="https://github.com/webpack/style-loader">style-loader</a>, <a href="https://github.com/jtangelder/sass-loader">sass-loader</a> and <a href="https://github.com/webpack/less-loader">less-loader</a> to allow import of stylesheets in plain css, sass and less,</li>
+			<li><a href="https://github.com/shakacode/bootstrap-sass-loader">bootstrap-sass-loader</a> and <a href="https://github.com/gowravshekar/font-awesome-webpack">font-awesome-webpack</a> to customize Bootstrap and FontAwesome</li>
+			<li><a href="https://github.com/nfl/react-helmet">react-helmet</a> to manage title and meta tag information on both server and client</li>
+			<li><a href="https://github.com/halt-hammerzeit/webpack-isomorphic-tools">webpack-isomorphic-tools</a> to allow require() work for statics both on client and server</li>
+			<li><a href="https://mochajs.org/">mocha</a> to allow writing unit tests for the project.</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>tj/frontend-boilerplate <small style="vertical-align: top; opacity: .5; font-size: 50%">мой выбор</small></h2>
+		<ul style="font-size: 80%">
+			<li><a href="https://webpack.github.io">Webpack</a></li>
+			<li><a href="https://facebook.github.io/react/">React</a></li>
+			<li><a href="https://github.com/reactjs/redux">Redux</a></li>
+			<li><a href="https://babeljs.io/">Babel</a></li>
+			<li><a href="https://github.com/postcss/autoprefixer">Autoprefixer</a></li>
+			<li><a href="https://github.com/postcss/postcss">PostCSS</a></li>
+			<li><a href="https://github.com/outpunk/postcss-modules">CSS modules</a></li>
+			<li><a href="http://simplaio.github.io/rucksack/docs">Rucksack</a></li>
+			<li><a href="https://github.com/reactjs/react-router-redux">React Router Redux</a></li>
+			<li><a href="https://github.com/zalmoxisus/redux-devtools-extension">Redux DevTools Extension</a></li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Redux</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img height="100%" src="http://blog.javascripting.com/content/images/2015/08/FluxDiagram.png"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<div style="margin: 40px -80px; position: relative">
+			<img width="100%" src="https://farm1.staticflickr.com/675/22340718181_e3ee9300a0_b.jpg"/>
+		</div>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img height="100%" style="margin-left: 3%" src="https://dl.dropbox.com/s/lyz51xrnvcs6blg/Screenshot%202016-06-15%2017.28.15.png?dl=0"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Redux structure</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Redux structure</h2>
+		<ul>
+			<li>/<b>actions</b>/ — возможные действия</li>
+			<li>/<b>components</b>/ — «глупые» компоненты</li>
+			<li>/<b>containers</b>/ — копановка «глупых» компонентов</li>
+			<li>/<b>constants</b>/ — константы (действия и т.п.)</li>
+			<li>/<b>reducers</b>/ — обработка действий системы</li>
+			<li><b>index.js</b> — точка входа</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>MyRedux structure</h2>
+		<ul>
+			<li>/<b>actions</b>/ — возможные действия</li>
+			<li>/<b>components</b>/ — все компоненты</li>
+			<li>/<b>constants</b>/ — константы (действия, методы api и т.п.)</li>
+			<li>/<b>decorators</b>/ — декораторы</li>
+			<li>/<b>middlewares</b>/ — посредники</li>
+			<li>/<b>reducers</b>/ — обработка действий системы</li>
+			<li>/<b>store</b>/ — конфигурация и модели</li>
+			<li><b>index.js</b> — точка входа</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Приложение</h2>
+		<ul>
+			<li>Авторизация</li>
+			<li>Загрузка списка папок и писем</li>
+			<li>Переход между папками</li>
+			<li>Выбор писем</li>
+		</ul>
+	</div></section>
+	
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/u5fqt5kf5urivwl/Screenshot%202016-06-16%2012.10.55.png?dl=0"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Основные компоненты</h2>
+		<ul style="font-size: 70%">
+			<li><b>App</b> — приложение</li>
+			<li><b>AuthForm</b> — форма авторизации</li>
+			<li><b>Avatar</b> — автара</li>
+			<li><b>Button</b> — кнопка</li>
+			<li><b>Folders</b> — список папок</li>
+			<li><b>FoldersItem</b> — элемент списка папок</li>
+			<li><b>Headline</b> — глобальное меню всеъ проектов</li>
+			<li><b>Icon</b> — иконка</li>
+			<li><b>Layout</b> — сетка приложения</li>
+			<li><b>Letters</b> — список писем/тредов</li>
+			<li><b>LettersItem</b> — элемент списка писем/тредов</li>
+			<li><b>LetterStatus</b> — статус письма (прочитано/непрочитано, фладок)</li>
+			<li><b>PortalMenu</b> — меню проекта</li>
+			<li><b>Scrollable</b> — прокручевамя область</li>
+			<li><b>Swipeable</b></li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -100px">Button.js</h2>
+		<pre class="js-code compact-xxs" style="margin-top: -30px">
+			import React, {Component} from "react";
+			#! import classNames from "classnames"; // хелпер
+			#! import Icon from "./Icon";
+			#!+ export default class Button extends Component {
+				render() {
+					#! const {text, short, ico, big, pressed, borderless, type, size, disabled, onTap} = this.props;
+					#!+ const classes = classNames("button", {
+						"button_short": short || !text,
+						"button_has-ico": ico,
+						"button_big": big,
+						"button_pressed": pressed,
+						"button_borderless": borderless,
+						"button_primary": type == "submit",
+						[`button_size_${size}`]: size,
+					#!- });
+					#!+ return &lt;button className={classes} type={type} disabled={disabled} onClick={onTap}>
+						{ico ? (
+							&lt;span className={classNames({"button__ico": true, [`button__ico_size_${size}`]: size})}>
+								&lt;Icon name={ico} size={size}/>
+							&lt;/span>
+						) : null}
+						{!short && text ? &lt;span className="button__txt">{text}&lt;/span> : null}
+					#!- &lt;/button>;
+				}
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px;">Store</h2>
+		<pre class="js-code">
+			{
+				auth: {
+					state: false, // сотояние авторизации
+					error: false, // ошибка при авторизации
+					busy: false, // идет авторизация
+					email: null, // активный email
+				},
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px;">Важно!</h2>
+		<pre class="js-code">
+			// Store, он же state формируют редьюсеры
+			// redcuers/index.js
+			import {combineReducers} from "redux";
+			#! import auth from "./auth";
+			#! import other from "./other";
+			#!+ export default combineReducers({
+				#! auth,
+				#! other,
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -100px">index.js</h2>
+		<pre class="js-code compact-xs">
+			#!+ import {Router, Route, IndexRedirect, browserHistory} from "react-router";
+			import {syncHistoryWithStore} from "react-router-redux";
+			import {Provider } from "react-redux";
+			import ReactDOM from "react-dom";
+			import React from "react";
+			import App from "./components/App";
+			#!- import configure from "./store";
+			#! const initialState = {}; // или {auth: {..initial..}}
+			#! const store = configure(initialState);
+			#! const history = syncHistoryWithStore(browserHistory, store);
+			#!+ ReactDOM.render(
+				&lt;Provider store={store}>
+					&lt;Router history={history}>
+						&lt;Route path="/">
+							**&lt;IndexRedirect to="/0/"/>**
+						&lt;/Route>
+						&lt;Route path="/:folder" component={App}/>
+					&lt;/Router>
+				&lt;/Provider>,
+				document.getElementById("root")
+			#!- );
+		</pre>
+	</div></section>
+	
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">/components/App.js</h2>
+		<pre class="js-code compact">
+			import React, {Component} from "react";
+			import {connect} from "react-redux";
+			import AuthForm from "./AuthForm";
+			#!+ // Декорируем класса соединяя его с Redux
+			@connect(
+				state => state // Это и есть map to props
+			)
+			export default class App extends Component {
+				#!+ render() {
+					const {auth} = this.props;
+					return !auth.state ? &lt;AuthForm/> : &lt;h1>Привет&gt;/h1>;
+				#!- }
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">/components/AuthForm.js</h2>
+		<pre class="js-code compact-xs">
+			import React, {Component} from "react";
+			import Button from "./Button";
+			export class AuthForm extends Component {
+				render() {
+					const {error, busy} = this.props;
+					return (
+						&lt;form className="well auth-form" **onSubmit={::this.handleSubmit}**>
+							&lt;h2>Авторизуйся, смерд!&lt;/h2>
+							**{error ? &lt;b>Ошибка&lt;/b> : null}**
+							&lt;input ref="email" className="input" placeholder="Email" name="email"/>
+							&lt;p>&lt;input ref="pass" className="input" placeholder="Password" name="pass" type="password"/>&lt;/p>
+							&lt;Button text="Войти" type="submit" **disabled={busy}**/>
+						&lt;/form>
+					);
+				}
+				#!+ handleSubmit(evt) {
+					// ????
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Первое действие</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Что дальше?</h2>
+		<pre class="js-code">
+			// constants/login.js
+			export const LOGIN_REQUEST = "LOGIN_REQUEST";
+
+			#!+ // actions/auth.js
+			import {LOGIN_REQUEST} from "../constants/auth";
+			export const login = (email, password) => ({
+				#! type: LOGIN_REQUEST, // обязательное поле
+				#! payload: {email, password} // какая-то полезная нагрузка
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">AuthForm.js</h2>
+		<pre class="js-code compact-xs">
+			#! import * as **actions** from "../actions/auth";
+			#! import {connect} from "react-redux";
+			#! import {bindActionCreators} from "redux";
+			#!+ @connect(
+				(state) => state, // mapStateToProps
+				#!+ (dispatch) => ({ // mapDispatchToProps
+					#! **authActions**: bindActionCreators(actions, dispatch)
+				#!- })
+			)
+			export class AuthForm extends Component {
+				handleSubmit(evt) {
+					#! const {email, pass} = this.refs;
+					#! this.props.**authActions.login**(email.value, pass.value);
+					#! evt.preventDefault();
+				}
+				render() {
+					// ...
+				}
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">reducers/auth.js</h2>
+		<pre class="js-code compact-s">
+			import {LOGIN_REQUEST} from "../constants/auth";
+			#!+ const initialState = {
+				state: true,
+				email: null,
+				error: false,
+				busy: true
+			#!- };
+			#!+ export default (state = **initialState**, action) => {
+				#!+ switch (action.type) {
+					#!+ case LOGIN_REQUEST:
+						return {...state, busy: true}; // создаем новый `state`
+
+					default:
+					#!-	return state;
+				#!- }
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Что дальше?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Что дальше?</h2>
+		<p>
+			А вот теперь самое интересное, как же сделать запрос и обработать результат?
+		</p>
+
+		<p class="next">
+			Логично предположить, что это должен сделать actions/login... но это простая функция, кот орая возвращает объект?!
+			Как быть?
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">actions/login.js</h2>
+		<pre class="js-code">
+			import {LOGIN_REQUEST} from "../constants/auth";
+			export const login = (email, password) => ({
+				type: LOGIN_REQUEST, // обязательное поле
+				payload: {email, password} // какая-то полезная нагрузка
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>MIDDLEWARE</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>MIDDLEWARE / logger</h2>
+		<pre class="js-code">
+			export default function logger(store) {
+				return function wrapDispatchToAddLogging(next) => {
+					return function dispatchAndLog(action) => {
+						console.log(action);
+						return next(action);
+					};
+				};
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>MIDDLEWARE / redux-thunk</h2>
+		<pre class="js-code">
+			export default ({dispatch, getState}) => next => action => {
+				if (typeof action === "function") {
+					return action(dispatch, getState);
+				}
+
+				return next(action);
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">actions/login.js</h2>
+		<pre class="js-code">
+			export const login = (dispatch) => (email, password) => {
+				#!+ dispatch({
+					type: LOGIN_REQUEST, // обязательное поле
+					payload: {email, password} // какая-то полезная нагрузка
+				#!- });
+				#! fetch("api/login", {body: `email=${email}&password=${password}`})
+				#!	.then(response => response.json())
+				#!	.then(body => dispatch({type: LOGIN_SUCCESS, body})
+				#!	.catch(error => dispatch({type: LOGIN_FAIL, error});
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Мдя, копипаста</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>MIDDLEWARE / API</h2>
+		<pre class="js-code">
+			export const login = (email, password) => ({
+				api: USER_LOGIN, // вызываемый метод API
+				types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL],
+				data: {email, password},
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">MIDDLEWARE / API</h2>
+		<pre class="js-code compact-s">
+			export default ({dispatch, getState}) => next => action => {
+				#! const {api, types, data, ...rest} = action;
+				#!+ if (!(api && types)) {
+					return next(action);
+				#!- }
+				#! const [REQUEST, SUCCESS, FAIL] = types;
+				#! next({...rest, type: REQUEST, api, data});
+
+				#!+ return call(api, data, getState().auth).then(
+						(result) => next({...rest, result, type: SUCCESS, api, data}),
+						(error) => next({...rest, error, type: FAIL, api, data})
+					).catch((error) => {
+						console.error('MIDDLEWARE ERROR:', error, api, data);
+						next({...rest, error, type: FAIL});
+				#!-	});
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>git add .</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">git status</h2>
+		<ul style="font-size: 60%">
+			<li>new file:   src/actions/auth.js</li>
+			<li>new file:   src/components/App.js</li>
+			<li>new file:   src/components/AuthForm.js</li>
+			<li>new file:   src/components/Button.js</li>
+			<li>new file:   src/components/Icon.js</li>
+			<li>new file:   src/constants/api.js</li>
+			<li>new file:   src/constants/auth.js</li>
+			<li>new file:   src/index.html</li>
+			<li>new file:   src/index.js</li>
+			<li>new file:   src/middleware/api.js</li>
+			<li>new file:   src/middleware/index.js</li>
+			<li>new file:   src/middleware/logger.js</li>
+			<li>new file:   src/reducers/auth.js</li>
+			<li>new file:   src/reducers/index.js</li>
+			<li>new file:   src/store/index.js</li>
+		</ul>
+		<p>15 файлов</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/RubaXa/redux-octavius/tree/0.1.0">redux-octavius v0.1.0</a></h2>
+		<ul>
+			<li>
+				<b>bundle.js ~171KB</b>
+			</li>
+			<li class="next">
+				<b>vendor.bundle.js ~1.2MB</b> 💩
+				<ul>
+					<li>react</li>
+					<li>react-dom</li>
+					<li>react-redux</li>
+					<li>react-router</li>
+					<li>react-router-redux</li>
+					<li>redux</li>
+				</ul>
+			</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Юзер</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Юзер</h2>
+		<p>
+			Получившаяся версия только авторизует и получает в ответ токен, поэтому нам нужно доработать действие login, чтобы
+			после авторизации сразу получить данные юзера.
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Данные юзера (новые константы)</h2>
+		<pre class="js-code">
+			// constants/api.js
+			export const USER_SHORT_METHOD = "user/short";
+
+			// constants/user.js
+			export const USER_FETCH = "USER_FETCH";
+			export const USER_FETCH_SUCCESS = "USER_FETCH_SUCCESS";
+			export const USER_FETCH_FAIL = "USER_FETCH_FAIL";
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Модифицыруем reducers/auth.js</h2>
+		<pre class="js-code compact-s">
+			+import {LOGIN_REQUEST, LOGIN_FAIL} from "../constants/auth";
+			+import {USER_FETCH_SUCCESS, USER_FETCH_FAIL} from "../constants/user";
+			const initialState = {..};
+			export default (state = initialState, action) => {
+				switch (action.type) {
+					case LOGIN_REQUEST:
+						return {...state, busy: true};
+			+		case USER_FETCH_SUCCESS:
+			+			return {...state, ...action.result, state: true, busy: false};
+					case LOGIN_FAIL:
+			+		case USER_FETCH_FAIL:
+						return {...state, error: true, busy: false};
+					default:
+						return state;
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">Самое интересное actions/auth.js</h2>
+		<pre class="js-code compact-s">
+			import {USER_LOGIN_MEETHOD} from "../constants/api";
+			import {LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL} from "../constants/auth";
+			#! import {fetchUser} from "./user";
+			#!+ export const login = (email, password) => **async** (dispatch) => {
+				#!+ const response = **await** dispatch({
+					api: USER_LOGIN_MEETHOD,
+					data: {email, password},
+					types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL],
+				#!- });
+				#!+ if (!response.error) {
+					return dispatch(fetchUser(email));
+				#!- }
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -0px">/components/App.js</h2>
+		<pre class="js-code compact-s">
+			@connect(
+				state => state
+			)
+			export default class App extends Component {
+				render() {
+					const {auth} = this.props;
+					return !auth.state ? &lt;AuthForm/> : &lt;h1>Привет, <mark>{auth.email}</mark>&lt;/h1>;
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px"><a href="https://github.com/RubaXa/redux-octavius/tree/0.2.0">v0.2.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/12f6fcf8fce8a7aa74fd919b71d2e7d774aea52b">DIFF</a></h2>
+		<ul>
+			<li>
+				<b>Создано</b>
+				<ul>
+					<li>src/actions/user.js</li>
+					<li>src/constants/user.js</li>
+				</ul>
+			</li>
+			<li class="next">
+				<b>Изменено</b>
+				<ul>
+					<li>src/actions/auth.js</li>
+					<li>src/components/App.js</li>
+					<li>src/constants/api.js</li>
+					<li>src/reducers/auth.js</li>
+				</ul>
+			</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Папки и треды</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Store += Папки и треды</h2>
+		<pre class="js-code">
+			{
+				auth: {..},
+				folders: [{folder}, ..], // reducers/folders.js
+				threads: {  // reducers/threads.js
+					current: { // текущий список тредов по папки
+						folder_id: [{thread}, ..],
+					},
+				},
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Но есть нюанс</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Но есть нюанс</h2>
+		<p>
+			В Почте мы не используем отдельный «конца» для получения списка папок и тредов, это не эффективно.
+			Для этого используется threads/status который сразу возвращает треды и папки,
+			оба редьюсера будут реагировать на действие THREADS_STATUS_SUCCESS.
+		</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Пять минут спустя</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">reducers/folders.js</h2>
+		<pre class="js-code">
+			import {STATUS_FETCH_SUCCESS} from "../constants/status";
+			export default (state = [], action) => {
+				switch (action.type) {
+					case STATUS_FETCH_SUCCESS:
+						return action.result.folders;
+					default:
+						return state;
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">reducers/threads.js</h2>
+		<pre class="js-code compact-s">
+			import {STATUS_FETCH_SUCCESS} from "../constants/status";
+			const initialState = {current: {}};
+			export default (state = initialState, action) => {
+				switch (action.type) {
+					case STATUS_FETCH_SUCCESS:
+						const {folder} = action.data;
+						const {threads} = action.result;
+						return {
+							...state,
+							current: {
+								...state.current,
+								[folder]: threads
+							}
+						};
+					default:
+						return state;
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Собираем App</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Собираем App</h2>
+		<pre class="js-code compact-xxs">
+			@connect(
+				#!+ ({auth, folders, threads}, {params}) => ({
+					auth,
+					folders,
+					threads: threads.current[params.folder | 0] || []
+				#!- })
+			)
+			export default class App extends Component {
+				render() {
+					#! const {auth, folders, threads, params} = this.props;
+					#! const folderId = params.folder | 0;
+					#!+ if (auth.state) {
+						return &lt;div>
+							&lt;Headline/>
+							&lt;PortalMenu/>
+							&lt;Layout
+								bordered
+							#!	left={&lt;Scrollable content={**&lt;Folders models={folders} active={folderId}/>**}/>}
+							#!	main={&lt;Scrollable content={**&lt;Letters models={threads}/>**}/>} />
+						&lt;/div>;
+					} else {
+						return &lt;AuthForm/>;
+					#!- }
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Как загрузить данные?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Как загрузить данные?</h2>
+		<p>Или точнее как вызвать действие? На какое событие?</p>
+		<div class="next">В React/Redux всё пляшет от состояния компонента и для этого в нашем распоряжении:</div>
+		<ul class="next" style="margin-left: 100px">
+			<li><b>componentWillMount</b></li>
+			<li><b>componentDidUpdate</b></li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>@fetchData<small style="display: block; font-size: 50%">(getter, executor)</small></h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>@fetchData</h2>
+		<pre class="js-code">
+			@connect(...)
+			@fetchData(
+				#! ({auth: email}, {folder}) => ({email, folder}),
+				#!+ ({email, folder}, actions)
+				#!-		=> email && actions.fetchStatus(folder)
+			)
+			export default class App extends Component {
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">@fetchData</h2>
+		<pre class="js-code compact-xs">
+			import React, {Component} from "react";
+			import shallowEqual from "react-redux/lib/utils/shallowEqual";
+			export default function fetchData(getter, executor) {
+				#!+ return (DecoratedComponent) => class FetchDataDecorator extends Component {
+					#!+ componentWillMount() {
+						executor(getter(this.props, this.props.params), this.props.actions);
+					#!- }
+
+					#!+ componentDidUpdate(prevProps) {
+						#! const params = getter(this.props, this.props.params);
+						#! const prevParams = getter(prevProps, prevProps.params);
+						#!+ !shallowEqual(params, prevParams)
+						#!-		&& executor(params, this.props.actions);
+					#!- }
+
+					render() {
+						return &lt;DecoratedComponent {...this.props} />;
+					}
+				#!- };
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Привязываем Действия к App</h2>
+		<pre class="js-code compact-s">
+			import {bindActionCreators} from "redux";
+			import {routerActions} from "react-router-redux";
+			import {fetchStatus} from "../actions/status";
+
+			@connect(
+				(...) => (...),
+				(dispatch) => ({ // mapDispatchToProps
+					#! actions: bindActionCreators({fetchStatus}, dispatch),
+					#! routerActions: bindActionCreators({...routerActions}, dispatch),
+				})
+			)
+			@fetchData(...)
+			export default class App extends Component {
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/RubaXa/redux-octavius/tree/0.3.0">v0.3.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/99673f0a55c5f49ffc999ed94cc23f7fdd165d9b">DIFF</a></h2>
+		<ul>
+			<li><b>21</b> files changed</li>
+			<li><b>508</b> insertions(+)</li>
+			<li><b>5</b> deletions(-)</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Навигация</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Навигация</h2>
+		<pre class="js-code compact-xxs">
+			export default class App extends Component {
+				render() {
+					// ...
+					if (auth.state) {
+						// ...
+						return &lt;div **ref="clickable"** onClick={(evt) => **this.handleGlobalClick(evt)**}>
+							// ...
+						&lt;/div>;
+					}
+				}
+				#!+ handleGlobalClick(evt) {
+					if (!evt.defaultPrevented) {
+						let el = evt.target;
+						#!+ while (el.parentNode && el !== this.refs.clickable) {
+							if (el.tagName === "A") {
+								evt.preventDefault();
+								#!+ this.props.**routerActions.push**(el.pathname);
+								#!- return;
+							}
+							el = el.parentNode;
+						#!- }
+					}
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://github.com/RubaXa/redux-octavius/tree/0.4.0">v0.4.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/a216a02c034699fd9de7b55316811f63cb04f235">DIFF</a></h2>
+		<ul>
+			<li><b>2</b> files changed</li>
+			<li><b>15</b> insertions(+)</li>
+			<li><b>3</b> deletions(-)</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Проблема</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Проблема</h2>
+		<p>
+			Основная проблема, что при переходе между Папками, сначала список тредов пустой и только после ответа сервера он обновляется.
+			Надо сделать так, чтобы переключение папки и обновление списка происходило только, если есть данные.
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Решение в лоб / <a href="https://github.com/RubaXa/redux-octavius/tree/0.4.1">v0.4.1</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/fe02c077b34a8149b7c8dbe64d7ef7d35ef583b8">DIFF</a></h2>
+		<pre class="js-code compact-xs">
+			#!+ constructor(...args) {
+				super(...args);
+				this.activeFolderId = null;
+				this.activeThreads = [];
+			#!- }
+			#!+ render() {
+				const {auth} = this.props;
+				if (auth.state) {
+					let {folders, threads, params} = this.props;
+					let folderId = params.folder | 0;
+					#!+ if (threads == null) {
+						#!+ folderId = this.activeFolderId == null ? folderId : this.activeFolderId;
+						#!- threads = this.activeThreads;
+					} else {
+						#!+ this.activeFolderId = folderId;
+						#!- this.activeThreads = threads;
+					}
+					#!- // ...
+				}
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Выбор писем</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Выбор / <a href="https://github.com/RubaXa/redux-octavius/tree/0.5.0">v0.5.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/928ec5b7865c6dc2dab77b957cddeef7c301ff19">DIFF</a></h2>
+		<p>
+			Тут всё как и раньше: contstants, action, reducer, connect.
+		</p>
+		<ul style="margin-left: 100px">
+			<li><b>8 files changed</b></li>
+			<li><b>69 insertions(+)</b></li>
+			<li><b>4 deletions(-)</b></li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>И...</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Тормозит<small class="next" style="color: #ccc; display: block; font-size: 50%">сильно</small></h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Отключаем все DevTools*</h2>
+		<p style="position: absolute; bottom: 0; right: 100px;">* — для React и Redux</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Замеряем время клика</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelectorAll(".nav a")[1].click();
+			console.timeEnd("click");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Замеряем время клика</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelectorAll(".nav a")[1].click();
+			console.timeEnd("click");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Замеряем время клика</h2>
+		<ul style="font-size: 150%">
+			<li class="next">Переход: <b>~540.942ms</b></li>
+			<li class="next">Холостой: <b>~190.572ms</b></li>
+		</ul>
+		<div class="next" style="position: absolute; right: 100px; bottom: 80px">
+			<div>Для справки, у нас числа такие:</div>
+			<ul style="padding: 0; margin: 0; margin-left: 50px">
+				<li>Переход: <b>121.580ms</b></li>
+				<li>Холостой: <b>1.680ms</b></li>
+			</ul>
+		</div>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Не может быть!</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%">574.06ms</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/xqnx794zm56dizc/Screenshot%202016-06-16%2022.37.16.png?dl=0"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Может 💩</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Может тормозит мой код?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>
+			<div style="font-size: 50%;">Performance Tools</div>
+			<a style="font-size: 80%" href="https://facebook.github.io/react/docs/perf.html">react-addons-perf</a>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://facebook.github.io/react/docs/perf.html">react-addons-perf</a></h2>
+		<ul>
+			<li>Perf.<b>start</b>()</li>
+			<li>Perf.<b>stop</b>()</li>
+			<li>Perf.<b>getLastMeasurements</b>()</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://facebook.github.io/react/docs/perf.html">react-addons-perf</a></h2>
+		<ul>
+			<li>Perf.<b>printInclusive</b>() — сколько всего затрачено времени</li>
+			<li>Perf.<b>printExclusive</b>() — время, несчитая затраченого на: обработку props, getInitialState, вызов componentWillMount и componentDidMount, и т.д.</li>
+			<li>Perf.<b>printWasted</b>() — потраченое время на компоненты, которые не изменились</li>
+			<li>Perf.<b>printOperations</b>()</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%">70.66ms</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/lk2x5zt3glpudwf/Screenshot%202016-06-16%2023.28.28.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%">40.9ms</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/c5gvc6foyooykhi/Screenshot%202016-06-16%2023.29.05.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%">2.09ms</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/fg3hrtgc756fx6z/Screenshot%202016-06-16%2023.29.51.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img style="position: absolute; left: 30%; top: 20%;" src="http://cs.pikabu.ru/images/previews_comm/2014-01_1/13886861838901.jpg"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Хмммм</h2>
+		<p>
+			Может проблема всё же во мне? А я её не вижу?<br/>
+			<b>Нужно найти готовый пример и проверить.</b>
+		</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Facebook</h2>
+		<img width="240" style="position: absolute; right: 0%; bottom: 0" src="https://dl.dropbox.com/s/2zmgj8ahi77i6p1/Screenshot%202016-06-17%2010.46.25.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/8s9ufxzdbcdahmo/Screenshot%202016-06-17%2011.22.05.png?dl=0"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%">173.86ms</h2>
+		<img width="100%" src="https://dl.dropbox.com/s/wav385nm554ugji/Screenshot%202016-06-17%2011.17.30.png?dl=0"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>F5 / Патчим ReactDOM.render</h2>
+		<pre class="js-code">
+			var DOM = c("ReactDOM-upstream");
+			var originalRender = DOM.render;
+			DOM.render = function perfRender(data, el) {
+			   console.time(el.className);
+			   var retVal = originalRender.apply(this, arguments);
+			   console.timeEnd(el.className);
+			   return retVal;
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Сколько сообщений?</h2>
+		<pre class="js-code">
+			const conversation = document.querySelector(".conversation")
+			const items = conversation.firstChild.firstChild.children;
+			console.log(items.length);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Проверяем</h2>
+		<ul>
+			<li class="next">12 сообщений: <b>78.775</b>ms</li>
+			<li class="next">26 сообщений: <b>102.908</b>ms</li>
+			<li class="next">144 сообщения: <b>210.380</b>ms</li>
+			<li class="next">329 сообщений: <b>395.464</b>ms</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/wx9oszaj910uiho/Screenshot%202016-06-17%2011.33.47.png?dl=0"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Выводы</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>ЭТО НОРМА!</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>На самом деле нет!</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Как же всё таки профилировать?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>ReactFeatureFlags</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>ReactFeatureFlags</h2>
+		<pre class="js-code">
+			import ReactFeatureFlags from "react/lib/ReactFeatureFlags";
+			#! ReactFeatureFlags.logTopLevelRenders = true;
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>ReactFeatureFlags</h2>
+		<ul>
+			<li>
+				<b>@@INIT</b>
+				<ul class="next">
+					<li>React mount: Provider: <b>45.939ms</b></li>
+					<li>React update: Router: 0.271ms</li>
+				</ul>
+			</li>
+			<li class="next">
+				<b>STATUS_FETCH_SUCCESS</b>
+				<ul>
+					<li>React update: Connect(FetchDataDecorator): <b>478.966ms</b></li>
+					<li>React update: Connect(Letters): <b>198.068ms</b></li>
+				</ul>
+			</li>
+		</ul>
+	</div></section>
+	
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Проверяем / Переход между папок</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelectorAll(".nav a")[0].click();
+			console.timeEnd("click");
+			#!+ // React update: Router: **348.028ms**
+			// React update: Connect(FetchDataDecorator): 0.007ms
+			#!- // React update: Connect(Letters): 0.002ms
+			#! // click: **362.845ms**
+			#!+ // React update: Connect(FetchDataDecorator): 144.643ms
+			#!- // React update: Connect(Letters): 135.463ms
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Проверяем / Выбор одного письма</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelector(".dataset__avatar").click();
+			console.timeEnd("click");
+			// React update: Connect(FetchDataDecorator): 0.229ms
+			// React update: Connect(ProtalMenu): 3.695ms
+			// React update: Connect(Letters): <mark>162.009ms</mark>
+			// click: <mark>170.524ms</mark>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Проверяем / Выбор всех писем</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelector(".ico_toolbar_select-all").click();
+			console.timeEnd("click");
+			// React update: Connect(FetchDataDecorator): 0.201ms
+			// React update: Connect(ProtalMenu): 3.547ms
+			// React update: Connect(Letters): <mark>170.261ms</mark>
+			// click: <mark>179.362ms</mark>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Оптимизация</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Оптимизация</h2>
+		<pre class="js-code">
+			// Это метод вызывает при получении новых
+			// данных и в этот момент можно решить,
+			// обновлять или нет компонент.
+			shouldComponentUpdate: function (nextProps, nextState) {
+				return true; // по умолчанию
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Оптимизируем выбор письма</h2>
+		<pre class="js-code">
+			// components/LettersItems.js
+			shouldComponentUpdate(nextProps) {
+				return (
+				#!	   (this.props.model !== nextProps.model)
+				#!	|| (this.props.selected !== nextProps.selected)
+				);
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Оптимизируем выбор письма</h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelector(".dataset__avatar").click();
+			console.timeEnd("click");
+			// React update: Connect(FetchDataDecorator): 0.260ms
+			// React update: Connect(ProtalMenu): <mark>3.329ms</mark>
+			// React update: Connect(Letters): <mark>11.527ms</mark>
+			// click: <mark>15.730ms</mark>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Оптимизируем</h2>
+		<p>
+			Уже лучше, но писать везде <b>shouldComponentUpdate</b> с однообразным кодом не очень то хочется,
+			нужна универсальная реализация.
+		</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 400%">@immutableComponent</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="">@immutableComponent</h2>
+		<pre class="js-code compact-xs">
+			import React, {Component} from "react";
+			import shallowEqual from "react-redux/lib/utils/shallowEqual";
+			export default function immutableComponent(propKeys) {
+				return (DecoratedComponent) => class ImmutableComponentDecorator extends Component {
+					<mark>shouldComponentUpdate</mark>(nextProps) {
+						if (propKeys) {
+							return propKeys.some(name => this.props[name] !== nextProps[name]);
+						} else {
+							return !shallowEqual(this.props, nextProps);
+						}
+					}
+					render() {
+						return &lt;DecoratedComponent {...this.props} />;
+					}
+				};
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="">@immutableComponent / <a href="https://github.com/RubaXa/redux-octavius/tree/0.6.0">v0.6.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/2e39552c1267719acf341ebebd1bcd0ac1274de8">DIFF</a></h2>
+		<pre class="js-code">
+			import immutableComponent from "../decorators/immutableComponent";
+
+			@immutableComponent(["model", "selected"])
+			export default class LettersItems extends Component {
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>
+			Что делать c<br/>
+			<b>545.481</b>ms
+		</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2><a href="https://github.com/orgsync/react-list">orgsync/react-list</a></h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px"><a href="https://github.com/orgsync/react-list">orgsync/react-list</a></h2>
+		<pre class="js-code compact-s">
+			// Letters.js
+			&lt;ReactList
+				itemsRenderer={(items, ref) => &lt;div ref={ref} className="dataset__items">{items}&lt;/div>}
+				itemRenderer={(idx, key) => {
+					const model = models[idx];
+					return &lt;LettersItem
+						key={key}
+						model={model}
+						selected={selection[model.id]}
+						onToggleSelect={(evt) => this.handleToggleSelect(evt, model)}
+					/>
+				}}
+				length={models.length}
+				**type="simple"** // просто добавляет элементы
+			  />
+		</pre>
+	</div></section>
+	
+	<section class="slide"><div>
+		<h2>Замеряем / <a href="https://github.com/RubaXa/redux-octavius/tree/0.7.0">v0.7.0</a> / <a href="https://github.com/RubaXa/redux-octavius/commit/021955d9fdec6bec52436824546b25dd1a859d94">DIFF</a></h2>
+		<pre class="js-code">
+			console.time("click");
+			document.querySelectorAll(".nav__item")[1].click();
+			console.timeEnd("click");
+			// React update: Router: <mark>63.051ms</mark>
+			// React update: Connect(FetchDataDecorator): 0.003ms
+			// React update: Connect(Letters): 0.003ms
+			// React update: ReactList: 0.004ms
+			// click: <mark>75.183ms</mark>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Итоги</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Итоги</h2>
+		<p style="line-height: 130%">
+			Сложно сказать, вы сами видели все мои шаги, код очень просто, но он тормозит,
+			оптимизации которые были сделаны влияют только на статичную страницу, когда не происходит смена «Папок».
+			<br/>
+			<br/>
+			ReactList частично решил проблему, но в режиме simple, он только добавляет элементы,
+			поэтому по мере подгрзуке писем (при прокрутке), производительность будет стремительно падать.
+			<br/>
+			<br/>
+			Конечно у ReactList есть другой режим, который позволяет держать только те элементы,
+			которые умещаются в viewport. Это исправляет ситуацию, но порождает другую,
+			наверно даже более серьезную, прокрутка такого списка начинает тормозить.
+		</p>
+	</div></section>
+
+	<section class="slide feast-vs-react"><div>
+		<style>
+			.feast-vs-react s {
+				font-size: 80%;
+				vertical-align: bottom;
+			}
+		</style>
+		<style></style>
+		<h2>Как у нас?</h2>
+		<ul>
+			<li class="next">Переход между папками, ms: <b>80-110</b> vs. 60-100<s>350-450</s> </li>
+			<li class="next">
+				Выбор:
+				<ul>
+					<li>Первого письма, ms: <b>18-25</b> vs. --- (Swipeable не реализован)</li>
+					<li class="next">Последующего, ms: <b>2-5</b> vs. 9-17<s>150-170</s></li>
+					<li class="next">Всех писем, ms: <b>18-25</b> vs. 50-65<s>150-170</s></li>
+				</ul>
+			</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Подумать над Store</h2>
+		<pre class="js-code compact-xs">
+			auth: object // авторизация
+			folders: [object] // список папок
+			threads:
+				index: // индекс по всем тредам
+					[id]
+						...attrs // основные аттрибуты
+						messages: [@message]
+				active: {[folder_id]: [@thread]} // массив ссылок
+			messages:
+				index: // индекс по всем письмам
+					[id]
+						...attrs // основные аттрибуты
+						attachments: [@attachment]
+				active: {[folder_id]: [@message]} // если выключены треды
+			attachments: {[id]: object} // индекс аттачей
+			selection: // Выбор по папкам
+				[folder_id]
+					all: boolean, // выбраны все в папке
+					models: {[id]: boolean} // тред
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

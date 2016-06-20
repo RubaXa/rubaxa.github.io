@@ -1,5 +1,7 @@
 ## Пятница
 
+ * [17.06.2016](http://rubaxa.github.io/friday/2016-06-17.html): React, где скорость?
+ * [25.12.2015](http://rubaxa.github.io/friday/2015-12-25.html): Реактивный огород.
  * [13.11.2015](http://rubaxa.github.io/friday/2015-11-13.html): Переводим проект на Fe<u>a</u>st.
  * [09.10.2015](http://rubaxa.github.io/friday/2015-10-09.html): Fe<u>a</u>st — Live coding & components.
  * [27.03.2015](http://rubaxa.github.io/friday/2015-03-27.html): JSSDK: logger и Error.stack.

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>25.12.2015: Реактивный огород</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Реактивный огород</h1>
+	</header>
+
+	<section class="slide shout"><div>
+		<h2>Реактивность</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Реактивность</h2>
+		<pre class="js-code">
+			#! let a = 1;
+			#! let b = 2;
+			#! let c = a + b;
+			#! console.log(c); // 3
+			#! a = 3;
+			#! console.log(c); // 5
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Реализация в JS</h2>
+		<div>
+			Основная идея, это создать контейнер для всех переменных, который будет иметь get/set.
+			Чтобы ближе познакомиться в с темой, я написал малюсенькую либу, ReactiveDot или просто rdot.
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>a + b</h2>
+		<pre class="js-code">
+			#! const a = rdot(1);
+			#! const b = rdot(2);
+			#! const c = rdot(() => a + b); // (!) Зависимость
+			#! c.onValue(val => console.log("c: " + val)); // "c: 3"
+			#! a.set(3); // "c: 5"
+			#! b.set(7); // "c: 10"
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Пример</h2>
+		<pre class="js-code">
+			&lt;form name="counter">
+				&lt;button name="up" type="button">+&lt;/button>
+				&lt;button name="down" type="button">-&lt;/button>
+				&lt;input name="result" readonly/>
+			&lt;/form>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>NativeJS</h2>
+		<pre class="js-code compact-s">
+			const form = document.forms.counter;
+			#! let sum = 0;
+			#!+ function counter(x) {
+				sum += x;
+				#! render();
+			#!- }
+			#!+ function render() {
+				form.result.value = sum;
+			#! }
+			#! form.up.addEventListener("click", render.bind(null, +1));
+			#! form.down.addEventListener("click", render.bind(null, -1));
+			#! render();
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«Реактивность»</h2>
+		<pre class="js-code compact-s">
+			const form = document.forms.counter;
+
+			#!+ // Счетчик + сеттер, который при получении нового значения, прибовляет к нему старое
+			#!- const counter = rdot(0, (newValue, oldValue) => newValue + (oldValue|0));
+
+			#! // Создаем «реактивный поток» на основе события `click`:
+			#! rdot.fromEvent(form.up, "click").onValue(() => counter.set(+1));
+			#! rdot.fromEvent(form.down, "click").onValue(() => counter.set(-1));
+
+			#!+ // Связываем значение реактивной переменной с элементом формы
+			#!- counter.assign(form.result, "value");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Ещё пример</h2>
+		<pre class="js-code compact">
+			&lt;form name="reg">
+				&lt;div>
+					&lt;input placeholder="Username" name="username"/>
+					&lt;span>&lt;/span>
+				&lt;/div>
+				&lt;div>
+					&lt;input placeholder="Fullname" name="fullname"/>
+					&lt;span>&lt;/span>
+				&lt;/div>
+				&lt;button name="send">Reg&lt;/button>
+			&lt;/form>
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s" style="margin-top: -50px">
+			const form = document.forms.reg;
+
+			#!+ // Создаем реактивную двухстороннюю связку с Input-элементом
+			const username = rdot.dom(form.username);
+			#!- const fullname = rdot.dom(form.fullname);
+
+			#!+ // Реактивное правило валидации
+			#!- const validate = rdot(() => username().length > 0 && fullname().length > 0);
+
+			#!+ // Связываем кол-во введенных символов и их вывод в соответствующем DOM-элементе
+			[username, fullname].forEach(dot => {
+				#!+ dot
+				#!-	.map(value => value.length)
+				#!	.assign(dot.el.nextElementSibling);
+			#!- });
+
+			#!+ // Связываем правило валидации с состоянием кнопки
+			#!- validate.not().assign(form.send, "disabled");
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img width="100%" src="https://dl.dropbox.com/s/9znjzodpg62pih2/Screenshot%202016-01-15%2017.53.15.png?dl=0"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			const KEY_ENTER = 13;
+			const FILTER_ALL = "/";
+			const FILTER_ACTIVE = "/active";
+			const FILTER_COMPLETED = "/completed";
+
+			const newTodoEl = document.querySelector(".new-todo");
+			const listEl = document.querySelector(".todo-list");
+			const footerEl = document.querySelector(".footer");
+			const filtersEl = footerEl.querySelectorAll(".filters a");
+			const todoCountEl = footerEl.querySelector(".todo-count");
+			const clearCompletedEl = footerEl.querySelector(".clear-completed");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			// Реактивные переменные
+			#!+ const location = rdot
+								.fromEvent(window, "hashchange")
+			#!- 					.map(value => window.location.href.split('#')[1] || FILTER_ALL);
+
+			#!+ // Полле ввода нового todo
+			#!- const newTodo = rdot.dom(newTodoEl);
+
+			#!+ // Реактивный список дел
+			#!- const todosStorage = new rdot.Model.List();
+
+			#!+ // Статистика
+			 const stats = new rdot.Model({
+				#! left: 0, // сколько осталось
+				#! completed: 0 // всего
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code">
+			// Слушаем `Enter`
+			#!+ rdot.fromEvent(newTodo.el, "keydown").onValue(evt => {
+				if (evt.keyCode === KEY_ENTER) {
+					#!+ todosStorage.unshift(new rdot.Model({
+						value: newTodo(),
+						completed: false
+					#!- }));
+
+					#! newTodo.set(""); // clear
+				}
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs">
+			// Видимость подвала
+			const footerVisiblity = todosStorage
+																.map(todos => todos.length > 0);
+
+			#!+ footerVisiblity
+			#!	.map(state => state ? "" : "none")
+			#!	.assign(footerEl.style, "display");
+
+			#!+ // Выбранный фильтр
+			#!- location
+			#!	.filter(filter => footerVisiblity()) // (!) Зависимость
+			#!+	.onValue(filter => {
+					[].forEach.call(filtersEl, a => {
+						a.className = a.href.split("#")[1] === filter ? "selected" : "";
+					});
+			#!-	});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact">
+			// Подсчет статистики
+			todosStorage.fetch(todos => {
+				let left = 0;
+				let completed = 0;
+
+				#!+ todos.forEach(todo => {
+					left += !todo.completed();
+					completed += todo.completed();
+				#!- });
+
+				#! stats.left.set(left);
+				#! stats.completed.set(completed);
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact">
+			// Осталось дел
+			stats.left
+			#!	.map(cnt => `${cnt} ${cnt === 1 ? 'item' : 'items'}`)
+			#!	.assign(todoCountEl);
+
+			#!+ // Выполненых дел
+			#!- stats.completed
+			#!	.map(cnt => cnt ? "" : "none")
+			#!	.assign(clearCompletedEl.style, "display");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			// Обновление списка
+			#!+ rdot
+				#! .combine([location, todosStorage]) // (!) Зависимость
+				#!+ .arrayFilter(([filter, todos]) => ({
+					#! array: todos,
+					#!+ callback(todo) {
+						return (
+							(FILTER_ALL === filter) ||
+							(FILTER_ACTIVE === filter && !todo.completed()) ||
+							(FILTER_COMPLETED === filter && todo.completed())
+						);
+					#!- }
+				#!- }))
+				#! .onValue(renderTodosList)
+			#!- ;
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+		<p>
+			<a href="https://github.com/RubaXa/rdot">Учебный пример реализации</a>
+		</p>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
