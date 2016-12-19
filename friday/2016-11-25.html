@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>25.11.2016: Основные моменты использования Feast.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Основные моменты использования Feast</h1>
+	</header>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Вопросы</h2>
+		<ul>
+			<li>Датабиндинги: как модельки связываются с вьюхами, кто это контролирует и т.д.</li>
+			<li>Как делается адаптивность, oрганизования view в приложении и связей layout'а и конкретных вьюх в разных разделах</li>
+			<li>Как использовать и тулкит и фист в одном месте.</li>
+			<li>Роутер.</li>
+			<li>Производительность и пресловутый даталист на десятки тысяч итемов.</li>
+			<li>В каких случаях используются модельки, а в каких что-то иное для связи с сервером и передачи вьюхе.</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Вступление</h2>
+		<pre class="js-code compact">
+			// Пример создания блока
+			const btn = new UIButton({
+				name: "make",
+				icon: "wow",
+				value: "Сделать",
+			});
+			#!+ // Рендер
+			#!- btn.renderTo(document.body);
+			#!+ // Меняем аттрибуты
+			#!- btn.set({value: "Сделать хорошо!"});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">button/button.html</h2>
+		<pre class="js-code compact-s">
+			&lt;button type="{attrs.type}">
+				&lt;!-- Важно: корневой класс добавляется автоматически -->
+				#! &lt;bem:mod name="with_icon" test="attrs.icon"/>
+				#!+ &lt;span
+					bem:elem="icon"
+					**fn:if="attrs.icon"**
+				>
+					#!+ &lt;!-- Использование блока `icon` -->
+					#!- &lt;b:icon name="{attrs.icon}"/>
+				#!- &lt;/span>
+				#!+ &lt;span bem:elem="value">
+					**{attrs.value}** &lt;!-- аналог &lt;fn:value>attrs.value &lt;/fn:value> -->
+				#!- &lt;/span>
+			&lt;/button>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">button/button.css</h2>
+		<pre class="js-code compact">
+			.button {
+				// Кнопка с иконкой
+				&_with_icon { /*... */ }
+
+				// Иконка
+				&__icon { /*... */ }
+
+				// Текст/Значение
+				&__value { /*... */ }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -50px" class="js-code compact-xs">
+			import feast from "feast";
+			#!+ // Связанне ресурсы
+			import template from "feast-tpl!./button.html";
+			import styleSheet from "feast-css!./button.css";
+			#!-
+			#!+ // Используемые блоки
+			import UIIcon from "blocks/icon/icon";
+			#!-
+			#!+ /** @class UIButton */
+			export default feast.Block.extend(/** @lends UIButton# */{
+				#! name: "button", // Название блока, оно же корневой css-класс
+				#! template, // Шаблон
+				#! styleSheet, // Стили
+				#!+ blocks: { // Используемые блоки
+					icon: UIIcon, // "название" => UI-Блок
+				#!- },
+				#!+ defaults: {
+					icon: null,
+					type: "submit",
+					value: "Submit",
+				#!- }
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Вопросы?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Датабиндинг</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Датабиндинг</h2>
+		<div>Можно сказать его нет, данные должны спускаться <b>сверху</b> ➡ <b>вниз</b>:</div>
+		<pre class="js-code">
+			app:render()
+			    ⬇
+			  event
+			    ⬇
+			app:render()
+		</pre>
+		<div class="next" style="margin-top: -40px; font-size: 150%">
+			<strong>Но, есть модели и медиаторы</strong>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Датабиндинг</h2>
+		<ul>
+			<li><b>Модели</b> — объекты имеюущие <u>on/off интерфейс</u></li>
+			<li><b>Медиаторы</b> — механизм связывания ui-блоков (и не только) с бизнес логикой</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Датабиндинг: Модели и Блоки</h2>
+		<div>
+			На данный момент в feast зарезервировано два свойства,
+			видя которые он пытается подписаться на фиксированный список событий:
+		</div>
+
+		<ul style="margin-left: 60px">
+			<li><b>model</b> — `change`</li>
+			<li><b>models</b> — `add`, `remove`, `sort`, `reset` и `update`</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			&lt;!-- Блок «Список писем» -->
+			&lt;div>
+				&lt;!-- Используем абстрактный UIDataset -->
+				&lt;b:dataset
+					models="{attrs.models}"
+					compact="{attrs.compact}"
+				>
+					&lt;!-- Определяем итерируемую часть -->
+					&lt;fn:match name="dataset-item" args="model">
+						&lt;b:letter-list-item
+							key="{model.id}"
+							model="{model}"
+						/>
+					&lt;/fn:match>
+				&lt;/b:dataset>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Датабиндинг: Модели и Блоки</h2>
+		<pre class="js-code">
+			#!+ const datasetLetter = new UIDatasetLetters({
+				models: mailbox.getLetters(),
+			});
+			#!- datasetLetter.renderTo(document.body);
+			#!+ // Где-то в коде добавляются модели
+			#!- letters.set([/* список моделей */]);
+			#!+ // Ещё где-то меняется статус письма
+			#!- letters[0].set("flags.unread", false);
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Вопросы?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Адаптивность</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Адаптивность</h2>
+		<ul>
+			<li><b>«Ручная»</b> — конфигурирование через аттрибуты блока</li>
+			<li><b>Умные элементы</b> — адаптивность в зависомтиси от своих размеров</li>
+			<li><s>CSS Media Queries</s></li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Адаптивность: «Ручная»</h2>
+		<pre class="js-code">
+			// У элементов есть набор аттрибутов,
+			// которые отвчеают за его внещний вид и размеры
+			&lt;b:button
+				ico="delete"
+				size="m"
+				short
+				borderless
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Адаптивность: «Ручная»</h2>
+		<pre class="js-code compact-xs">
+			&lt;b:layout use:mediator="layout-manager">
+				#!+ &lt;fn:match name="left-column" args="layout">
+					#! &lt;b:button short="{layout.leftColumn &lt;= 4}"/>
+					#!+ &lt;fn:choose>
+						&lt;fn:when test="layout.is('xxs')">
+							&lt;!-- ... -->
+						&lt;/fn:when>
+
+						#!+ &lt;fn:when test="layout.isLessThen('xl') || layout.isLessThen('m')">
+							&lt;!-- ... -->
+						#!- &lt;/fn:when>
+					#!- &lt;/fn:choose>
+				&lt;/fn:match>
+
+				&lt;!-- И так далее -->
+				#!- &lt;fn:match name="main-frame" args="layout"/>
+			&lt;/b:layout>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Медиаторы</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -60px" class="js-code compact-xxs">
+			import feast from "feast";
+			export default feast.Mediator.create("layout-manager", {
+				components: {
+					#!+ "layout": { // название для обращения внутри медиатора
+						#! "class": UILayout,
+						#!+ "attrs": { // Список аттрибутов, которые будет изменять медиатор
+							#!+ "size": (mediator) => mediator.size,
+							"leftColumn": (mediator) => mediator.columnLeft,
+							"rightColumn": (mediator) => mediator.columnRight,
+							#!- "support3pane": (mediator) => mediator.support3pane
+						#!- },
+					#!- },
+					#!+ "portal-menu": {
+						"class": UIPortalMenu,
+						"attrs": { /* ... */ },
+						#!+ // события, на которые подписывается медиатор
+						#!- "events": ["layout:2pane", "layout:3pane"],
+					#!- },
+					#!+ "headline": {
+						"class": UIHeadline,
+						"attrs": { /* ... */ },
+					#!- },
+				},
+				handleEvent(evt) { /* ... */ }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -30px" class="js-code compact-s">
+			import feast from "feast";
+			export default feast.Mediator.create("layout-manager", {
+				components: { /* ... */ },
+
+				// Обработчик событий от компонентов по умолчанию
+				// (можно указать свой для каждого компонента)
+				handleEvent(evt) {
+					const type = evt.type;
+					switch (type) {
+						case "layout:2pane":
+						case "layout:3pane":
+							// Обновляем свойство медиатора
+							this.type = type.split(":")[1];
+							break;
+					}
+					// После этого все связанные блоки будут обновлены!
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img style="left: 50%; top: 50%; transform: translate(-50%, -50%)" src="./img/feast-mediator.png"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Вопросы?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Feast + Toolkit</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Feast + Toolkit</h2>
+		<div>
+			Для этого мы создали пакет <u>feast-mailru-toolkit</u>,
+			который добавляет поддержку namespace <b>&lt;toolkit:{name} /></b> в feast.
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Feast + Toolkit</h2>
+		<pre class="js-code compact">
+			&lt;!-- Feast Style -->
+			&lt;toolkit:btn
+				text="Click me!"
+				remit:click="tap"
+			/>
+			#!+ &lt;!-- Toolkit Style -->
+			&lt;toolkit:btn>&lt;![CDATA[{
+				"text": "Click me!",
+				"remit:click": "tap"
+			#!- }]]>&lt;/toolkit:btn>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Вопросы?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Роутер</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">Pilot 2</h2>
+		<pre class="js-code compact-xs">
+			// Создаем роутер на основе карты сайта (всех маршрутов)
+			const app = Pilot.create(sitemap);
+			#!+ // Функция для получения данные для приложения
+			const getViewAttrs = () => ({
+				folder: app.model.folder,
+				folders: app.model.folders,
+				letters: app.model.letters,
+				letter: app.model.letter,
+				router: app,
+				route: app.route,
+				request: app.request,
+			#!- });
+			#!+ // Создаём view-приложения
+			#!- app.view = new UIApplication(getViewAttrs());
+			#!+ // Обновляем приложение на каждый routeend
+			#!- app.on("routeend", () => app.view.set(getViewAttrs()));
+			#!+ // Рендер приложения c удалением содержимого
+			#!- app.view.renderTo(document.body, {replace: true});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">Пример sitemap</h2>
+		<pre class="js-code compact-s">
+			export default {
+				model: { // модели доступные всем маршрутам
+					folders: () => Folder.find(),
+				},
+
+				"#index": {
+					url: { // описание маски и правил валидации
+						pattern: "/:folder",
+					},
+					model: {
+						threads: (req) => Thread.find({folder: req.params.folder})
+					}
+				},
+
+				"#other-page-id": { ... }
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 400%">Производительность</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Производительность</h2>
+		<p>
+			В прошлом мирко-докладе «<a href="http://rubaxa.github.io/friday/2016-06-17.html">React, где скорость?</a>»,
+			я уже проводил сравнение с React, цифры которого примерно такие-же, а то и медленней,
+			чем у нашего даталиста в старой Почте.
+		</p>
+		<p>
+			Так что не буду приводить новых цифр, а просто попытаюсь объяснить, за счет чего мы выжимаем скорость.
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Производительность</h2>
+		<div>
+			Как я уже говорил, за render vdom отвечает citojs, это один самых быстрых движков, но и у него есть предел.
+			<br/><br/>
+			Всё дело в самой сути vdom, это:
+		</div>
+		<ul style="margin-left: 60px">
+			<li>Создать фрагмент vdom</li>
+			<li>Рекурсивное обновление дерева и аттрибутов</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Создание фрагмента</h2>
+		<div>
+			Основная проблема в fest/toolkit была в том, что там нет встроеных механизмов по работе аттрибутами и BEM.
+		</div>
+		<pre class="js-code" style="margin-left: 80px">
+			#!+ // Тут же мы имеем такие штуки как
+			&lt;fn:attr name="..." value="..." test="..."/>
+			#!- &lt;fn:add-class name="..." test="..."/>
+			#!+ // А главное
+			&lt;bem:mod name="..." test="..."/>
+			&lt;bem:mod name="..." value="..." test="..."/>
+			#!- // и другие...
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Рекурсивное обновление</h2>
+		<div>
+			Основная проблема в том, что именно обновлений не так много и основное время уходит на рекурсию.<br/>
+			<br/>
+			Поэтому основная задача с водится к «Как минимизировать количество операций сравнений?»
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Рекурсивное обновление</h2>
+		<div>
+			Для этого в feast есть несколько механизмов
+		</div>
+		<ul style="margin-left: 60px">
+			<li><b>feast.Block#immutable: boolean</b> — кешировать фрагмент, если аттрибуты не изменились</li>
+			<li><b>feast.Block#notVisualAttributes: Object</b> — перечень свойств не влияющих на view</li>
+			<li><b>&lt;fn:immutable-virtual-block name="..."/></b></li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Инструменты</h2>
+		<ul>
+			<li>«Пипетка»</li>
+			<li>DevTools/Timeline</li>
+			<li>Octavius/Timeline</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>«Пипетка»</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="https://habrastorage.org/files/600/32a/809/60032a809f7340f494ed4f29ab83de3e.png" width="100%"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>DevTools/Timeline</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://dl.dropbox.com/s/g4em7oxaxcu1zwk/Screenshot%202016-12-19%2014.12.58.png?dl=0" width="100%"/>
+		<h2 style="opacity: .3; margin-top: 280px">Click</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://dl.dropbox.com/s/ihbm3o6p7xqpc9x/Screenshot%202016-12-19%2014.11.56.png?dl=0" width="100%"/>
+		<h2 style="opacity: .3;  margin-top: 280px">Render</h2>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>Octavius/Timeline</h2>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://habrastorage.org/files/0f4/0c5/026/0f40c50265b442b1bf7bb23f02a26757.png" width="100%"/>
+	</div></section>
+
+
+	<section class="slide cover"><div>
+		<img src="https://habrastorage.org/files/4df/50f/31c/4df50f31cd694db3bdefb1422c0810f8.png" width="100%"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
