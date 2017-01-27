@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>27.01.2017: Пишем свой VirtualDOM<sup>обучение</sup>.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Пишем свой VirtualDOM</h1>
+	</header>
+
+	<section class="slide shout"><div>
+		<h2>VirtualDOM<sup>&trade;</sup></h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>VirtualDOM / React / JSX</h2>
+		<pre class="js-code">
+			function Button({name, text, onTap}) {
+				return (
+					&lt;button className="button" name={name} onClick={onTap}>
+						{text}
+					&lt;/button>
+				);
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>VirtualDOM / React / JSX</h2>
+		<pre class="js-code">
+			function Button({name, text, onTap}) {
+				return React.createElement(
+					"button", // Element
+					{className: "button", name, onTap}, // attributes
+					text // children
+				);
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>VirtualDOM / Убираем React</h2>
+		<pre class="js-code">
+			function Button({name, text, onTap}) {
+				return {
+					tag: "button",
+					attrs: {class: "button", name, onTap},
+					children: [text]
+				};
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>VirtualDOM / Пример</h2>
+		<pre class="js-code compact">
+			&lt;div class="app">
+				&lt;h1>Hi, %username%!&lt;/h1>
+				&lt;button name="enter" class="button">Enter&lt;/button>
+			&lt;/div>
+			                &downarrow;(click + prompt)&downarrow;
+			&lt;div class="app">
+				&lt;h1>Hi, VD!&lt;/h1>
+				&lt;button name="exit" class="button">Exit&lt;/button>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xxs" style="margin-left: -50px;">
+			import {Component} from "./vdom";
+			import Button from "./Button";
+			class App extends Component {
+				handleEvent(evt) {
+					#! const name = evt.currentTarget.name === "enter" ? prompt("Name?") : null;
+					#! this.setState({name});
+				}
+				render() {
+					#! const {name} = this.state;
+					#!+ return {
+						tag: "div",
+						attrs: {className: "app"},
+						children: [
+							#! {tag: "h1", children: [`Hi, ${name || '%username%'}!`]},
+							#!+ {tag: Button, attrs: {
+								#!+ name: name ? "enter" : "exit",
+								#!- text: name ? "Enter" : "Exit",
+								#! onClick: this,
+							#!- }},
+						]
+					#!- };
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>VirtualDOM / Пример</h2>
+		<pre class="js-code compact">
+			import {render} from "./vdom";
+			import App from "./App";
+
+			const container = document.getElementById("root");
+			render(container, App, {});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Приступим</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Необходимый набор методов</h2>
+		<ul>
+			<li class="next"><b>create</b>(node, parent) — создать ноду</li>
+			<li class="next"><b>createChildren</b>(node, parent) — создать детишек</li>
+			<li class="next"><b>update</b>(oldNode, newNode, parent) — обновить</li>
+			<li class="next"><b>updateChildren</b>(oldNode, newNode) — обновить детишек</li>
+			<li class="next"><b>updateAttrs</b>(el, attrs, oldAttrs) — установить аттрибуты</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			function create(/* VNode */node, /* HTMLElement */parent) {
+				node = normalize(node); // "str" -> {tag: "#", children: "..."}
+				let el;
+
+				if (TEXT_NODE === node.tag) {
+					el = document.createTextNode(node.children);
+				} else {
+					el = document.createElement(tag);
+					updateAttrs(el, node.attrs); // добавляем аттрибуты
+					createChildren(node, el); // создаеём детишек
+				}
+
+				node.el = el; // запоминаем DOM
+				(parent !== null) && parent.appendChild(el);
+
+				return node;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -50px">
+			function updateAttrs(/* HTMLElement */el, attrs, oldAttrs) {
+				let name;
+				let value;
+				for (name in attrs) {
+					value = attrs[name];
+					#!+ if (oldAttrs == null || oldAttrs[name] !== value) {
+						#!+ if (CLASS_ATTR === name) { // className
+							el.className = value;
+						#!- }
+						#!+ else if (VALUE_ATTR === name) { // value
+							(el[name] !== value)  && (el[name] = value);
+						#!- }
+						#!+ else if (/^on[A-Z]/.test(name)) { // события
+							el.addEventListener(name.substr(2), value, false);
+						#!- }
+						#!+ else { // все остальные
+							el.setAttribute(name, value);
+						#!- }
+					#!- }
+				}
+
+				// продолжение следует
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs">
+			.
+				// продолжение
+
+				if (oldAttrs != null) {
+					for (name in oldAttrs) {
+						value = oldAttrs[name];
+
+						if (attrs[name] == null && attrs[name] !== value) {
+							if (/^on[A-Z]/.test(name)) {
+								el.removeEventListener(name.substr(2), value, false);
+							} else {
+								el.removeAttribute(name);
+							}
+						}
+					}
+				}
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s">
+			function createChildren(/* VNode */node, /* HTMLElement */parent) {
+				const children = node.children;
+				const length = children.length;
+
+				#!+ if (length == null || /string|number|boolean/.test(typeof children)) {
+					#! node.children = [create(children, parent)];
+				} else {
+					#!+ for (let i = 0; i < length; i++) {
+						children[i] = create(children[i], parent);
+					#!- }
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2><a href="https://jsfiddle.net/ptjeoqp2/1/">v0.1.0</a> <sup style="font-size: 50%">(jsfiddle)</sup></h2>
+		<pre class="js-code compact-s">
+			&lt;div id="root">&lt;/div>
+
+			&lt;script>
+				const vnode = create({
+					#!+ tag: "div",
+					attrs: {class: "app"},
+					children: [
+						#! {tag: "h1", children: "Hi, %username%!"},
+						#! {tag: "button", attrs: {class: "button"}, children: "Enter"},
+					#!- ],
+				}, document.getElementById("root"));
+			&lt;/script>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Обновление</h2>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -30px;">
+			function update(/* VNode */oldNode, /* VNode */newNode, /* HTMLElement */parent) {
+				const el = oldNode.el;
+				newNode = normalize(newNode);
+
+				#!+ if (newNode.tag === oldNode.tag) {
+					#! newNode.el = el;
+					#!+ if (TEXT_NODE === oldNode.tag) { // Текст
+						#!+ if (oldNode.children !== newNode.children) {
+							el.textContent = newNode.children;
+						#!- }
+					} else { // Внутренности
+						#!+ updateAttrs(el, newNode.attrs, oldNode.attrs);
+						#!- updateChildren(oldNode, newNode);
+					#!- }
+				} else {
+					#! newNode = create(newNode, null);
+					#! parent.replaceChild(newNode.el, el);
+				#!- }
+
+				return newNode;
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -30px;">
+			function updateChildren(/* VNode */oldNode, /* VNode */newNode) {
+				const el = newNode.el;
+				const oldChildren = oldNode.children;
+				const oldLength = oldChildren.length;
+				let newChildren = newNode.children;
+				let newLength = newChildren.length;
+
+				#!+ if (newLength == null || /string|number|boolean/.test(typeof newChildren)) {
+					newLength = 1;
+					newNode.children = newChildren = [newChildren];
+				#!- }
+
+				#!+ for (let idx = 0; idx < newLength; idx++) {
+					const newChild = newChildren[idx];
+					if (idx < oldLength) { // обновляем узел
+						#! newChildren[idx] = update(oldChildren[idx], newChild, el);
+					} else { // создаём новый в конце
+						#! newChildren[idx] = create(newChild , el);
+					}
+				#!- }
+
+				#!+ for (let i = newLength; i < oldLength; i++) { // удаляем хвост
+					el.removeChild(oldChildren[i].el);
+				#!- }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h1>И финальный штрих</h1>
+		<pre class="js-code compact">
+			function render(container, node) {
+				#! let vnode = container.vnode;
+
+				#!+ if (vnode) {
+					vnode = update(vnode, node, container);
+				} else {
+					vnode = create(node, container);
+				#!- }
+
+				#!+ container.vnode = vnode;
+				#!- return vnode;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px;"><a href="https://jsfiddle.net/ptjeoqp2/2/">v0.2.0</a> <sup style="font-size: 50%">(jsfiddle)</sup></h2>
+		<pre class="js-code compact-xxs">
+			let name;
+			const container = document.getElementById("root");
+			const redraw = () => render(container, createFragment());
+			#!+ function createFragment() {
+				return {
+					tag: "div",
+					attrs: {class: "app"},
+					children: [
+						#! {tag: "h1", children: `Hi, ${name || '%username%'}!`},
+						#!+ {tag: "button", attrs: {
+							class: "button",
+							name: **name ? "exit" : "enter"**,
+							onClick: handleClick,
+						#!- }, children: **name ? "Exit" : "Enter"**},
+					]
+				};
+			#!- }
+			#!+ function handleClick(evt) {
+				name = evt.currentTarget.name === "enter" && prompt("Name?");
+				#! redraw();
+			#!- }
+			#! redraw();
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>Продолжение</div>
+			<div style="font-size: 60%; color: #666;">следует</div>
+			<div class="next" style="font-size: 20%; color: #ccc;">когда-нибудь</div>
+		</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 ## Пятница
 
+ * [27.01.2017](http://rubaxa.github.io/friday/2017-01-27.html): Пишем свой VirtualDOM<sup>обучение</sup>
  * [25.11.2016](http://rubaxa.github.io/friday/2016-11-25.html): Feast: Вопросы/Ответы.
  * [17.06.2016](http://rubaxa.github.io/friday/2016-06-17.html): React, где скорость?
  * [25.12.2015](http://rubaxa.github.io/friday/2015-12-25.html): Реактивный огород.
