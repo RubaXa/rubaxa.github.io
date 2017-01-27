@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>02.05.2016: Octavius. Скелет.</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<style>
+
+	</style>
+
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Octavius. Скелет.</h1>
+	</header>
+
+	<section class="slide"><div>
+		<h2>Файловая структура</h2>
+		<ul>
+			<li>/<b>app</b>/ — публичные файлы приложения (frontend)</li>
+			<li class="next">/<b>githooks</b>/ — разные гитовые хуки: обновление npm и jam, запуск eslint и другое</li>
+			<li class="next">/<b>tasks</b>/ — `grunt`-задачи</li>
+			<li class="next">/<b>server</b>/ — серверная часть dev-сервера</li>
+			<li class="next">/<b>utils</b>/ — всякие утилиты, которые нужны серверу и `grunt`-задачам</li>
+		</ul>
+	</div></section>
+	
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Frontend: /app/</h2>
+		<ul style="font-size: 80%">
+			<li><b>/dev-tools/</b> — разные полезные утилиты для разработки (не для продакшена)</li>
+			<li class="next"><b>/feast-mod/</b> — модификаторы для `&lt;fn:value mod="XXX"/&gt;`</li>
+			<li class="next" style="white-space: nowrap"><b>/mediator/</b> — медиаторы для взаимодействия приложения и компонентов (бизнес логика)</li>
+			<li class="next"><b>/route/</b> — контроллеры маршрутов</li>
+			<li class="next"><b>/service/</b> — сервисы: auth, compose, viewer и т.п.</li>
+			<li class="next"><b>/ui-block/</b> — все блоки приложения (само приложение тоже блок)</li>
+			<li class="next"><b>access.js</b> — описание прав доступа к маршрутам</li>
+			<li class="next"><b>app.js</b> — построение и инициализация приложения</li>
+			<li class="next"><b>models</b>-loader.js — описание моделей для приложения с привязкой к маршрутам</li>
+			<li class="next"><b>require.config.js</b> — require-конфиг приложения</li>
+			<li class="next"><b>setup.js</b> — глобальный setup `RPC`, `Action` и т.п.</li>
+			<li class="next"><b>sitemap.js</b> — конфигурация роутинга</li>
+   		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>app.js</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>index.html</h2>
+		<pre class="js-code">
+			require(["app"], function (/** Pilot */app) {
+				app.nav(location.toString());
+
+				// Дальше конфигурация HistoryAPI:
+				//  - подписка на `popstate`
+				//  - обработка события `click` для ссылкам
+				//  - `pushState` по `app.on('routeend')`
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>app.js/детали</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>sitemap.js</h2>
+		<pre class="js-code compact">
+			#! import {authorized} from "access";
+			#!+ import routeLetters from "route/letters";
+			#!- import routeReadLetter from "route/read-letter";
+			#! import appModelsLoader from "models-loader";
+			#!+ export default {
+				#! access: authorized, // Права доступа к `root` маршруту
+				#! model: appModelsLoader, // Модели приложения
+				#! "#letters": routeLetters, // Список писем
+				#! "#read-letter": routeReadLetter // Чтение письма
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>app.js</h2>
+		<pre class="js-code">
+			import sitemap from "sitemap";
+			#! import UIApplication from "ui-block/application/application";
+			#! const app = Pilot.create(sitemap);
+			#!+ app.view = new UIApplication(getViewAttrs());
+			app.on("routeend", function () {
+				app.view.set(getViewAttrs());
+			#!- });
+			#! export default app;
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>app.js</h2>
+		<pre class="js-code">
+			function getViewAttrs() {
+				return {
+					model: app.model,
+					folder: app.model.folder,
+					letter: app.model.letter,
+					request: app.request
+				};
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>app.nav()</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>app.nav()</h2>
+		<ul>
+			<li class="next">Поиск маршрута</li>
+			<li class="next">Проверка прав доступа</li>
+			<li class="next">Загрузка данных</li>
+			<li class="next">Активация и деактивация маршрута (события)</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>access.js — парава доступа</h2>
+		<pre class="js-code">
+			import authService from "service/auth";
+
+			export function authorized() {
+				return authService.login();
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">service/auth.js</h2>
+		<pre class="js-code compact-xs">
+			export default require("Emitter").apply(/** @lends AuthService */{
+				user: null,
+				#!+ isAuth() {
+					return !!this.user;
+				#!- },
+				#!+ setUser(user) {
+					this.user = User.map(user);
+					this.trigger("login", this.user);
+					return user;
+				#!- },
+				#!+ login() {
+					authPromise = authPromise || User.login().then(user => {
+						this.setUser(user);
+						#! require(["service/auth/" + cfg.auth], service => service.keepalive());
+						return user;
+					});
+					return authPromise;
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Где авторизация?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">Обработка 403: service/auth.js</h2>
+		<pre class="js-code compact-xs">
+			RPC.errorHandler.push({
+				#! status: "denied:user",
+				#!+ process(/** RPC.Request */xhr) {
+					if (!loginPromise) {
+						loginPromise = new Promise((resolve) => {
+							#!+ AuthGateLoader.then((AuthGate) => {
+								#! AuthGate.show();
+								#!+ AuthGate.one("auth", (email) => {
+									#!+ loginPromise = null;
+									// Обновляем email
+									xhr.data.email = email;
+									#!- resolve(); // Разрешаем повтор запроса
+								#!- });
+							#!- });
+						});
+					}
+					return loginPromise;
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Авторизация</h2>
+		<ul>
+			<li>Мы всегда пологаем, что юзер авторизован</li>
+			<li>Если в ответ на запрос вернули 403, стопим запрос и пытаемся заного авторизоваться</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Загрузка данных<br/>models-loader.js</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -30px">
+			export default {
+				#! status: (req) => loadStatus(req.params.folder),
+				#! folders: (req, **waitFor**) => waitFor("status").then(status => status.folders),
+				#!+ folder: (req, waitFor) => {
+					#!+ if (req.is("#read-letter")) {
+						#!+ return Promise
+							#!- .all([waitFor("folders"), waitFor("letter")])
+							#! .then(([folders, letter]) => folders.get(letter.get("folder")));
+					} else {
+						#! return waitFor("folders").then(folders => folders.get(req.params.folder));
+					#!- }
+				#!- },
+				#!+ letters: {
+					#! match: ["#letters", "#read-letter"], // id маршрутов
+					#! defaults: [],
+					#! fetch: (req, waitFor) => waitFor("status").then(status => status.letters)
+				#!- },
+				#!+ letter: {
+					match: ["#read-letter"],
+					defaults: null,
+					fetch: (req, waitFor) => waitFor("status")
+																			.then(() => Thread.findOne(req.params.letter))
+				#!- }
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>UI</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2><a target="_blank" href="http://local.git/v-octavius.html">UIApplication</a></h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Взаимодействие</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Выделение писем</h2>
+		<ul>
+			<li>dataset-letters — выделение элемента</li>
+			<li>portal-menu — отображение контролов для работы с письмами</li>
+		</ul>
+
+		<ul class="next">
+			<li>
+				portal-menu — есть кнопка выделить всё / сбросить выделение
+				<ul class="next"><li><b>selectall</b></li></ul>
+			</li>
+			<li class="next">
+				dataset-letters — выбор отдельного элемента
+				<ul class="next"><li><b>toggleselected</b></li></ul>
+			</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>feast.Mediator</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>application.html</h2>
+		<pre class="js-code">
+			&lt;div>
+				&lt;b:portal-menu **use:mediator="selected-letters"**/>
+				&lt;b:dataset-letters
+					**use:mediator="selected-letters"**
+					models="{attrs.model.letters}"
+					draggable
+				/>
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -30px">mediator/selected-letters.js</h2>
+		<pre class="js-code compact-xs">
+			export default feast.Mediator.create("selected-letters", {
+				#!+ toolbar: {
+					#! class: UIPortalMenu,
+					#! events: ["selectall"],
+					#! attrs: {selected: (mediator) => mediator.getModels()}
+				#!- },
+				#!+ letters: {
+					class: UIDatasetLetters,
+					events: ["toggleselected"],
+					attrs: {selected: (mediator) => mediator.getHashMap()}
+				#!- },
+				#!+ handleEvent(evt) {
+					const type = evt.type;
+					switch (type) {
+						// ...
+					}
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -30px">mediator/selected-letters.js</h2>
+		<pre class="js-code compact-xs">
+			switch (type) {
+				#!+ case "toggleselected":
+					#! const letter = evt.details.get("model");
+					#!+ if (this.map[letter.id]) {
+						delete this.map[letter.id];
+					} else {
+						this.map[letter.id] = true;
+					#!- }
+					#!- break;
+				#!+ case "selectall":
+					#! const state = Object.keys(this.map).length === 0;
+					#!+ if (state) {
+						this.getAllModels().forEach(letter => this.map[letter.id] = state);
+					} else {
+						this.map = {};
+					#!- }
+					#!- break;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Цикл работы медиатора</h2>
+		<ul>
+			<li>Получение событие</li>
+			<li>Обработка</li>
+			<li>Обновление всех связанных компонент</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Новое письмо<br/><small style="opacity: .6; font-size: 80%">service/compose</small></h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>service/compose.js</h2>
+		<pre class="js-code compact-s">
+			export default {
+				open(params) {
+					return loadTools().then(([authService, MessageFormData, view]) => {
+						#! const authUser = authService.user;
+						#!+ const formData = MessageFormData.create({
+							mode: params.mode,
+							from: authUser.getEmail(),
+							signature: authUser.get("signs").filter(sign => sign.active),
+							model: params.model
+						#!- });
+						#! view.add(formData);
+						#! return formData;
+					});
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>service/compose.js</h2>
+		<pre class="js-code compact-s">
+			function loadTools() {
+				return new Promise(resolve => {
+					require([
+						'service/auth',
+						'ui-block/compose/compose',
+						'mail/MessageFormData'
+					], ([authService, UICompose, MessageFormData]) => resolve({
+						authService: deps[0],
+						view: initView(deps[1]),
+						MessageFormData: deps[2]
+					}));
+				});
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Интеграция</h2>
+		<pre class="js-code compact-s">
+			import composeService from "service/compose";
+			export default feast.Block.extend(/** @lends UIApplication# */{
+				name: "application",
+				#!+ events: {
+					"compose:new": "handleCompose",
+					"compose:reply": "handleCompose",
+					"compose:replyall": "handleCompose",
+					"compose:forward": "handleCompose"
+				#!- },
+				#!+ handleCompose(evt) {
+					composeService.open({
+						mode: evt.type.split(":").pop(), // new, reply, forward
+						model: this.attrs.letter
+					});
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>service/viewer</h2>
+		<pre class="js-code compact-s">
+			export default {
+				open(message, attachment) {
+					return new Promise(resolve => {
+						require(["ui-block/viewer/viewer"], (/** UIViewer */UIViewer) => {
+							const view = new UIViewer({
+								message,
+								attachment
+							});
+							view.renderTo(getContainerEl());
+							resolve(view);
+						});
+					});
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Взавимодействие между медиаторами</h2>
+		<pre class="js-code">
+			&lt;b:portal-menu
+				use:mediator="selected-letters **actions-with-letters**"/>
+			&lt;b:dataset-letters
+				use:mediator="selected-letters **actions-with-letters**"
+				models="{attrs.model.letters}"
+				draggable
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xxs" style="margin-top: -50px">
+			import selectedLetters from "mediator/selected-letters";
+			#!+ const actionEvents = ["move", "remove", "archive", "spam", "unspam",
+					"mark:readed", "mark:unreaded", "mark:flagged", "mark:unflagged",
+			#!- 		"togglestatus:unread", "togglestatus:flagged"];
+			#!+ export default feast.Mediator.create('actions-with-letters', {
+				#!+ actions: {
+					"move": MoveToAction,
+					"mark": MarkAsAction,
+					"remove": DeleteAction,
+					// ..
+				#!- },
+				#!+ components: {
+					dataset: {
+						"class": UIDatasetLetters,
+						"events": actionEvents
+					},
+					toolbar: {
+						"class": UIPortalMenu,
+						"events": actionEvents
+					}
+				#!- },
+				#!+ handleEvent(evt) {
+					// ..
+				#!- }
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs">
+			handleEvent(evt) {
+				const models = selectedLetters.getModels();
+				#!+ if (type === "spam") {
+					params.spam = true;
+				#!- }
+				#!+ else if (/^mark:/.test(type)) {
+					type = "mark";
+					params.flag = /readed/.test(type) ? "unread" : "flagged";
+					params.state = /:(unreaded|flagged)/.test(type);
+				#!- }
+				#!+ else if (/^togglestatus:/.test(type)) {
+					type = "mark";
+					params.flag = evt.type.split(":").pop();
+					params.state = !models[0].is(`flags.${params.flag}`);
+				#!- }
+				#!+ else if (type === "move") {
+					params.folderTo = evt.details.folder.id;
+				#!- }
+				// Выполняем действие
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact">
+			// Выполняем действие
+			this.actions[type].execute(params, {
+				onoperation() {
+					// Скрываем swipe-панель
+					swipeManager.reset();
+				}
+			}).then(() => {
+				// Отменяем выделение в случае успеха
+				selectedLetters.reset();
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Итог</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Итог</h2>
+		<ul>
+			<li>Основные данные готовит роутер</li>
+			<li>Компоненты сверху вниз получают нужные данные</li>
+			<li>Взаимодействие между компонентами происходит через медиаторы</li>
+			<li>Сервисы инкапсулируют отельные части приложения, которые необходимы по требованию</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
