@@ -143,7 +143,7 @@
 				if (TEXT_NODE === node.tag) {
 					el = document.createTextNode(node.children);
 				} else {
-					el = document.createElement(tag);
+					el = document.createElement(node.tag);
 					updateAttrs(el, node.attrs); // добавляем аттрибуты
 					createChildren(node, el); // создаеём детишек
 				}
@@ -171,7 +171,7 @@
 							(el[name] !== value)  && (el[name] = value);
 						#!- }
 						#!+ else if (/^on[A-Z]/.test(name)) { // события
-							el.addEventListener(name.substr(2), value, false);
+							el.addEventListener(name.substr(2).toLowerCase(), value, false);
 						#!- }
 						#!+ else { // все остальные
 							el.setAttribute(name, value);
@@ -194,7 +194,7 @@
 
 						if (attrs[name] == null && attrs[name] !== value) {
 							if (/^on[A-Z]/.test(name)) {
-								el.removeEventListener(name.substr(2), value, false);
+								el.removeEventListener(name.substr(2).toLowerCase(), value, false);
 							} else {
 								el.removeAttribute(name);
 							}
