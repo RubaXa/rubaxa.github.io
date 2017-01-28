@@ -24,8 +24,9 @@
 		<h2>Предыстория</h2>
 		<p>
 			Третий год наблюдаю за развитием React и его окружением, которое меняет со скоростью света.
-			Ещё тогда пробовал писать свои тесты на производительность и они не впечатляли. Время шло, но хайп только усиливался,
-			вскоре появился Redux, который вывел React в бесспорные лидеры.
+			Ещё тогда пробовал писать свои тесты на производительность и они не впечатляли.
+			Время шло, но хайп только усиливался, вскоре появился Redux, который вывел React
+			в бесспорные лидеры.
 		</p>
 		<p>Неделю назад, я подумал, а почему бы мне собрать текущий проект на Redux и проверить, насколько лучше стало.</p>
 	</div></section>
@@ -196,12 +197,12 @@
 		<h2 style="margin-top: -100px">Button.js</h2>
 		<pre class="js-code compact-xxs" style="margin-top: -30px">
 			import React, {Component} from "react";
-			#! import classNames from "classnames"; // хелпер
-			#! import Icon from "./Icon";
+			#! import cx from "classnames"; // хелпер
+			#! import Icon from "./Icon"; // Блок иконки
 			#!+ export default class Button extends Component {
 				render() {
 					#! const {text, short, ico, big, pressed, borderless, type, size, disabled, onTap} = this.props;
-					#!+ const classes = classNames("button", {
+					#!+ const classes = cx("button", {
 						"button_short": short || !text,
 						"button_has-ico": ico,
 						"button_big": big,
@@ -255,8 +256,21 @@
 
 	<section class="slide"><div>
 		<h2 style="margin-top: -100px">index.js</h2>
+		<style>
+			#imprts {
+				position: absolute;
+				font-size: 100px;
+				color: #ccc;
+				transform: scaleY(2);
+				margin-left: -105px;
+				margin-top: 60px;
+			}
+			#imprts span {
+				font-size: 25px;
+			}
+		</style>
 		<pre class="js-code compact-xs">
-			#!+ import {Router, Route, IndexRedirect, browserHistory} from "react-router";
+			#!+ <div id="imprts">{</div>import {Router, Route, IndexRedirect, browserHistory} from "react-router";
 			import {syncHistoryWithStore} from "react-router-redux";
 			import {Provider } from "react-redux";
 			import ReactDOM from "react-dom";
@@ -310,7 +324,7 @@
 					return (
 						&lt;form className="well auth-form" **onSubmit={::this.handleSubmit}**>
 							&lt;h2>Авторизуйся, смерд!&lt;/h2>
-							**{error ? &lt;b>Ошибка&lt;/b> : null}**
+							**{error && &lt;b>Ошибка&lt;/b>}**
 							&lt;input ref="email" className="input" placeholder="Email" name="email"/>
 							&lt;p>&lt;input ref="pass" className="input" placeholder="Password" name="pass" type="password"/>&lt;/p>
 							&lt;Button text="Войти" type="submit" **disabled={busy}**/>
@@ -461,6 +475,7 @@
 				#!	.then(body => dispatch({type: LOGIN_SUCCESS, body})
 				#!	.catch(error => dispatch({type: LOGIN_FAIL, error});
 			};
+			#! // И так далее, для других action
 		</pre>
 	</div></section>
 
@@ -524,7 +539,7 @@
 			<li>new file:   src/reducers/index.js</li>
 			<li>new file:   src/store/index.js</li>
 		</ul>
-		<p>15 файлов</p>
+		<p style="margin-top: -40px;">15 файлов</p>
 	</div></section>
 
 	<section class="slide"><div>
@@ -554,8 +569,9 @@
 	<section class="slide"><div>
 		<h2>Юзер</h2>
 		<p>
-			Получившаяся версия только авторизует и получает в ответ токен, поэтому нам нужно доработать действие login, чтобы
-			после авторизации сразу получить данные юзера.
+			Получившаяся версия только авторизует и получает в ответ токен,
+			поэтому нам нужно доработать действие login, чтобы после авторизации
+			сразу получить данные юзера.
 		</p>
 	</div></section>
 
@@ -714,7 +730,7 @@
 						return {
 							...state,
 							current: {
-								...state.current,
+								...state.current, // нужно больше деструктуризации
 								[folder]: threads
 							}
 						};
@@ -782,7 +798,7 @@
 		<h2>@fetchData</h2>
 		<pre class="js-code">
 			@connect(...)
-			@fetchData(
+			@fetchData( // Будет вызывать действия при измениях маршрута и свойств
 				#! ({auth: email}, {folder}) => ({email, folder}),
 				#!+ ({email, folder}, actions)
 				#!-		=> email && actions.fetchStatus(folder)
@@ -870,7 +886,7 @@
 					if (!evt.defaultPrevented) {
 						let el = evt.target;
 						#!+ while (el.parentNode && el !== this.refs.clickable) {
-							if (el.tagName === "A") {
+							if (el.tagName === "A" && el.target !== "_blank") {
 								evt.preventDefault();
 								#!+ this.props.**routerActions.push**(el.pathname);
 								#!- return;
@@ -899,8 +915,9 @@
 	<section class="slide"><div>
 		<h2>Проблема</h2>
 		<p>
-			Основная проблема, что при переходе между Папками, сначала список тредов пустой и только после ответа сервера он обновляется.
-			Надо сделать так, чтобы переключение папки и обновление списка происходило только, если есть данные.
+			Основная проблема, что при переходе между Папками, сначала список тредов пустой и
+			только после ответа сервера он обновляется. Надо сделать так, чтобы переключение
+			папки и обновление списка происходило только, если есть данные.
 		</p>
 	</div></section>
 
@@ -917,7 +934,7 @@
 				if (auth.state) {
 					let {folders, threads, params} = this.props;
 					let folderId = params.folder | 0;
-					#!+ if (threads == null) {
+					#!+ if (threads == null) { // тредов нет, возьмем активный список
 						#!+ folderId = this.activeFolderId == null ? folderId : this.activeFolderId;
 						#!- threads = this.activeThreads;
 					} else {
@@ -1136,7 +1153,7 @@
 	</div></section>
 
 	<section class="slide shout"><div>
-		<h2>Как же всё таки профилировать?</h2>
+		<h2>Как же всё таки полчить честные цифры?</h2>
 	</div></section>
 
 	<section class="slide shout"><div>
