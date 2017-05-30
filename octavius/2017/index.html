@@ -202,6 +202,22 @@
 
 	<section class="slide"><div>
 		<h2 style="margin-top: -50px">Поддержка вложенных моделей</h2>
+		<pre class="js-code">
+			const Thread = Message.extend({
+				#! className: "mail.Thread", // для логирования
+				#! findUrl: "threads", // Получение списка тредов
+				#! findOneUrl: "threads/thread", // Запрос за тредом
+				#!+ defaults: { // Свойства по умолчанию
+					...Message.fn.defaults,
+					length: 0,
+					**messages: new Message.List.Sorted**,
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Валидация атрибутов</h2>
 		<pre class="js-code compact-s">
 			// Письмо
 			const Message = RPCModel.extends({
@@ -209,24 +225,42 @@
 					// ...
 					attachments: new Attachment.List.Local(),
 				},
+				// Валидация атрибутов при изменении
+				valueValidator(newValue, attr, newAttrs, model) {
+					#! return <mark>check(attr, newValue)</mark> ? newValue : model.get(attr);
+				}
 			});
 
-			// Тред наследует Письмо
-			const Thread = Message.extends({
-				defaults: {
-					// ...
-					messages: new Message.List.Sorted(),
-				},
+			// Отсортированный список моделей
+			Message.List.Sorted = Message.List.extend({
+				comparator: {date: true} // desc
 			});
 		</pre>
-		<div class="next">
-			<img src="img/arrow-rdu.png" style="
-				position: absolute;
-				right: 150px;
-				top: 260px;
-				transform: rotateZ(-10deg);
-			"/>
-		</div>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 500%">Неполные данные</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Неполные данные</h2>
+		<pre class="js-code compact">
+			const Thread = Message.extend({
+				<s>findOneUrl: "threads/thread"</s>
+				#!+ findOneUrl(query) { return query.withoutQuote
+						? "threads/thread/short"
+						: "threads/thread"
+				#!- },
+				// ...
+				#!+ isDataFully(query) {
+					#! return this.is("body") || !query.withoutQuote;
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/jssdk-thread-flow.png" height="95%" style="margin-left: 30px; margin-top: 30px;"/>
 	</div></section>
 
 	<section class="slide"><div>
