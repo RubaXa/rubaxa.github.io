@@ -135,6 +135,32 @@
 	</div></section>
 
 	<section class="slide"><div>
+		<h2>Методы получения модели</h2>
+		<ul>
+			<li><b>find</b>(query) — получить список моделей</li>
+			<li><b>findOne</b>(id) / findOne(query) — модель по id или некому условию</li>
+			<li><b>get</b>(id) — получить модель из RuntimeCache (если есть)</li>
+			<li><b>getSafe</b>(id) — получить модель независимо от её наличия</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Базовый интрейфейс модели</h2>
+		<ul>
+			<li><b>isNew</b>() - явялется ли модель «новой»?</li>
+			<li><b>isDataFully</b>([query]) - проверить полноту данных</li>
+			<li><b>is</b>(name) — проверить значение на истиность</li>
+			<li><b>get</b>(name) — получить значение</li>
+			<li><b>set</b>(name, value) - изменить</li>
+			<li><b>previous</b>(name) - предыдущее значение</li>
+			<li><b>toJSON</b>() - получить чистые данные</li>
+		</ul>
+		<p style="text-align: right; margin-top: -30px;">
+			* <b>name</b> — поддерживаем нотацию
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
 		<h2>JSSDK: Models</h2>
 		<ul>
 			<li><b>Персистентность</b></li>
@@ -163,6 +189,35 @@
 				#!+ // Инвертируем флаг
 				#!- message.set("flags.unread", !message.is("flags.unread"));
 			#!- });
+		</pre>
+		<div class="next">
+			<img src="img/arrow-rdu.png" style="
+				position: absolute;
+				right: 150px;
+				top: 260px;
+				transform: rotateZ(-10deg);
+			"/>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Поддержка вложенных моделей</h2>
+		<pre class="js-code compact-s">
+			// Письмо
+			const Message = RPCModel.extends({
+				defaults: {
+					// ...
+					attachments: new Attachment.List.Local(),
+				},
+			});
+
+			// Тред наследует Письмо
+			const Thread = Message.extends({
+				defaults: {
+					// ...
+					messages: new Message.List.Sorted(),
+				},
+			});
 		</pre>
 		<div class="next">
 			<img src="img/arrow-rdu.png" style="
