@@ -10,7 +10,12 @@
 	<style>
 		.slide .next.shade {
 			opacity: 1;
-			transition: all 1s;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: #fff;
+			transition: all .5s;
 		}
 		.slide .next.active.shade {
 			opacity: 0;
@@ -23,7 +28,6 @@
 		<h1>Почта MailRu</h1>
 		<p></p>
 	</header>
-
 
 	<section class="slide shout"><div>
 		<h2>Почта Mail.ru</h2>
@@ -85,6 +89,17 @@
 
 	<section class="slide cover"><div>
 		<img src="img/api-flow.png" height="90%" style="margin-left: 90px; margin-top: 60px;"/>
+
+		<div class="next shade" style="top: 170px;"></div>
+		<div class="next shade" style="top: 210px;"></div>
+		<div class="next shade" style="top: 250px;"></div>
+		<div class="next shade" style="top: 290px;"></div>
+		<div class="next shade" style="top: 330px;"></div>
+		<div class="next shade" style="top: 360px;"></div>
+
+		<div class="next shade" style="top: 400px;">
+			<div style="position: absolute; background: #fff; top: -30px; height: 40px; width: 550px; right: 0;"></div>
+		</div>
 	</div></section>
 
 	<section class="slide"><div>
@@ -271,14 +286,100 @@
 
 	<section class="slide cover"><div>
 		<img src="img/jssdk-thread-flow.png" height="95%" style="margin-left: 30px; margin-top: 30px;"/>
-		<div class="next shade" style="
-			position: absolute;
-			top: 400px;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			background: #fff;
-		"></div>
+		<div class="next shade" style="top: 400px;"></div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Группировка</h2>
+		<pre class="js-code">
+			Promise.all([
+				Folder.findOne(123), // Первый запрос
+				Thread.find({folder: 123}) // Второй :[
+			]).then(([folder, threads]) => {
+				// ..
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Группировка</h2>
+		<pre class="js-code">
+			<mark>RPC.batch(() =></mark> Promise.all([
+				Folder.findOne(123),
+				Thread.find({folder: 123})
+			])).then(([folder, threads]) => {
+				// ..
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Логирование</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<pre class="js-code" style="margin: -40px 0 0 -100px; box-shadow: none; border-bottom: 2px solid #ccc;">
+			Folder.find().then(folders => { ... });
+		</pre>
+		<img src="img/jssdk-model-log.png" width="100%" style="margin-top: 160px;"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Ошибки</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Ошибки</h2>
+		<pre class="js-code compact-xs">
+			request.on("error", (evt, req) => {
+				saveToLog(req);
+			});
+		</pre>
+
+		<div style="display: flex; margin: -30px -70px 0 -20px; font-size: 87%;">
+			<ul class="next" style="flex-basis: 45%;">
+				<li><b>uuid</b>:`string` — id запроса</li>
+				<li><b>url</b>:`string` — что запрашивали</li>
+				<li><b>type</b>:`string` — GET, POST и т.п.</li>
+				<li><b>data</b>:`Object` — Параметры запроса</li>
+				<li><b>options</b>:`Object` — Опции запроса</li>
+				<li><b>body</b>:`Object` — Ответ (JSON)</li>
+				<li><b>error</b>:`*` — Ошибка</li>
+				<li><b>responseText</b>:`*` — raw-ответ</li>
+			</ul>
+			<ul class="next">
+				<li><b>startTime</b>:`number` — Время начала запроса</li>
+				<li><b>endTime</b>:`number` — Время завершения</li>
+				<li><b>duration</b>:`number` — Продолжительность запроса</li>
+				<li><b>aborted</b>:`boolean` — Отменен</li>
+				<li><b>batched</b>:`boolean` — В «пачке»
+				<li><b>pending</b>:`boolean` — В ожидании ответа</li>
+				<li><b>retries</b>:`number` — Количество попыток</li>
+			</ul>
+		</div>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>«Действие»</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Пример MoveTo</h2>
+		<pre class="js-code compact-s">
+			MoveTo.execute({
+				#! folderTo: 123, // id папки куда переносим
+				#! models: [...] // Массив Писем или Тредов (модели)
+			}).then(action => {
+				#!+ // Ссылка на модель Папки куда переместили
+				#!- const folderTo = action.folderTo;
+
+				#!+ // Список реально перемещенных моделей
+				#!- const affectedModels = action.models;
+
+				#!+ // Показывает нотификацию для отмены действия
+				#!- showUndoNotify().onUndo(() => action.undo());
+			});
+		</pre>
 	</div></section>
 
 	<section class="slide"><div>
