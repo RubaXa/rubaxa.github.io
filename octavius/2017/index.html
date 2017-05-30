@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>Почта MailRu</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=792, user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="../../shwr/styles/screen.css">
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>Почта MailRu</h1>
+		<p></p>
+	</header>
+
+
+	<section class="slide shout"><div>
+		<h2>Почта Mail.ru</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/BootScheme.png" height="100%" style="margin-left: 100px; margin-top: 40px;"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Данные и API</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/apidoc-index.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/apidoc-variants.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Данные и API</h2>
+		<ul>
+			<li>Постановка</li>
+			<li>Проектирование</li>
+			<li>Соглосование</li>
+			<li>Отправка Pull Request</li>
+			<li>Реализация*</li>
+			<li>Покрытие автотестами*</li>
+		</ul>
+		<p style="text-align: right;">* — backend</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>JSSDK</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK</h2>
+		<ul>
+			<li>Прозрачность для работчика</li>
+			<li>Расширяемость (свои обработчики событий, перехват обработки ошибок и т.п.)</li>
+			<li>Инкапсуляция всей бизнес логики и самодостаточность</li>
+			<li>Персистентность данных</li>
+			<li>Независимость от проекта</li>
+			<li>100% покрытие тестами</li>
+			<li>Документация</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/jssdk-core.png" height="90%" style="margin-left: 90px; margin-top: 30px;"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Раньше</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/api-flow.png" height="90%" style="margin-left: 90px; margin-top: 60px;"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>В итоге раньше надо было</h2>
+		<ul>
+			<li>Разбор всех статусов (на данный момент их 25)</li>
+			<li>Принятие решения в зависмости от статуса и его ограничений</li>
+			<li>Корректно реагировать на оишбки при работе с api</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="img/jssdk-api-flow.png" height="90%" style="margin-left: 60px; margin-top: 30px;"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Пример перехвата</h2>
+		<pre class="js-code compact">
+			RPC.intercept({
+				#! status: "invalid",
+				#!+ process(req) {
+					#!+ if (req.get("body.folder.error") === "not_open") {
+						 // вернёт Promise
+						return openSecureFolderLayer({
+							folder: req.get("body.folder.value")
+						});
+					#!- }
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Стало</h2>
+		<ul>
+			<li>Вся логика скрыта в JSSDK</li>
+			<li>На ружу выведены события</li>
+			<li>Разработчик оперирует моделями</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+	<script src="../../shwr/shower.js"></script>
+</body>
+</html>

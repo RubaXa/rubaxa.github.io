@@ -1014,6 +1014,17 @@ window.shower = window.shower || (function(window, document, undefined) {
 
 
 	(function () {
+		function hlText(line) {
+			return line
+					.replace(/\b([+-]?\d+(?:\s+\d+)*(?:\.\d+)?)\s*(KB|bytes|seconds)?/gi, function (_, num, postfix) {
+						return (
+							'<span class="number">' + num + '</span>' +
+							(postfix ? ' <span class="keyword">' + postfix + '</span>' : '')
+						);
+					})
+			;
+		}
+
 		function hl(line, html) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
@@ -1078,6 +1089,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 		// .js-code
 		[].forEach.call(document.querySelectorAll('.js-code,.pre'), function (pre) {
 			var isCode = pre.classList.contains('js-code');
+			var isText = pre.classList.contains('js-text');
 			var lines = pre.innerHTML.split('\n').slice(+!isCode, -1);
 			var pad = lines[0].match(/^\s*/)[0].length;
 			var groups = 0;
@@ -1104,7 +1116,9 @@ window.shower = window.shower || (function(window, document, undefined) {
 						line = line.replace(/(^\s*)#![-+]?\s?/, '$1');
 					}
 
-					if (/xtpl/.test(pre.className)) {
+					if (isText) {
+						line = hlText(line, html);
+					} else if (/xtpl/.test(pre.className)) {
 						line = xtpl(line, html);
 					} else {
 						line = hl(line, html);
