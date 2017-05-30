@@ -6,6 +6,16 @@
 	<meta name="viewport" content="width=792, user-scalable=no">
 	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<link rel="stylesheet" href="../../shwr/styles/screen.css">
+
+	<style>
+		.slide .next.shade {
+			opacity: 1;
+			transition: all 1s;
+		}
+		.slide .next.active.shade {
+			opacity: 0;
+		}
+	</style>
 </head>
 <body class="list">
 
@@ -253,7 +263,7 @@
 				#!- },
 				// ...
 				#!+ isDataFully(query) {
-					#! return this.is("body") || !query.withoutQuote;
+					#! return this.is("body") || query.withoutQuote;
 				#!- }
 			});
 		</pre>
@@ -261,6 +271,14 @@
 
 	<section class="slide cover"><div>
 		<img src="img/jssdk-thread-flow.png" height="95%" style="margin-left: 30px; margin-top: 30px;"/>
+		<div class="next shade" style="
+			position: absolute;
+			top: 400px;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: #fff;
+		"></div>
 	</div></section>
 
 	<section class="slide"><div>
