@@ -126,7 +126,7 @@
 		</ul>
 	</div></section>
 
-	<section class="slide"><div>
+	<section class="slide shout"><div>
 		<h2>JSSDK: Models</h2>
 	</div></section>
 
@@ -146,6 +146,32 @@
 			<li>Валидация атрибутов</li>
 			<li>Логирование</li>
 		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Персистентность</h2>
+		<pre class="js-code compact-s">
+			// Где-то получаем тред
+			Thread.findOne(123).then(thread => {
+			#!+	thread.get("messages.0").on("change:flags", () => {
+					// Реагируем на изменение флагов
+			#!-	});
+			});
+
+			#!+ // Где-то письмо (которое входит в тред)
+			Message.findOne(345).then(message => {
+				#!+ // Инвертируем флаг
+				#!- message.set("flags.unread", !message.is("flags.unread"));
+			#!- });
+		</pre>
+		<div class="next">
+			<img src="img/arrow-rdu.png" style="
+				position: absolute;
+				right: 150px;
+				top: 260px;
+				transform: rotateZ(-10deg);
+			"/>
+		</div>
 	</div></section>
 
 	<section class="slide"><div>
