@@ -1029,7 +1029,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
-						.replace(/(\s[-+]?\d+|""|(?=[^=])(["`]).*?[^\\]\2|\/\/.+|\b(?:new|async|await|function|return|var|import|from|const|let|class|extends)\b)/g, function (_, val) {
+						.replace(/(\s[-+]?\d+|""|(?=[^=])(["`]).*?[^\\]\2|\/\/.+|\b(?:new|async|in|await|function|return|var|import|from|const|let|class|extends)\b)/g, function (_, val) {
 							var type = '';
 							if (/^[-+]?\d+$/.test(val)) {
 								type = 'number';

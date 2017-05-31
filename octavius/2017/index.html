@@ -416,6 +416,88 @@
 		<img src="img/jssdk-docs-2.png" width="100%"/>
 	</div></section>
 
+	<section class="slide cover"><div>
+		<h2 style="font-size: 700%; margin-top: 120px;">Приложение</h2>
+		<img src="img/octavius-and-inspector.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 700%; margin-top: 120px;">Установка</h2>
+		<img src="img/octavius-readme-1.png" width="100%" style="margin-top: 40px;"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 600%; margin-top: 80px;">Общие сведения</h2>
+		<img src="img/octavius-readme-2.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Точка вход</h2>
+		<pre class="js-code">
+			require(["app/app", "logger"], function (app, logger) {
+				#!+ // Скрыть лоудер загрузки приложения
+				#!- app.ready(hideLoading);
+				#!+ // Перехват ссылок и запуск приложения
+				app.listenFrom(document, {
+					autoStart: true,
+					logger: logger
+				#!- });
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Что такое app?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Что такое app?</h2>
+		<pre class="js-code">
+			const app = Pilot.create({
+				#! model: { /* модели доступные всем маршрутам */
+				#!+ "#letters": {
+					url: "/:folder", // "/inbox/", "/trash/" или "/123/"
+					#!+ model: { // модели конкретного маршрута
+						threads: ({params: {folder}}) => Thread.find({folder})
+					#!- }
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Навигация по id</h2>
+		<pre class="js-code">
+			// Перейти на нужный маршрут
+			app.go("#letters");
+			app.go("#letters", {folder: "inbox"});
+
+			// Сформировать url
+			app.getUrl("#letters", {folder: 123});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Продвинутая настройка маршрута</h2>
+		<pre class="js-code compact-s">
+			"#letters": {
+				url: {
+					#! pattern: "/:folder",
+					#!+ params: {
+						folder: {
+							#! default: Folder.INBOX,
+							#! decode: (value) => TYPE2ID[value] || parseInt(value, 10),
+							#! encode: (value) => (value in ID2TYPE) ? ID2TYPE[value] : value,
+						}
+					#!- }
+				},
+				model: { /*...*/ },
+				// ...
+			}
+		</pre>
+	</div></section>
+
+
 	<section class="slide"><div>
 		<h2>The End</h2>
 
