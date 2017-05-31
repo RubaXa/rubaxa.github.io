@@ -497,6 +497,70 @@
 		</pre>
 	</div></section>
 
+	<section class="slide shout"><div>
+		<h2>Глобальная модель</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-xs" style="margin-top: -80px; margin-left: -40px;">
+			export default {
+				// Статус ящика
+				status: ({params: {folder}}) => loadStatus(folder),
+				#!+ // Список папок
+				#!- folders: (req, waitFor) => **waitFor("status")**.then(status => status.folders),
+				#!+ // Текущая папка
+				folder(req, waitFor) {
+					if (req.is("#read-letter")) {
+						#!+ return Promise
+							  .all([**waitFor("folders"), waitFor("letter")**])
+						#!-	   .then(([folders, letter]) => folders.get(letter.get("folder")));
+					} else {
+						#! return waitFor("folders").then(folders => folders.get(req.params.folder));
+					}
+				#!- },
+				#!+ // Список писем
+				#!- letters: (req, waitFor) => waitFor("status").then(status => status.letters),
+				#!+ // Письмо
+				letter: {
+					match: ["#read-letter", "#search-letter"],
+					fetch: ({params:{letter}}, waitFor) =>
+											waitFor("status").then(() => Thread.findOne(letter))
+				},
+				#!-
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Pilot.Request</h2>
+		<div style="display: flex; ">
+			<ul style="width: 60%">
+				<li><b>query</b> — GET-параметры</li>
+				<li><b>params</b> — параметры маршрута</li>
+				<li><b>route</b> — текущий маршрут</li>
+				<li><b>router</b> — ссылка на роутер</li>
+			</ul>
+			<ul style="width: 40%; font-size: 80%">
+				<li>href</li>
+				<li>protocol</li>
+				<li>host</li>
+				<li>hostname</li>
+				<li>port</li>
+				<li>pathname</li>
+				<li>search</li>
+				<li>hash</li>
+				<li>referrer</li>
+			</ul>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Итого, данные деляться на два типа</h2>
+		<ul>
+			<li>Глобальные — доступные всем маршрутам</li>
+			<li>Локальные — для конкретного маршрута</li>
+		</ul>
+	</div></section>
 
 	<section class="slide"><div>
 		<h2>The End</h2>
