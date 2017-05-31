@@ -386,6 +386,23 @@
 		<img src="img/jssdk-action-flow.png" width="90%" style="margin-top: 60px; margin-left: 55px;"/>
 	</div></section>
 
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">«Действие»</h2>
+		<pre class="js-code compact">
+			const MyAction = Action.extend(/** @lends MyAction# */{
+				#!+ // Подготовка данных
+				prepare(params, options) {
+					return {computed: params.foo + params.bar};
+				#!- },
+				#!+ // Выполняемая операция
+				#!- operation({computed}, params, options) { /* … */ },
+				#!+ // Обратная операция
+				#!- undoOperation(data, params, options) { /* … */  },
+				#!+ // Откатываем изменения в случае ошибки при выполнении
+				#!- rollbackOperation() { }
+			});
+		</pre>
+	</div></section>
 
 	<section class="slide"><div>
 		<h2>The End</h2>
