@@ -1,0 +1,977 @@
+{
+  "ns": "b",
+  "name": "application",
+  "attrs": {},
+  "remit": {},
+  "children": [
+    {
+      "ns": "b",
+      "name": "portal-menu",
+      "attrs": {},
+      "remit": {
+        "div": {
+          "click": "move"
+        },
+        "b:button": {
+          "click": "search"
+        }
+      },
+      "children": [
+        {
+          "ns": "b",
+          "name": "layout",
+          "attrs": {},
+          "remit": {},
+          "children": [
+            {
+              "ns": "fn",
+              "name": "if",
+              "attrs": {
+                "test": "attrs['left-column']"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "apply-match",
+                  "attrs": {
+                    "name": "left-column"
+                  },
+                  "children": [
+                    {
+                      "ns": "fn",
+                      "name": "if",
+                      "attrs": {
+                        "test": "layout.type != '3pane' && layout['left-column'] > 4"
+                      },
+                      "children": [
+                        {
+                          "ns": "b",
+                          "name": "button",
+                          "attrs": {},
+                          "remit": {},
+                          "children": [
+                            {
+                              "ns": "fn",
+                              "name": "if",
+                              "attrs": {
+                                "test": "attrs.ico"
+                              },
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "ico",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ns": "fn",
+              "name": "apply-match",
+              "attrs": {
+                "name": "main-frame"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "if",
+                  "attrs": {
+                    "test": "app.request.is('#letters') || (layout.support3pane && layout.type == '3pane')"
+                  },
+                  "children": [
+                    {
+                      "ns": "fn",
+                      "name": "apply-match",
+                      "attrs": {
+                        "name": "main-frame-sidebar",
+                        "attrs": "layout"
+                      },
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "if",
+                          "attrs": {
+                            "test": "layout.size != 'xxs' || attrs.selected.length > 0 "
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "button",
+                              "attrs": {},
+                              "remit": {},
+                              "children": [
+                                {
+                                  "ns": "fn",
+                                  "name": "if",
+                                  "attrs": {
+                                    "test": "attrs.ico"
+                                  },
+                                  "children": [
+                                    {
+                                      "ns": "b",
+                                      "name": "ico",
+                                      "attrs": {},
+                                      "remit": {},
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "ns": "fn",
+                          "name": "if",
+                          "attrs": {
+                            "test": "!attrs.selectMode && (layout.type=='3pane' || !layout.support3pane)"
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "button",
+                              "attrs": {},
+                              "remit": {},
+                              "children": [
+                                {
+                                  "ns": "fn",
+                                  "name": "if",
+                                  "attrs": {
+                                    "test": "attrs.ico"
+                                  },
+                                  "children": [
+                                    {
+                                      "ns": "b",
+                                      "name": "ico",
+                                      "attrs": {},
+                                      "remit": {},
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "ns": "fn",
+                          "name": "if",
+                          "attrs": {
+                            "test": "layout['right-column']==0"
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "button",
+                              "attrs": {},
+                              "remit": {},
+                              "children": [
+                                {
+                                  "ns": "fn",
+                                  "name": "if",
+                                  "attrs": {
+                                    "test": "attrs.ico"
+                                  },
+                                  "children": [
+                                    {
+                                      "ns": "b",
+                                      "name": "ico",
+                                      "attrs": {},
+                                      "remit": {},
+                                      "children": []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "ns": "fn",
+                  "name": "if",
+                  "attrs": {
+                    "test": "(layout.support3pane && layout.type == '3pane') || app.request.is('#read-letter')"
+                  },
+                  "children": [
+                    {
+                      "ns": "fn",
+                      "name": "apply-match",
+                      "attrs": {
+                        "name": "main-frame-content",
+                        "args": "layout, attrs"
+                      },
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "if",
+                          "attrs": {
+                            "test": "layout.size == 'xxs'"
+                          },
+                          "children": [
+                            {
+                              "ns": "fn",
+                              "name": "if",
+                              "attrs": {
+                                "test": "app.request.is('#read-letter')"
+                              },
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "button",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": [
+                                    {
+                                      "ns": "fn",
+                                      "name": "if",
+                                      "attrs": {
+                                        "test": "attrs.ico"
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "b",
+                                          "name": "ico",
+                                          "attrs": {},
+                                          "remit": {},
+                                          "children": []
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ns": "fn",
+              "name": "if",
+              "attrs": {
+                "test": "attrs['right-column']"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "apply-match",
+                  "attrs": {
+                    "name": "right-column"
+                  },
+                  "children": [
+                    {
+                      "ns": "b",
+                      "name": "button",
+                      "attrs": {},
+                      "remit": {},
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "if",
+                          "attrs": {
+                            "test": "attrs.ico"
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "ico",
+                              "attrs": {},
+                              "remit": {},
+                              "children": []
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "ns": "b",
+      "name": "layout",
+      "attrs": {},
+      "remit": {},
+      "children": [
+        {
+          "ns": "fn",
+          "name": "if",
+          "attrs": {
+            "test": "attrs['left-column']"
+          },
+          "children": [
+            {
+              "ns": "fn",
+              "name": "apply-match",
+              "attrs": {
+                "name": "left-column"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "if",
+                  "attrs": {
+                    "test": "app.request.is('#letters') || app.request.is('#read-letter')"
+                  },
+                  "children": [
+                    {
+                      "ns": "b",
+                      "name": "scrollable",
+                      "attrs": {},
+                      "remit": {},
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "apply-match",
+                          "attrs": {
+                            "name": "content"
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "nav-folders",
+                              "attrs": {
+                                "short": false,
+                                "active": null,
+                                "highlight": null
+                              },
+                              "remit": {},
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "nav",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": [
+                                    {
+                                      "ns": "fn",
+                                      "name": "for",
+                                      "attrs": {
+                                        "data": "attrs.items",
+                                        "as": "item"
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "fn",
+                                          "name": "apply-match",
+                                          "attrs": {
+                                            "name": "nav-item",
+                                            "args": "item"
+                                          },
+                                          "children": [
+                                            {
+                                              "ns": "fn",
+                                              "name": "virtual-block",
+                                              "attrs": {
+                                                "key": "{folder.id}",
+                                                "name": "nav-item-folder",
+                                                "model": "{folder}",
+                                                "active": "{attrs.active}",
+                                                "system": "{attrs.system}",
+                                                "highlight": "{attrs.highlight}",
+                                                "url": "{attrs.route.getUrl(folder)}"
+                                              },
+                                              "children": [
+                                                {
+                                                  "ns": "b",
+                                                  "name": "ico",
+                                                  "attrs": {},
+                                                  "remit": {},
+                                                  "children": []
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "ns": "fn",
+                                      "name": "apply-match",
+                                      "attrs": {
+                                        "name": "nav-foot"
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "fn",
+                                          "name": "if",
+                                          "attrs": {
+                                            "test": "!attrs.short"
+                                          },
+                                          "children": [
+                                            {
+                                              "ns": "b",
+                                              "name": "ico",
+                                              "attrs": {},
+                                              "remit": {},
+                                              "children": []
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ns": "fn",
+          "name": "apply-match",
+          "attrs": {
+            "name": "main-frame"
+          },
+          "children": [
+            {
+              "ns": "fn",
+              "name": "if",
+              "attrs": {
+                "test": "app.request.is('#letters') || (layout.support3pane && layout.type == '3pane')"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "apply-match",
+                  "attrs": {
+                    "name": "main-frame-sidebar",
+                    "attrs": "layout"
+                  },
+                  "children": [
+                    {
+                      "ns": "b",
+                      "name": "scrollable",
+                      "attrs": {},
+                      "remit": {},
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "apply-match",
+                          "attrs": {
+                            "name": "content"
+                          },
+                          "children": [
+                            {
+                              "ns": "b",
+                              "name": "dataset-letters",
+                              "attrs": {},
+                              "remit": {
+                                "div": {
+                                  "click": "togglestatus:flagged"
+                                }
+                              },
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "dataset",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": [
+                                    {
+                                      "ns": "fn",
+                                      "name": "for",
+                                      "attrs": {
+                                        "data": "attrs.models",
+                                        "as": "model"
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "fn",
+                                          "name": "apply-match",
+                                          "attrs": {
+                                            "name": "dataset-item",
+                                            "args": "model"
+                                          },
+                                          "children": [
+                                            {
+                                              "ns": "fn",
+                                              "name": "virtual-block",
+                                              "attrs": {
+                                                "name": "dataset-letter",
+                                                "key": "{model.id}",
+                                                "model": "{model}",
+                                                "selected": "{attrs.selected[model.id]}",
+                                                "compact": "{attrs.compact}"
+                                              },
+                                              "children": [
+                                                {
+                                                  "ns": "fn",
+                                                  "name": "if",
+                                                  "attrs": {
+                                                    "test": "!attrs.compact"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "letter-status",
+                                                      "attrs": {},
+                                                      "remit": {},
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "ico",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "ns": "b",
+                                                  "name": "avatar",
+                                                  "attrs": {},
+                                                  "remit": {},
+                                                  "children": []
+                                                },
+                                                {
+                                                  "ns": "fn",
+                                                  "name": "if",
+                                                  "attrs": {
+                                                    "test": "attrs.compact"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "letter-status",
+                                                      "attrs": {},
+                                                      "remit": {},
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "ico",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    },
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "letter-status",
+                                                      "attrs": {},
+                                                      "remit": {},
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "ico",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "ns": "fn",
+                                                  "name": "if",
+                                                  "attrs": {
+                                                    "test": "!attrs.compact"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "letter-status",
+                                                      "attrs": {},
+                                                      "remit": {},
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "ico",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "ns": "fn",
+              "name": "if",
+              "attrs": {
+                "test": "(layout.support3pane && layout.type == '3pane') || app.request.is('#read-letter')"
+              },
+              "children": [
+                {
+                  "ns": "fn",
+                  "name": "apply-match",
+                  "attrs": {
+                    "name": "main-frame-content",
+                    "args": "layout, attrs"
+                  },
+                  "children": [
+                    {
+                      "ns": "b",
+                      "name": "scrollable",
+                      "attrs": {},
+                      "remit": {},
+                      "children": [
+                        {
+                          "ns": "fn",
+                          "name": "apply-match",
+                          "attrs": {
+                            "name": "content"
+                          },
+                          "children": [
+                            {
+                              "ns": "fn",
+                              "name": "if",
+                              "attrs": {
+                                "test": "!app.request.is('#read-letter')"
+                              },
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "panel-with-selected",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": [
+                                    {
+                                      "ns": "fn",
+                                      "name": "if",
+                                      "attrs": {
+                                        "test": "attrs.selected.length",
+                                        "animated": true
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "fn",
+                                          "name": "if",
+                                          "attrs": {
+                                            "test": "attrs.selected[0].isDataFully()"
+                                          },
+                                          "children": [
+                                            {
+                                              "ns": "b",
+                                              "name": "letter",
+                                              "attrs": {},
+                                              "remit": {
+                                                "b:attach-thumb": {
+                                                  "click": "attachment:open"
+                                                }
+                                              },
+                                              "children": [
+                                                {
+                                                  "ns": "b",
+                                                  "name": "avatar",
+                                                  "attrs": {},
+                                                  "remit": {},
+                                                  "children": []
+                                                },
+                                                {
+                                                  "ns": "b",
+                                                  "name": "dropdown-actions",
+                                                  "attrs": {},
+                                                  "remit": {
+                                                    "div": {
+                                                      "click": "nospam"
+                                                    }
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "dropdown",
+                                                      "attrs": {},
+                                                      "remit": {
+                                                        "b:button": {
+                                                          "click": "dropdown-toggle"
+                                                        },
+                                                        "div": {
+                                                          "click": "dropdown-toggle"
+                                                        }
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "ns": "fn",
+                                                          "name": "apply-match",
+                                                          "attrs": {
+                                                            "name": "ctrl"
+                                                          },
+                                                          "children": [
+                                                            {
+                                                              "ns": "b",
+                                                              "name": "button",
+                                                              "attrs": {},
+                                                              "remit": {},
+                                                              "children": [
+                                                                {
+                                                                  "ns": "fn",
+                                                                  "name": "if",
+                                                                  "attrs": {
+                                                                    "test": "attrs.ico"
+                                                                  },
+                                                                  "children": [
+                                                                    {
+                                                                      "ns": "b",
+                                                                      "name": "ico",
+                                                                      "attrs": {},
+                                                                      "remit": {},
+                                                                      "children": []
+                                                                    }
+                                                                  ]
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                },
+                                                {
+                                                  "ns": "fn",
+                                                  "name": "if",
+                                                  "attrs": {
+                                                    "test": "attrs.model.is('attaches.list.length')"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "fn",
+                                                      "name": "for",
+                                                      "attrs": {
+                                                        "data": "attrs.model.get('attaches.list')",
+                                                        "as": "attachment"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "attach-thumb",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": []
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "ns": "fn",
+                              "name": "if",
+                              "attrs": {
+                                "test": "app.request.is('#read-letter')"
+                              },
+                              "children": [
+                                {
+                                  "ns": "b",
+                                  "name": "thread",
+                                  "attrs": {},
+                                  "remit": {},
+                                  "children": [
+                                    {
+                                      "ns": "fn",
+                                      "name": "for",
+                                      "attrs": {
+                                        "data": "attrs.model.get('messages')",
+                                        "as": "letter"
+                                      },
+                                      "children": [
+                                        {
+                                          "ns": "b",
+                                          "name": "letter",
+                                          "attrs": {},
+                                          "remit": {
+                                            "b:attach-thumb": {
+                                              "click": "attachment:open"
+                                            }
+                                          },
+                                          "children": [
+                                            {
+                                              "ns": "b",
+                                              "name": "avatar",
+                                              "attrs": {},
+                                              "remit": {},
+                                              "children": []
+                                            },
+                                            {
+                                              "ns": "b",
+                                              "name": "dropdown-actions",
+                                              "attrs": {},
+                                              "remit": {
+                                                "div": {
+                                                  "click": "nospam"
+                                                }
+                                              },
+                                              "children": [
+                                                {
+                                                  "ns": "b",
+                                                  "name": "dropdown",
+                                                  "attrs": {},
+                                                  "remit": {
+                                                    "b:button": {
+                                                      "click": "dropdown-toggle"
+                                                    },
+                                                    "div": {
+                                                      "click": "dropdown-toggle"
+                                                    }
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "fn",
+                                                      "name": "apply-match",
+                                                      "attrs": {
+                                                        "name": "ctrl"
+                                                      },
+                                                      "children": [
+                                                        {
+                                                          "ns": "b",
+                                                          "name": "button",
+                                                          "attrs": {},
+                                                          "remit": {},
+                                                          "children": [
+                                                            {
+                                                              "ns": "fn",
+                                                              "name": "if",
+                                                              "attrs": {
+                                                                "test": "attrs.ico"
+                                                              },
+                                                              "children": [
+                                                                {
+                                                                  "ns": "b",
+                                                                  "name": "ico",
+                                                                  "attrs": {},
+                                                                  "remit": {},
+                                                                  "children": []
+                                                                }
+                                                              ]
+                                                            }
+                                                          ]
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "ns": "fn",
+                                              "name": "if",
+                                              "attrs": {
+                                                "test": "attrs.model.is('attaches.list.length')"
+                                              },
+                                              "children": [
+                                                {
+                                                  "ns": "fn",
+                                                  "name": "for",
+                                                  "attrs": {
+                                                    "data": "attrs.model.get('attaches.list')",
+                                                    "as": "attachment"
+                                                  },
+                                                  "children": [
+                                                    {
+                                                      "ns": "b",
+                                                      "name": "attach-thumb",
+                                                      "attrs": {},
+                                                      "remit": {},
+                                                      "children": []
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "ns": "fn",
+          "name": "if",
+          "attrs": {
+            "test": "attrs['right-column']"
+          },
+          "children": [
+            {
+              "ns": "fn",
+              "name": "apply-match",
+              "attrs": {
+                "name": "right-column"
+              },
+              "children": [
+                {
+                  "ns": "b",
+                  "name": "slot",
+                  "attrs": {},
+                  "remit": {},
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

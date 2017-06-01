@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+	<title>v-octavius</title>
+
+	<script src="../../feast/feast.js"></script>
+</head>
+<body>
+
+	<style>
+		.-fp-inspector-scope {
+			margin: 0;
+			padding: 1px;
+			border: none;
+			display: inline-block;
+			text-align: center;
+			font-family: Tahoma;
+			font-size: 15px;
+			vertical-align: top;
+			white-space: nowrap;
+		}
+
+		.-fp-inspector-scope + .-fp-inspector-scope {
+			margin-left: 5px;
+		}
+
+		.-fp-inspector-scope_collapsed .-fp-inspector-scope__children {
+			display: none;
+		}
+
+		.-fp-inspector-scope__name {
+			cursor: pointer;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			transition: all .3s;
+		}
+
+		.-fp-inspector-scope_ns_b {
+			background: rgba(0,0,0,.02);
+			box-shadow: 0 1px 1px rgba(0,0,0,.2);
+		}
+			.-fp-inspector-scope_ns_b > .-fp-inspector-scope__name {
+				display: block;
+				color: #fff;
+				text-shadow: 1px 1px 1px rgba(0,0,0,.3);
+				margin: 3px 1px 0;
+				padding: 0 10px 3px;
+			}
+
+
+		.-fp-inspector-scope_ns_fn {
+			border: 1px dotted red;
+			display: block;
+		}
+			.-fp-inspector-scope_ns_fn > .-fp-inspector-scope__children > .-fp-inspector-scope_ns_fn {
+				display: inline-block;
+			}
+
+			.-fp-inspector-scope_ns_fn > .-fp-inspector-scope__name {
+				color: red;
+				font-size: 12px;
+			}
+
+		.-fp-inspector-scope_name_if {
+			border-color: mediumpurple;
+		}
+			.-fp-inspector-scope_name_if > .-fp-inspector-scope__name {
+				color: mediumpurple;
+			}
+
+		.-fp-inspector-scope_name_for {
+			border-color: #006666;
+		}
+			.-fp-inspector-scope_name_for > .-fp-inspector-scope__name {
+				color: #006666;
+			}
+
+		.-fp-inspector-scope_ns_b > .-fp-inspector-scope__name + .-fp-inspector-scope__children {
+			margin-top: 5px;
+		}
+
+		.-fp-inspector-scope__children {
+			padding: 0 5px 5px;
+		}
+
+		.-fp-inspector-scope_inactive {
+			opacity: .4;
+		}
+
+		.-fp-inspector-vars {
+			position: fixed;
+			bottom: 5px;
+			left: 5px;
+			background: #fff;
+			box-shadow: 0 1px 1px rgba(0,0,0,.5);
+			padding: 5px;
+		}
+	</style>
+
+	<div id="canvas"></div>
+
+	<script>
+		var UIInspectorScope = feast.Block.extend({
+			name: '-fp-inspector-scope',
+			template: feast.parse(`
+				<fieldset>
+					<fn:var name="color" value="background-color: {_this.randomHsl(attrs.data.name)}"/>
+
+					<bem:mod name="ns" value="{attrs.data.ns}"/>
+					<bem:mod name="name" value="{attrs.data.name}"/>
+					<bem:mod name="collapsed" test="attrs.collapsed"/>
+					<bem:mod name="inactive" test="attrs.data.testFn ? !attrs.data.testFn() : false"/>
+
+					<fn:choose>
+						<fn:when test="attrs.data.ns == 'b'">
+							<div remit:click="toggle" bem:elem="name" style="{color}"><fn:value>attrs.data.name</fn:value></div>
+						</fn:when>
+
+						<fn:when test="' if for '.includes(attrs.data.name)">
+							<legend ref="name" remit:click="toggle" bem:elem="name">
+								<fn:value>attrs.data.name + ' '</fn:value>
+								<fn:value>attrs.data.attrs.test || (attrs.data.attrs.as + ' in ' + attrs.data.attrs.data)</fn:value>
+							</legend>
+						</fn:when>
+
+						<fn:when test="attrs.data.name.includes('virtual')">
+							<legend remit:click="toggle" bem:elem="name">&lt;<fn:value>attrs.data.attrs.name</fn:value>/&gt;</legend>
+						</fn:when>
+
+						<fn:otherwise>
+							<legend remit:click="toggle" bem:elem="name"><fn:value>attrs.data.attrs.name</fn:value></legend>
+						</fn:otherwise>
+					</fn:choose>
+
+					<fn:if test="attrs.data.children.length">
+						<div ref="children" bem:elem="children">
+							<fn:for data="attrs.data.children" as="child" key="idx">
+								<b:-fp-inspector-scope key="{idx}" data="{child}"/>
+							</fn:for>
+						</div>
+					</fn:if>
+				</fieldset>
+			`),
+
+			attrChanged: {
+				data(data) {
+//					this.set('collapsed', data.name === 'apply-match');
+				}
+			},
+
+			events: {
+				'toggle': 'handleToggle'
+			},
+
+			randomHsl: (function () {
+				var step = 15;
+				var deg = -step;
+				var store = {};
+
+				return function randomHsl(name) {
+					if (!store[name]) {
+						deg += step;
+						store[name] = 'hsla(' + deg + ', 70%, 60%, 1)';
+					}
+
+					return store[name];
+				}
+			})(),
+
+			didMount() {
+				var nameEl = this.refs.name;
+
+				if (nameEl) {
+					var children = this.refs.children;
+					var oWidth = children.offsetWidth;
+					var lastChild = children.lastChild;
+					var maxWidth = lastChild.offsetLeft - children.firstChild.offsetLeft + lastChild.offsetWidth;
+					var setMaxWidth = function (value) {
+						nameEl.style.maxWidth = value + 'px';
+					};
+					var collapse = setMaxWidth.bind(null, maxWidth);
+					var pid;
+
+					collapse();
+
+					this.$on(nameEl, 'mouseover', function () {
+						clearTimeout(pid);
+						setMaxWidth(oWidth);
+						pid = null;
+					});
+
+					this.$on(nameEl, 'mouseout', function () {
+						!pid && (pid = setTimeout(collapse, 200));
+					});
+				}
+
+				if (this.is('root')) {
+					setTimeout(function () {
+						document.body.scrollLeft = 0;
+
+						var getMinScale = function () {
+							return window.innerWidth / (document.body.scrollWidth + 20);
+						};
+						var currentScale = getMinScale();
+
+						this.el.style['transform'] = 'scale(' + currentScale + ')';
+						this.el.style['transform-origin'] = 'top left';
+
+						this.$on(document, 'mousewheel', function (evt) {
+							if (!evt.wheelDeltaX) {
+								currentScale += evt.wheelDeltaY/1000;
+								currentScale = Math.min(Math.max(currentScale, getMinScale()), 1);
+								this.el.style['transform'] = 'scale(' + currentScale + ')';
+							}
+
+							document.body.scrollLeft -= evt.wheelDeltaX/3;
+							evt.preventDefault();
+						}.bind(this));
+					}.bind(this), 1);
+				}
+			},
+
+			handleToggle(evt) {
+				this.invert('collapsed');
+				evt.stopPropagation();
+			}
+		});
+
+		var variables = {};
+
+		function walk(node) {
+			if (node.name === 'if') {
+				var test = node.attrs.test;
+				var regexp = /(?:^|[!(\s&|])([a-z]+(?:\.\w+)*(\(.*?\)|\[.*?\])?)/gi;
+				var keys = [];
+				var match;
+
+				while (match = regexp.exec(test)) {
+					var expr = match[1];
+					keys.push(expr);
+					variables[expr] = null;
+					test = test.replace(expr, '__get(' + JSON.stringify(expr) + ')');
+				}
+
+				node.testFn = new Function(
+					'__null, __get',
+					'return function () { return __null() || ' + test + '}'
+				)(
+					function __null() {
+						return keys.every(function (key) {
+							return variables[key] === null;
+						});
+					},
+					function __get(name) {
+						return variables[name] === null || variables[name];
+					}
+				);
+			}
+
+			node.children.forEach(walk);
+		}
+
+//		var UIInspectorVars = feast.Block.extend({
+//			name: '-fp-inspector-vars',
+//			template: feast.parse(`
+//				<div on-input="_this.handleInput(evt)">
+//					<fn:for data="attrs.variables" as="value" key="name">
+//						<div key="{name}">
+//							<fn:value>name</fn:value>
+//							<input name="{name}" value="{value}"/>
+//						</div>
+//					</fn:for>
+//				</div>
+//			`),
+//			handleInput(evt) {
+//				const el = evt.target;
+//				const value = el.value;
+//				const num = parseFloat(value);
+//				variables[el.name] = Number.isFinite(num) ? num : (/true|false/.test(value) ? value == 'true' : value || null);
+//				rootScope.render();
+//			}
+//		});
+//
+//		var vars = new UIInspectorVars({variables});
+
+		fetch('./2016.tree.json')
+			.then(response => response.json())
+			.then(tree => {
+				walk(tree);
+
+				var rootScope = new UIInspectorScope({
+					root: true,
+					data: tree
+				});
+
+				rootScope.renderTo(window['canvas']);
+			})
+			.catch(err => {
+				console.error(err);
+			})
+		;
+//		vars.renderTo(window['canvas']);
+	</script>
+</body>
+</html>
