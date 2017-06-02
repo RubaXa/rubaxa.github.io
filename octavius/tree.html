@@ -115,7 +115,14 @@
 
 					<fn:choose>
 						<fn:when test="attrs.data.ns == 'b'">
-							<div remit:click="toggle" bem:elem="name" style="{color}"><fn:value>attrs.data.name</fn:value></div>
+							<div
+								remit:mouseenter="tooltip"
+								remit:click="toggle"
+								bem:elem="name"
+								style="{color}"
+							>
+								<fn:value>attrs.data.name</fn:value>
+							</div>
 						</fn:when>
 
 						<fn:when test="' if for '.includes(attrs.data.name)">
@@ -151,7 +158,8 @@
 			},
 
 			events: {
-				'toggle': 'handleToggle'
+				'toggle': 'handleToggle',
+				'tooltip': 'handleTooltip'
 			},
 
 			randomHsl: (function () {
@@ -209,14 +217,15 @@
 						this.el.style['transform-origin'] = 'top left';
 
 						this.$on(document, 'mousewheel', function (evt) {
-							if (!evt.wheelDeltaX) {
+							if (evt.shiftKey) {
 								currentScale += evt.wheelDeltaY/1000;
 								currentScale = Math.min(Math.max(currentScale, getMinScale()), 1);
 								this.el.style['transform'] = 'scale(' + currentScale + ')';
+
+								document.body.scrollLeft -= evt.wheelDeltaX/3;
+								evt.preventDefault();
 							}
 
-							document.body.scrollLeft -= evt.wheelDeltaX/3;
-							evt.preventDefault();
 						}.bind(this));
 					}.bind(this), 1);
 				}
@@ -225,6 +234,10 @@
 			handleToggle(evt) {
 				this.invert('collapsed');
 				evt.stopPropagation();
+			},
+
+			handleTooltip(evt) {
+				console.log(this);
 			}
 		});
 
@@ -244,19 +257,19 @@
 					test = test.replace(expr, '__get(' + JSON.stringify(expr) + ')');
 				}
 
-				node.testFn = new Function(
-					'__null, __get',
-					'return function () { return __null() || ' + test + '}'
-				)(
-					function __null() {
-						return keys.every(function (key) {
-							return variables[key] === null;
-						});
-					},
-					function __get(name) {
-						return variables[name] === null || variables[name];
-					}
-				);
+//				node.testFn = new Function(
+//					'__null, __get',
+//					'return function () { return __null() || ' + test + '}'
+//				)(
+//					function __null() {
+//						return keys.every(function (key) {
+//							return variables[key] === null;
+//						});
+//					},
+//					function __get(name) {
+//						return variables[name] === null || variables[name];
+//					}
+//				);
 			}
 
 			node.children.forEach(walk);
@@ -285,9 +298,11 @@
 //
 //		var vars = new UIInspectorVars({variables});
 
-		fetch('./2016.tree.json')
+		fetch('./2017.tree.json')
 			.then(response => response.json())
 			.then(tree => {
+				console.log('Tree parsed');
+
 				walk(tree);
 
 				var rootScope = new UIInspectorScope({
@@ -298,6 +313,7 @@
 				rootScope.renderTo(window['canvas']);
 			})
 			.catch(err => {
+				console.warn('Blayt!');
 				console.error(err);
 			})
 		;
