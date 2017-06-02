@@ -749,6 +749,118 @@
 	</div></section>
 
 	<section class="slide"><div>
+		<h2>Итого</h2>
+		<ul>
+			<li>Все данные пробрасываются сверх &rarr; вниз</li>
+			<li>Обратная связ через custom-events</li>
+			<li>Обновление как полное, так и через подписку на модели/колекции</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Где логика?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Медиаторы</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Медиаторы нужны для:</h2>
+		<ul>
+			<li>Связь с бизнес-локой / JSSDK</li>
+			<li>Обработка событий</li>
+			<li>Взаимодействия между блоками, которые ничего не знают о друг друге</li>
+			<li>Хранить состояниея блоков</li>
+			<li>и т.д.</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Медиаторы: Жизненный цикл</h2>
+		<ul>
+			<li>Регистрация компонента</li>
+			<li>Подписка на события</li>
+			<li>Обновление атрибутов</li>
+			<li>Реакция на событие</li>
+			<li>Какая-то внутренняя логика</li>
+			<li>Обновление всех связанных компонентов</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -60px" class="js-code compact-xs">
+			// Действия
+			import MarkAsAction from "jssdk/mail/actions/MarkAs";
+			import DeleteAction from "jssdk/mail/actions/Delete";
+			#!+ // Другие медиаторы
+			#!- import lettersSelection from "mediator/letters-selection";
+
+			#!+ export default feast.Mediator.create("letter-actions", {
+				components: {
+					#!+ "dataset-letters": {  // имя для обращения внутри медиатора
+						#! "class": UIDatasetLetters,
+						#!+ // события, на которые подписывается медиатор
+						#!- "events": ["invert:unread", "delete", ...]
+					#!- },
+					#!+ "nav-folders": {
+						"class": UINavFodlers,
+						"events": ["drop", "move"],
+						**"handleEvent": "handleMoveTo"**
+					#!- },
+					// ...
+				},
+				handleEvent(evt) { /* ... */ },
+				handleMoveTo(evt) { /* ... */ },
+				// ...
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -30px" class="js-code compact-xxs">
+			export default feast.Mediator.create("layout-manager", {
+				components: { /* ... */ },
+				handleEvent(evt) {
+					#!+ // Тип события
+					#!- const type = evt.type;
+					#!+ // Получаем список моделей от медиатора отвечающего за выделение писем
+					#!- const selectedModels = lettersSelection.getModels();
+					#!+
+					if (type === "delete") {
+						#!+ DeleteAction.execute({models: selectedModels})
+							.then(this._done)
+						#!-	.catch(this._fail);
+					} else if (type === "move") {
+						// ...
+					}
+					#!-
+					#!+ swipeManager.reset(); // Закрываем свайпы
+					lettersSelection.reset(); // Сбрасываем выделение
+					#!-
+					#! // По завершению `handleEvent`, всем связанные блоки с медиатором будут обновлены
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/app-struct-shot-idx-final.png" width="100%"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Сервисы</h2>
+		<ul>
+			<li><b>auth</b> — загрузка соответствующего типа авторизации (account, oauth) и запуск процесса логина</li>
+			<li><b>compose</b> — форма написания письма (загрузка, инициализация, менеджмент окон)</li>
+			<li><b>viewer</b> — приложение для просмотра документов, фотографий, архивов и любых других атачей</li>
+			<li>и т.п.</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
 		<h2>The End</h2>
 
 		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
