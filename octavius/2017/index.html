@@ -107,7 +107,7 @@
 		<ul>
 			<li>Разбор всех статусов (на данный момент их 25)</li>
 			<li>Принятие решения в зависмости от статуса и его ограничений</li>
-			<li>Корректно реагировать на оишбки при работе с api</li>
+			<li>Корректно реагировать на ошибки при работе с api</li>
 		</ul>
 	</div></section>
 
@@ -146,7 +146,7 @@
 		<h2>Стало</h2>
 		<ul>
 			<li>Вся логика скрыта в JSSDK</li>
-			<li>На ружу выведены события</li>
+			<li>Наружу выведены события</li>
 			<li>Разработчик оперирует моделями</li>
 		</ul>
 	</div></section>
@@ -278,7 +278,7 @@
 				#!- },
 				// ...
 				#!+ isDataFully(query) {
-					#! return this.is("body") || query.withoutQuote;
+					#! return this.is("messages.lentgh") || query.withoutQuote;
 				#!- }
 			});
 		</pre>
@@ -766,6 +766,20 @@
 	</div></section>
 
 	<section class="slide"><div>
+		<h2>Пример</h2>
+		<pre class="js-code">
+			&lt;b:portal-menu
+				#! use:mediator="letters-actions letters-selection"
+			/>
+			// ...
+			&lt;b:thread
+				model={attrs.model}
+				#! use:mediator="letters-actions"
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
 		<h2>Медиаторы нужны для:</h2>
 		<ul>
 			<li>Связь с бизнес-локой / JSSDK</li>
@@ -796,7 +810,7 @@
 			#!+ // Другие медиаторы
 			#!- import lettersSelection from "mediator/letters-selection";
 
-			#!+ export default feast.Mediator.create("letter-actions", {
+			#!+ export default feast.Mediator.create("letters-actions", {
 				components: {
 					#!+ "dataset-letters": {  // имя для обращения внутри медиатора
 						#! "class": UIDatasetLetters,
