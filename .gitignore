@@ -2,3 +2,4 @@ sdk
 node_modules
 mailru
 /**/.DS_Store
+*.graffle
