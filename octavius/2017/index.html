@@ -642,13 +642,13 @@
 		<h2 style="margin-top: -80px">Button/Button.html</h2>
 		<pre class="js-code compact-s">
 			&lt;div title="{attrs.title || attrs.text}">
-				#!+ &lt;bem:mod name="pressed" test="attrs.pressed && !attrs.disabled" />
+				#!+ &lt;<mark>bem:mod</mark> name="pressed" test="attrs.pressed && !attrs.disabled" />
 				&lt;bem:mod name="borderless" test="attrs.borderless" />
 				&lt;bem:mod name="primary" test="attrs.type == 'submit' || attrs.primary" />
 				&lt;bem:mod name="size" value="{attrs.size}" test="attrs.size" />
 				#!- &lt;bem:mod name="disabled" test="attrs.disabled" />
 				#!+ &lt;fn:if test="attrs.ico">
-					&lt;span **bem:elem="ico"**>
+					&lt;span <mark>bem:elem="ico"</mark>>
 						&lt;bem:mod name="size" value="{attrs.size}" test="attrs.size" />
 						&lt;bem:mod name="{'theme-'+attrs.theme}" test="attrs.theme" />
 			
@@ -656,7 +656,7 @@
 					&lt;/span>
 				#!- &lt;/fn:if>
 				#!+ &lt;fn:if test="!attrs.short && attrs.text">
-					&lt;span bem:elem="txt">{attrs.text}&lt;/span>
+					&lt;span <mark>bem:elem="txt"</mark>>{attrs.text}&lt;/span>
 				#!- &lt;/fn:if>
 			&lt;/div>
 		</pre>
@@ -712,7 +712,7 @@
 	</div></section>
 
 	<section class="slide shout"><div>
-		<h2>Props Down<br/>Events Up</h2>
+		<h2>Attrs Down<br/>Events Up</h2>
 	</div></section>
 
 	<section class="slide"><div>
