@@ -75,23 +75,6 @@
 		<h2>JSSDK</h2>
 	</div></section>
 
-	<section class="slide"><div>
-		<h2>JSSDK</h2>
-		<ul>
-			<li>Прозрачность для работчика</li>
-			<li>Расширяемость (свои обработчики событий, перехват обработки ошибок и т.п.)</li>
-			<li>Инкапсуляция всей бизнес логики и самодостаточность</li>
-			<li>Персистентность данных</li>
-			<li>Независимость от проекта</li>
-			<li>100% покрытие тестами</li>
-			<li>Документация</li>
-		</ul>
-	</div></section>
-
-	<section class="slide cover"><div>
-		<img src="media/jssdk-core.png" height="90%" style="margin-left: 90px; margin-top: 30px;"/>
-	</div></section>
-
 	<section class="slide shout"><div>
 		<h2>Раньше</h2>
 	</div></section>
@@ -118,6 +101,14 @@
 			<li>Принятие решения в зависмости от статуса и его ограничений</li>
 			<li>Корректно реагировать на ошибки при работе с api</li>
 		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Стало</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-core.png" height="90%" style="margin-left: 90px; margin-top: 30px;"/>
 	</div></section>
 
 	<section class="slide"><div>
@@ -160,12 +151,39 @@
 		</ul>
 	</div></section>
 
+	<section class="slide"><div>
+		<h2>JSSDK</h2>
+		<ul>
+			<li>Прозрачность для работчика</li>
+			<li>Расширяемость (свои обработчики событий, перехват обработки ошибок и т.п.)</li>
+			<li>Инкапсуляция всей бизнес логики и самодостаточность</li>
+			<li>Персистентность данных</li>
+			<li>Независимость от проекта</li>
+			<li>100% покрытие тестами</li>
+			<li>Документация</li>
+		</ul>
+	</div></section>
+
 	<section class="slide shout"><div>
 		<h2>JSSDK: Models</h2>
 	</div></section>
 
 	<section class="slide cover"><div>
 		<img src="media/base-models.png" height="90%" style="margin-left: 80px; margin-top: 30px;"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK: Models</h2>
+		<ul>
+			<li><b>Персистентность</b></li>
+			<li>Работа с неполными данными — об этом чуть позже</li>
+			<li><b>Поддержка вложенных моделей</b></li>
+			<li><b>Дедупликация запросов</b></li>
+			<li>Кеширование</li>
+			<li>Значения по умолчанию</li>
+			<li>Валидация атрибутов</li>
+			<li>Логирование</li>
+		</ul>
 	</div></section>
 
 	<section class="slide"><div>
@@ -192,20 +210,6 @@
 		<p style="text-align: right; margin-top: -30px;">
 			* <b>name</b> — поддерживаем нотацию
 		</p>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>JSSDK: Models</h2>
-		<ul>
-			<li><b>Персистентность</b></li>
-			<li>Работа с неполными данными — об этом чуть позже</li>
-			<li><b>Поддержка вложенных моделей</b></li>
-			<li><b>Дедупликация запросов</b></li>
-			<li>Кеширование</li>
-			<li>Значения по умолчанию</li>
-			<li>Валидация атрибутов</li>
-			<li>Логирование</li>
-		</ul>
 	</div></section>
 
 	<section class="slide"><div>
@@ -333,10 +337,6 @@
 		<img src="media/jssdk-model-log.png" width="100%" style="margin-top: 160px;"/>
 	</div></section>
 
-	<section class="slide shout"><div>
-		<h2>Ошибки</h2>
-	</div></section>
-
 	<section class="slide"><div>
 		<h2 style="margin-top: -50px;">Ошибки</h2>
 		<pre class="js-code compact-xs">
@@ -391,22 +391,18 @@
 		</pre>
 	</div></section>
 
-	<section class="slide cover"><div>
-		<img src="media/jssdk-action-flow.png" width="90%" style="margin-top: 60px; margin-left: 55px;"/>
-	</div></section>
-
 	<section class="slide"><div>
 		<h2 style="margin-top: -50px;">«Действие» / Lifecycle</h2>
 		<pre class="js-code compact">
 			const MyAction = Action.extend(/** @lends MyAction# */{
 				#!+ // Подготовка данных
-				prepare(params, options) {
+				prepare(params, options)/* Promise|Object */ {
 					return {computed: params.foo + params.bar};
 				#!- },
 				#!+ // Выполняемая операция
-				#!- operation({computed}, params, options) { /* … */ },
+				#!- operation({computed}, params, options) /* Promise */ { /* … */ },
 				#!+ // Обратная операция
-				#!- undoOperation(data, params, options) { /* … */  },
+				#!- undoOperation(data, params, options) /* Promise */ { /* … */  },
 				#!+ // Откатываем изменения в случае ошибки при выполнении
 				#!- rollbackOperation() { }
 			});
@@ -414,6 +410,11 @@
 	</div></section>
 
 	<section class="slide cover"><div>
+		<img src="media/jssdk-action-flow.png" width="90%" style="margin-top: 60px; margin-left: 55px;"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 500%">Покрытие тестами</h2>
 		<img src="media/jssdk-coverage.png" width="100%"/>
 	</div></section>
 
@@ -478,11 +479,15 @@
 		<h2 style="margin-top: -50px">Навигация по id</h2>
 		<pre class="js-code">
 			// Перейти на нужный маршрут
-			app.go("#letters");
-			app.go("#letters", {folder: "inbox"});
+			app.go("#letters"); // "/inbox/"
+			app.go("#letters", {folder: 123}); // "/123/"
 
 			// Сформировать url
-			app.getUrl("#letters", {folder: 123});
+			app.getUrl("#letters", {folder: 0}); // "/inbox/"
+			app.getUrl("#letters", {folder: 123}); // "/123/"
+
+			// Или для текущего маршрута
+			app.route.getUrl({folder: 0}); // "/inbox/"
 		</pre>
 	</div></section>
 
@@ -498,7 +503,8 @@
 							#! decode: (value) => TYPE2ID[value] || parseInt(value, 10),
 							#! encode: (value) => (value in ID2TYPE) ? ID2TYPE[value] : value,
 						}
-					#!- }
+					#!- },
+					#! toUrl(params, builder) { return builder({params, ...extra}); }
 				},
 				model: { /*...*/ },
 				// ...
@@ -543,13 +549,13 @@
 	<section class="slide"><div>
 		<h2>Pilot.Request</h2>
 		<div style="display: flex; ">
-			<ul style="width: 60%">
+			<ul style="width: 80%">
 				<li><b>query</b> — GET-параметры</li>
 				<li><b>params</b> — параметры маршрута</li>
-				<li><b>route</b> — текущий маршрут</li>
+				<li><b>route</b> — текущий маршрут, route.is("#letters #search")</li>
 				<li><b>router</b> — ссылка на роутер</li>
 			</ul>
-			<ul style="width: 40%; font-size: 80%">
+			<ul style="width: 20%; font-size: 80%">
 				<li>href</li>
 				<li>protocol</li>
 				<li>host</li>
@@ -592,10 +598,6 @@
 
 	<section class="slide cover"><div>
 		<img src="media/app-struct-shot-panel-with-selected.png" width="100%"/>
-	</div></section>
-
-	<section class="slide shout"><div>
-		<h2 style="font-size: 250%">— У нас нет «глупых/умных» блоков,<br/>они все «глупые»</h2>
 	</div></section>
 
 	<section class="slide shout"><div>
