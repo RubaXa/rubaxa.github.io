@@ -1,6 +1,16 @@
 (function (window, document) {
-	var _rname = /^(.*?)\s+([-—]+\s+)/,
-		_repos = [
+	var _rname = /^(.*?)\s+([-—]+\s+)/;
+	var _repos = [
+			{
+				"name": "npmy",
+				"desc": "`npm link` on steroids",
+				"url": "https://github.com/artifact-project/npmy/"
+			},
+			{
+				"name": "tx-reflector",
+				"desc": "TypeScript transformer for code generation.",
+				"url": "https://github.com/artifact-project/tx-reflector/"
+			},
 			{
 				"name": "JSBench",
 				"desc": "JSBench — JavaScript benchmark playground. User-friendly interface, sync with your github, code highlighting and etc.",
