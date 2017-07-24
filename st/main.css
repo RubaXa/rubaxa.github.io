@@ -41,9 +41,9 @@ h1 {
 a {
 	color: #36c;
 }
-a:hover {
-	color: #f00;
-}
+	a:hover {
+		color: #f00;
+	}
 
 ul {
 	margin: 0;
@@ -54,3 +54,8 @@ ul {
 	ul sup {
 		margin-left: 5px;
 	}
+
+
+#articles {
+	line-height: 180%;
+}
