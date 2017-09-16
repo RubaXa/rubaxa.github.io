@@ -2,6 +2,11 @@
 	var _rname = /^(.*?)\s+([-—]+\s+)/;
 	var _repos = [
 			{
+				"name": "react-devtools-symbiote",
+				"desc": "A module that allows use React DevTools for inspection your component hierarchy without React.",
+				"url": "https://github.com/artifact-project/react-devtools-symbiote/"
+			},
+			{
 				"name": "npmy",
 				"desc": "`npm link` on steroids",
 				"url": "https://github.com/artifact-project/npmy/"
