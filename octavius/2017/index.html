@@ -517,34 +517,74 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<pre class="js-code compact-xs" style="margin-top: -80px; margin-left: -40px;">
+		<h2>Глобальная модель</h2>
+		<pre class="js-code">
+			// Источники данных
+			import request from './source/request';
+			import authUser from './source/authUser';
+			import folders from './source/folders';
+			// etc
+			const loader = new Pilot.Loader({
+				request,
+				authUser,
+				// .. etc
+			}, {
+				/* разные опции */
+			});
+			// export
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code" style="margin: -70px 0 0 0">
+			// source/request.js
 			export default {
-				// Статус ящика
-				status: ({params: {folder}}) => loadStatus(folder),
-				#!+ // Список папок
-				#!- folders: (req, waitFor) => **waitFor("status")**.then(status => status.folders),
-				#!+ // Текущая папка
-				folder(req, waitFor) {
-					if (req.is("#read-letter")) {
+				fetch: (req) => req,
+			};
+			#!+ // source/status.js  (!)
+			export default {
+				fetch: (req) => loadStatusByRequest(req),
+				reaction(req, newStatus, event) {
+					// Реакция на события
+					// (загрузка данных или действия над моделями)
+				}
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s" style="margin: -50px 0 0 -60px">
+			// source/folders.js
+			export default {
+				fetch(req, **waitFor**) {
+					return waitFor("status").then(status => status.folders);
+				},
+			};
+			#!+ // source/folder.js
+			export default {
+				fetch(req, waitFor) {
+					if (req.is("#read-letter")) { // Если это «Чтение»
 						#!+ return Promise
 							  .all([**waitFor("folders"), waitFor("letter")**])
 						#!-	   .then(([folders, letter]) => folders.get(letter.get("folder")));
 					} else {
 						#! return waitFor("folders").then(folders => folders.get(req.params.folder));
 					}
-				#!- },
-				#!+ // Список писем
-				#!- letters: (req, waitFor) => waitFor("status").then(status => status.letters),
-				#!+ // Письмо
-				letter: {
-					match: ["#read-letter", "#search-letter"],
-					fetch: ({params:{letter}}, waitFor) =>
-											waitFor("status").then(() => Thread.findOne(letter))
-				},
-				#!-
-			}
+				}
+			#!- };
 		</pre>
 	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code">
+			// source/letter.js
+			export default {
+				match: ["#read-letter", "#search-letter"],
+				fetch: ({params:{letter}}) => Thread.findOne(letter),
+			};
+		</pre>
+	</div></section>
+
 
 	<section class="slide"><div>
 		<h2>Pilot.Request</h2>
@@ -766,6 +806,26 @@
 			<li>Обратная связ через custom-events</li>
 			<li>Обновление как полное, так и через подписку на модели/колекции</li>
 		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>UI + Данные</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>UI + Данные</h2>
+		<pre class="js-code compact">
+			const app = Pilot.create(sitemap);
+			#!+ // Создаём AppView
+			app.view = new UIApplication(dataSource.getData(), {
+				router: app,
+				dataSource,
+			#!- });
+			#!+ // Подписываем View на изменение данных
+			dataSource.onChange(data => {
+				app.view.set(data);
+			#!- });
+		</pre>
 	</div></section>
 
 	<section class="slide shout"><div>
