@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>09.11.2017: React -> Redux -> JSSDK</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>React -> Redux -> JSSDK</h1>
+	</header>
+
+	<section class="slide shout"><div>
+		<h2>Redux vs. JSSDK</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<p>
+			И так, это не про холивар, а ответ на вопрос
+			<p style="text-align: center; font-size: 140%">
+				<b>«Я хочу использовать Redux и JSSDK, как?»</b>.
+			</p>
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Redux vs. JSSDK: Ответ</h2>
+		<pre class="js-code compact">
+			// Пихаете модели в редьюсеры
+			export function folderListReducer(folders, action) {
+				if (action.type === MAIL_FOLDER_CLEAN) {
+					// и в завсимисоти от `action.type`
+					// вызываете у модели `set`
+					const folder = folders.get(action.payload.id);
+					folder.set({unread: 0, total: 0});
+				}
+
+				return folders;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Redux vs. JSSDK: Проблема</h2>
+		<p>
+			Тут вы должны мне сказать, ответ должен быть иммутабелен и ничего работать не будет.
+			И будите <b>неправы</b>, Redux никогда небыл про иммутабельность, ему всё равно, это простой
+			EventBus + свистелки, перделки ввиде `reducers` и `middelwares`.
+			<br/>
+			<br/>
+			А вот `react-redux/connect`, он как раз расчитывает, что `state` будет иммутабелен, сделано это,
+			что лишний раз не трогать vdom и жизненый цикл компонентов.
+		</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>react-redux-jssdk</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>react-redux-jssdk</h2>
+		<pre class="js-code">
+			import {connect} from "react-redux-jssdk";
+			export default connect(state => state)(({folders}) =>
+				&lt;ul>
+					{folders.map(folder =>
+						&lt;li>{folder.get("name")}&lt;/li>
+					)}
+				&lt;/ul>
+			);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>react-redux-jssdk/connect</h2>
+		<p>
+			Это не какая-то свой реализация, всё сделано поверх оригинального `react-redux`, поэтому
+			работает ровно так же, но если внутри `mapStateToProps` или `render`-компонента идёт вызов
+			`model.get('...')`, начинается «магия».
+			<br/>
+			<br/>
+			А именно подписка на изменение этих моделей, поэтому когда кто-то вызовет `set` у модели,
+			связанные коннектор будет обновлён. И да, вы не ошибётесь, если подумаете, что это похоже на RP.
+		</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>&lt;Flow/></h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">&lt;Flow/></h2>
+		<pre class="js-code">
+			// foldersFlow.js
+			import {createFlow} from "react-redux-jssdk";
+			export default createFlow({
+				name: "MAIL/FOLDERS",
+				effects: {
+					[APP_STARTED]() { // <- action.type
+ 						return Folder.find().then(folders => ({folders}));
+					},
+				},
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">&lt;Flow/></h2>
+		<pre class="js-code compact-s">
+			import {createStore, applyMiddleware, combineReducers, compose} from "redux";
+			#! import foldersFlow, {StoreState} from "./folders.flow";
+
+			#!+ export default function configureStore(initialState) {
+				const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+				#!+ const rootReducer = combineReducers({
+					foldersFlow: foldersFlow.reducer,
+				#!- });
+				#!+ const middlewares = [
+					foldersFlow.middleware,
+				#!- ];
+				return createStore(
+					rootReducer,
+					initialState,
+					composeEnhancers(applyMiddleware(...middlewares)),
+				);
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">&lt;Flow/></h2>
+		<pre class="js-code compact-s">
+			import {Flow} from "react-redux-jssdk";
+			const FolderList = ({foldersFlow}) => (
+				#!+ &lt;Flow
+					#! source={foldersFlow}
+					#! pending={&lt;Loading/>} // необязателен
+					#! failed={&lt;MyError/>}  // по умолчанию &lt;FlowError/>
+				>
+				#!+ {() =>
+					&lt;ul>
+						{foldersFlow.folders.map(folder =>
+							&lt;li>{folder.get("name")}&lt;/li>
+						)}
+					&lt;/ul>
+				#!- }
+				#!- &lt;/Flow>
+			);
+			export default connect(({foldersFlow}) => ({foldersFlow}))(FolderList);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">&lt;Flow/></h2>
+		<pre class="js-code compact">
+			export default createFlow({
+				name: "MAIL/FOLDERS",
+				effects: { /*...*/ },
+				#!+ reducer(flow, action) {
+					#!+ if (action.type === MAIL_FOLDER_CLEAN) {
+						// и в завсимисоти от `action.type`
+						// вызываете у модели `set`
+						const folder = flow.folders.get(action.payload.id);
+						fodlers.set({unread: 0, total: 0});
+					#!- }
+					return flow;
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>The End</h2>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+	  ga('send', 'pageview');
+	</script>
+</body>
+</html>
