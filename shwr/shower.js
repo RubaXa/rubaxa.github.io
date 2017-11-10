@@ -1049,7 +1049,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/\b(else\s)?if\s\(/g, '<span class="function">$1if </span>(')
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
-						.replace(/\b(default|arguments|true|false)\b/g, '<span class="tomorrow-aqua">$1</span>')
+						.replace(/\b(default|arguments|true|false|interface)\b/g, '<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\b(export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:-]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/\b(b|bem):([a-z0-9-]+)/g, '<span class="tomorrow-purple">$1</span>:<span class="tomorrow-aqua">$2</span>')

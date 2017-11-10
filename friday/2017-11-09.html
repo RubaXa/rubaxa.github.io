@@ -176,6 +176,121 @@
 	</div></section>
 
 	<section class="slide shout"><div>
+		<h2>mail-filters</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>react-redux-jssdk</h2>
+		<pre class="js-code compact">
+			export type StoreState = {
+				#!+ // Только UI-состояния
+				#!- ui: UIOptions;
+				#!+ // «поток» редактируемого фильтра
+				#!- filterFlow: FilterFlowProps;
+				#!+ // «поток» списка папок
+				#!- foldersFlow: FoldersFlowProps;
+				#!+ // «поток» писем подходящих под условия
+				#!- messagesMatchFlow: MessagesMatchFlowProps;
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>foldersFlow</h2>
+		<pre class="js-code compact-s">
+			#!+ import {createFlow, FlowProps} from "react-redux-jssdk";
+			import * as Folder from "mail/Folder";
+			#!- import {APP_START} from "../app.constants";
+
+			#! export type FoldersFlowProps = {folders: FolderList} & FlowProps;
+			#!+ export default createFlow&lt;FoldersFlowProps, {}>({
+				name: "MAIL/FILTER/FOLDERS",
+				#!+ defaults: {
+					folders: Folder.map([]),
+				#!- },
+				#!+ effects: {
+					[APP_START]: () => Folder.find().then(**folders => ({folders})**),
+				#!- },
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -100px">filterFlow</h2>
+		<pre class="js-code compact-xxs" style="margin-top: -40px">
+			export type FilterFlowProps = {filter: FilterModel} & FlowProps;
+			export default createFlow&lt;FilterFlowProps, {}>({
+				name: "MAIL/FILTER",
+				defaults: {
+					filter: null,
+				},
+				#!+ effects: {
+					[APP_START]: ({payload:{id}}) => id
+						? Filter.findOne(id).then(filter => ({filter}))
+						: Promise.resolve({filter: new Filter()}),
+				#!-},
+				#!+ reducer(flow, {type, payload}) {
+					const {filter} = flow;
+					#!+ switch (type) {
+						#!+ case UI_UPDATE_AUTO_REPLY_TEXT:
+							filter.set("actions.reply", payload);
+						#!-	break;
+						#!+ case UI_TOGGLE_FILTER_FLAG:
+							filter.set(payload, !filter.is(payload));
+						#!-	break;
+						// ...
+					#!- }
+					return flow;
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>ui</h2>
+		<pre class="js-code compact-s">
+			export default handleActions({
+				[UI_TOGGLE_DETAIL_OPTIONS]: (state) => ({
+					...state,
+					showDetailOptions: !state.showDetailOptions,
+				}),
+				[UI_TOGGLE_FORWARD]: ...
+				[UI_TOGGLE_AUTO_REPLY]: ...,
+
+				#!+ [filterFlow.ACTIONS.SUCCESS]: (state, {payload: {filter}}: Action&lt;FilterFlowProps>) => ({
+					#!+ ...state,
+					forward: filter.is("actions.forward.length"),
+					#!- autoReply: filter.is("actions.reply"),
+				#!- }),
+			}, initialState);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">messages-match</h2>
+		<pre class="js-code compact-s">
+			export default createFlow&lt;MessagesMatchFlowProps, StoreState>({
+				name: "MAIL/FILTER/MESSAGES-MATCH",
+				defaults: {
+					count: 0,
+					limit_reached: false,
+				},
+				#!+ effects(action, {getState}) {
+					#!+ // Получаем поток фильтра
+					#!- const {filterFlow} = getState();
+					#!+ // Проверяем, что с ним всё ОК
+					if (filterFlow.success) {
+						#!+ // Опрашиваем сервер
+						#!- return fetchMessagesMatch(filterFlow.filter.toJSON(true));
+					#!- }
+					return null;
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+
+	<section class="slide shout"><div>
 		<h2>The End</h2>
 	</div></section>
 
