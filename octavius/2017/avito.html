@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>7 лет без «фрейморка»</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=792, user-scalable=no">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<link rel="stylesheet" href="../../shwr/styles/screen.css">
+
+	<style>
+		.slide .next.shade {
+			opacity: 1;
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background: #fff;
+			transition: all .5s;
+		}
+		.slide .next.active.shade {
+			opacity: 0;
+		}
+	</style>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>7 лет без «фрейморка»</h1>
+		<p></p>
+	</header>
+
+	<section class="slide shout"><div>
+		<h2>7 лет без «фрейморка»</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/BootScheme.png" height="100%" style="margin-left: 100px; margin-top: 40px;"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Данные и API</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/apidoc-index.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/apidoc-variants.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Данные и API</h2>
+		<ul>
+			<li>Постановка</li>
+			<li>Проектирование</li>
+			<li>Соглосование</li>
+			<li>Отправка Pull Request</li>
+			<li>Реализация*</li>
+			<li>Покрытие автотестами*</li>
+		</ul>
+		<p style="text-align: right;">* — backend</p>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Раньше</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/api-flow.png" height="90%" style="margin-left: 90px; margin-top: 60px;"/>
+
+		<div class="next shade" style="top: 170px;"></div>
+		<div class="next shade" style="top: 210px;"></div>
+		<div class="next shade" style="top: 250px;"></div>
+		<div class="next shade" style="top: 290px;"></div>
+		<div class="next shade" style="top: 330px;"></div>
+		<div class="next shade" style="top: 360px;"></div>
+
+		<div class="next shade" style="top: 400px;">
+			<div style="position: absolute; background: #fff; top: -30px; height: 40px; width: 550px; right: 0;"></div>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>В итоге раньше надо было</h2>
+		<ul>
+			<li>Разбор всех статусов (на данный момент их 25)</li>
+			<li>Принятие решения в зависмости от статуса и его ограничений</li>
+			<li>Корректно реагировать на ошибки при работе с api</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>JSSDK</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK: Стало</h2>
+		<ul>
+			<li>Работа с API только через Модели</li>
+			<li>Расширяемость поведения через события и перехваты</li>
+			<li>Инкапсуляция всей бизнес логики и самодостаточность</li>
+			<li>Независимость от проекта</li>
+			<li>Тесты</li>
+			<li>Документация</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-core.png" height="90%" style="margin-left: 90px; margin-top: 30px;"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK: Thread</h2>
+		<pre class="js-code">
+			// Получение списка тредов
+			Thread.find({folder: 8}).then(threads => {
+				// ...
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-api-flow.png" height="90%" style="margin-left: 60px; margin-top: 30px;"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Пример перехвата</h2>
+		<pre class="js-code compact">
+			RPC.intercept({
+				#! status: "invalid",
+				#!+ process(req) {
+					#!+ if (req.get("body.folder.error") === "not_open") {
+							// Возвращаем Promise
+						return openSecureFolderLayer({
+							folder: req.get("body.folder.value")
+						});
+					#!- }
+				#!- }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 500%; margin-top: 80px;">~2K assertions</h2>
+		<img src="media/jssdk-coverage.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 800%; margin-top: 80px;">JSDoc</h2>
+		<img src="media/jssdk-docs.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-docs-2.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK: Models</h2>
+		<ul>
+			<li><b>Персистентность</b></li>
+			<li><b>Работа с неполными данными</b> — об этом чуть позже</li>
+			<li><b>Поддержка вложенных моделей</b></li>
+			<li><b>Дедупликация запросов</b></li>
+			<li>Кеширование</li>
+			<li>Значения по умолчанию</li>
+			<li>Валидация атрибутов</li>
+			<li>Логирование</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Model: Методы получения модели</h2>
+		<ul>
+			<li><b>find</b>(query) — получить список моделей</li>
+			<li><b>findOne</b>(id) / findOne(query) — модель по id или некому условию</li>
+			<li><b>get</b>(id) — получить модель из RuntimeCache (если есть)</li>
+			<li><b>getSafe</b>(id) — получить модель независимо от её наличия</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>new Model(): Базовый интрейфейс модели</h2>
+		<ul>
+			<li><b>isNew</b>() - явялется ли модель «новой»?</li>
+			<li><b>isDataFully</b>([query]) - проверить полноту данных</li>
+			<li><b>is</b>(name) — проверить значение на истиность</li>
+			<li><b>get</b>(name) — получить значение</li>
+			<li><b>set</b>(name, value) - изменить</li>
+			<li><b>previous</b>(name) - предыдущее значение</li>
+			<li>...etc</li>
+		</ul>
+		<p style="text-align: right; margin-top: -30px;">
+			* <b>name</b> — поддерживает dot-нотацию
+		</p>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Backbone и его проблемы</h2>
+		<pre class="js-code compact-s">
+			const listFoo = new BackboneTheadCollection({folder: 123});
+			listFoo.fetch();
+
+			const listBar = new BackboneTheadCollection({folder: 123});
+			listBar.fetch();
+
+			#!+ console.log(listFoo.get(456) === listBar.get(456));
+			// false :[
+
+			listFoo.on("chnage", () => { console.log("Cnanged"); });
+			listBar.get(456).set("flag", true);
+			#!- // ничего не произойдет, потому что инстансы разные
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>JSSDK: Персистентность</h2>
+		<pre class="js-code compact-s">
+			// Где-то получаем тред
+			Thread.findOne(123).then(thread => {
+				thread.get("messages").on("change:flags", () => {
+					// Реагируем на изменение флагов
+				});
+			});
+
+			#!+ // Где-то письмо (которое входит в тред)
+			Message.findOne(345).then(message => {
+				#!+ // Инвертируем флаг (мы так не делаем :])
+				#!- message.set("flags.unread", !message.is("flags.unread"));
+			#!- });
+		</pre>
+		<div class="next">
+			<img src="media/arrow-rdu.png" style="
+				position: absolute;
+				right: 150px;
+				top: 260px;
+				transform: rotateZ(-10deg);
+			"/>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Поддержка вложенных моделей</h2>
+		<pre class="js-code">
+			const Thread = Message.extend({
+				className: "mail.Thread", // для логирования
+				findUrl: "threads", // Получение списка тредов
+				findOneUrl: "threads/thread", // Запрос за тредом
+				defaults: { // Свойства по умолчанию
+					...
+					<mark>messages: new Message.List.Sorted</mark>,
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Валидация атрибутов</h2>
+		<pre class="js-code compact-s">
+			// Письмо
+			const Message = RPCModel.extends({
+				defaults: {
+					...
+					attachments: new Attachment.List.Local(),
+				},
+				// Валидация атрибутов при изменении
+				valueValidator(newValue, attr, newAttrs, model) {
+					return <mark>check(model, attr, newValue)</mark> ? newValue : model.get(attr);
+				}
+			});
+
+			#!+ // Отсортированный список моделей
+			Message.List.Sorted = Message.List.extend({
+				comparator: {date: true} // desc
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 500%">Неполные данные</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Неполные данные</h2>
+		<pre class="js-code compact">
+			const Thread = Message.extend({
+				<s>findOneUrl: "threads/thread"</s>
+				findOneUrl: (query) => query.withoutQuote
+						? "threads/thread/short"
+						: "threads/thread"
+				},
+				isDataFully(query) {
+					#!+ return this.is("messages.length") && (
+							query.withoutQuote || hasQuotes(this)
+					#!- );
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-thread-flow.png" height="95%" style="margin-left: 30px; margin-top: 30px;"/>
+		<div class="next shade" style="top: 400px;"></div>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Логирование</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<pre class="js-code" style="
+			top: -60px;
+			left: -20px;
+			right: 0;
+			padding-left: 150px;
+			position: absolute;
+			box-shadow: 0 1px;
+			border-bottom: 2px solid #333;
+		">
+			Client.find().then(list => ...);
+		</pre>
+		<img src="media/o2app.png" width="100%"/>
+		<style>
+			.o2-steps {
+				position: absolute;
+				width: 100%;
+				top: 0;
+				left: 0;
+				bottom: 0;
+			}
+			.o2-steps > div {
+				background: #fff;
+				position: absolute;
+				width: 100%;
+				left: 0;
+				bottom: 0;
+				transition: opacity .3s;
+			}
+			.full .o2-steps > .next {opacity: 1;}
+			.full .o2-steps > .next.active {opacity: 0;}
+			.o2-01 {top: 41%;}
+			.o2-02 {top: 48%;}
+			.o2-03 {top: 70%;}
+		</style>
+		<div class="o2-steps">
+			<div class="o2-01 next"></div>
+			<div class="o2-02 next"></div>
+			<div class="o2-03 next"></div>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Ошибки</h2>
+		<pre class="js-code compact-xs">
+			request.on("error", (evt, req) => {
+				saveToLog(req);
+			});
+		</pre>
+
+		<div style="display: flex; margin: -30px -70px 0 -20px; font-size: 87%;">
+			<ul style="flex-basis: 45%;">
+				<li><b>uuid</b>:`string` — id запроса</li>
+				<li><b>url</b>:`string` — что запрашивали</li>
+				<li><b>type</b>:`string` — GET, POST и т.п.</li>
+				<li><b>data</b>:`Object` — Параметры запроса</li>
+				<li><b>options</b>:`Object` — Опции запроса</li>
+				<li><b>body</b>:`Object` — Ответ (JSON)</li>
+				<li><b>error</b>:`*` — Ошибка</li>
+				<li><b>responseText</b>:`*` — raw-ответ</li>
+			</ul>
+			<ul>
+				<li><b>startTime</b>:`number` — Время начала запроса</li>
+				<li><b>endTime</b>:`number` — Время завершения</li>
+				<li><b>duration</b>:`number` — Продолжительность запроса</li>
+				<li><b>aborted</b>:`boolean` — Отменен</li>
+				<li><b>batched</b>:`boolean` — В «пачке»
+				<li><b>pending</b>:`boolean` — В ожидании ответа</li>
+				<li><b>retries</b>:`number` — Количество попыток</li>
+			</ul>
+		</div>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>«Действие»</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">«Действие» / Lifecycle</h2>
+		<pre class="js-code compact">
+			const MyAction = Action.extend(/** @lends MyAction# */{
+				#!+ // Подготовка данных
+				prepare(params, options)/* Promise|Object */ {
+					return {computed: params.foo + params.bar};
+				#!- },
+				#!+ // Выполняемая операция
+				#!- operation({computed}, params, options) /* Promise */ { /* … */ },
+				#!+ // Обратная операция
+				#!- undoOperation(data, params, options) /* Promise */ { /* … */  },
+				#!+ // Откатываем изменения в случае ошибки при выполнении
+				#!- rollbackOperation() { }
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Пример MoveTo</h2>
+		<pre class="js-code compact-s">
+			MoveTo.execute({
+				folderTo: 123, // id папки куда переносим
+				models: [...] // Массив Писем или Тредов (модели)
+			}).then(action => {
+				// Ссылка на модель Папки куда переместили
+				const folderTo = action.folderTo;
+
+				// Список реально перемещенных моделей
+				const affectedModels = action.models;
+
+				// Показывает нотификацию для отмены действия
+				showUndoNotify().onUndo(() => action.undo());
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/jssdk-action-flow.png" width="90%" style="margin-top: 60px; margin-left: 55px;"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 700%; margin-top: 120px;">Приложение</h2>
+		<img src="media/app-struct-shot-idx.png" width="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 700%; margin-top: 120px;">Установка</h2>
+		<img src="media/octavius-readme-1.png" width="100%" style="margin-top: 40px;"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 600%; margin-top: 80px;">Общие сведения</h2>
+		<img src="media/octavius-readme-2.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Точка вход</h2>
+		<pre class="js-code">
+			require(["app/app", "logger"], function (app, logger) {
+				// Скрыть лоудер загрузки приложения
+				app.ready(hideLoading);
+				// Перехват ссылок и запуск приложения
+				app.listenFrom(document, {
+					autoStart: true,
+					logger: logger
+				});
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Что такое app?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Что такое app?</h2>
+		<pre class="js-code">
+			const app = Pilot.create({
+				#! model: { /* модели доступные всем маршрутам */ },
+				#!+ "#letters": {
+					url: "/:folder", // "/inbox/", "/trash/" или "/123/"
+					#!+ model: { // модели конкретного маршрута
+						threads: ({params: {folder}}) => Thread.find({folder})
+					#!- }
+				#!- },
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Навигация по id</h2>
+		<pre class="js-code">
+			// Перейти на нужный маршрут
+			app.go("#letters"); // "/inbox/"
+			app.go("#letters", {folder: 123}); // "/123/"
+
+			// Сформировать url
+			app.getUrl("#letters", {folder: 0}); // "/inbox/"
+			app.getUrl("#letters", {folder: 123}); // "/123/"
+
+			// Или для текущего маршрута
+			app.route.getUrl({folder: 0}); // "/inbox/"
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Продвинутая настройка маршрута</h2>
+		<pre class="js-code compact-s">
+			"#letters": {
+				url: {
+					pattern: "/:folder", // <mark>"/inbox/"</mark>, "/trash/" или <mark>"/123/"</mark>
+					#!+ params: {
+						folder: {
+							#! default: Folder.INBOX,
+							#! decode: (val) => (val in TYPE2ID) ? TYPE2ID[val] : toInt(val),
+							#! encode: (id) => (id in ID2TYPE) ? ID2TYPE[id] : id,
+						}
+					#!- },
+					#! toUrl: (params, builder) => builder({params, ...extra}),
+				},
+				model: { /*...*/ },
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>App Model</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -40px;">App Model (aka dataSource)</h2>
+		<pre class="js-code compact">
+			console.dir(app.model);
+			{
+				request: Pilot.Request, // текущий «location»
+				authUser: User, // авторизованный юзер
+				folder: Folder, // активная папка
+				folders: Folder.List, // список папок
+				letters: Thread.List, // список тредов или писем
+				letter: Thread, // активный тред (на чтении)
+				status: Object, // статус ящика
+				...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px;">App Model (aka dataSource)</h2>
+		<pre class="js-code compact-s">
+			// Источники данных
+			import request from "./source/request";
+			import authUser from "./source/authUser";
+			import status from "./source/status";
+			import folders from "./source/folders";
+			// ...etc
+			const loader = new Pilot.Loader({
+				request,
+				authUser,
+				status,
+				folders,
+				// ...etc
+			}, {
+				/* разные опции */
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code" style="margin: -70px 0 0 0">
+			// source/request.js
+			export default {
+				fetch: (req) => req,
+			};
+			#!+ // source/status.js  (!)
+			export default {
+				fetch: (req) => loadStatusByRequest(req),
+				reaction(req, newStatus, event) {
+					// Реакция на события
+					// (загрузка данных или «Действия» над моделями)
+				}
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code compact-s" style="margin: -50px 0 0 -60px">
+			// source/folders.js
+			export default {
+				fetch(req, **waitFor**) {
+					return waitFor("status").then(status => status.folders);
+				},
+			};
+			#!+ // source/folder.js
+			export default {
+				fetch(req, waitFor) {
+					if (req.is("#read-letter")) { // Если это «Чтение»
+						#!+ return Promise
+							  .all([**waitFor("folders"), waitFor("letter")**])
+						#!-	   .then(([folders, letter]) => folders.get(letter.get("folder")));
+					} else {
+						#! return waitFor("folders").then(folders => folders.get(req.params.folder));
+					}
+				}
+			#!- };
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre class="js-code">
+			// source/letter.js
+			export default {
+				match: ["#read-letter", "#search-letter"],
+				fetch: ({params:{letter}}) => Thread.findOne(letter),
+			};
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Pilot.Request</h2>
+		<div style="display: flex; ">
+			<ul style="width: 80%">
+				<li><b>params</b> — параметры маршрута</li>
+				<li><b>query</b> — GET-параметры</li>
+				<li><b>route</b> — текущий маршрут, route.is("#letters #search")</li>
+				<li><b>router</b> — ссылка на роутер</li>
+			</ul>
+			<ul style="width: 20%; font-size: 80%">
+				<li>href</li>
+				<li>protocol</li>
+				<li>host</li>
+				<li>hostname</li>
+				<li>port</li>
+				<li>pathname</li>
+				<li>search</li>
+				<li>hash</li>
+				<li>referrer</li>
+			</ul>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>UI + Данные</h2>
+		<pre class="js-code compact">
+			const app = Pilot.create(sitemap);
+			#!+ // Создаём AppView
+			app.view = new UIApplication(dataSource.getData(), {
+				router: app,
+				dataSource,
+			#!- });
+			#!+ // Подписываем View на изменение данных
+			dataSource.onChange(data => {
+				app.view.set(data);
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>UIApplication</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 style="font-size: 500%">Всё есть блоки</h2>
+		<img src="media/app-struct-shot-dataset.png" width="95%" style="margin-left: 10px; margin-top: 50px;"/>
+	</div></section>
+
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 350%">
+			— Все блоки «глупые» <small style="font-size: 30%; vertical-align: middle">(ну почти)</small><br/>
+			<br/>
+			— Attrs Down / Events Up &nbsp;
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Attrs Down, Events Up</h2>
+		<pre class="js-code">
+			&lt;b:letter-status
+				name="unread"
+				state="{attrs.unread}"
+				remit:<mark>click</mark>="<mark>invert:unread</mark>"
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/feast-button.png" width="100%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Структура блока</h2>
+		<code>/Button/</code>
+		<ul style="margin-left: 70px;">
+			<li>Button.<b>js</b> — Контроллер поведения</li>
+			<li>Button.<b>html</b> — Шаблон</li>
+			<li>Button.<b>scss</b> — Стили</li>
+			<li>Button.<b>spec.js</b> — Спецификация</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Button/Button.spec.js</h2>
+		<pre class="js-code compact-s">
+			export default {
+				keywords: "btn кнопка",
+				cases: {
+					"base": {
+						attrs: [{text: "Написать"}]
+					},
+					"primary": {
+						attrs: [
+							{type: "submit", text: "Написать"},
+							{ico: "compose", type: "submit", text: "Написать"},
+							{ico: "compose", short: true, type: "submit", text: "Написать"},
+							{pressed: true, type: "submit", text: "Написать"}
+						]
+					},
+				}
+			};
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Блоки💖️JSSDK</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px;">Блоки💖️JSSDK</h2>
+		<div style="overflow: hidden;">
+			<video controls loop autoplay style="margin-left: -50px; margin-right: -50px; width: calc(100% + 100px);">
+				<source src="media/DatasetLetters.webm" type="video/webm"/>
+				Зевс всемогущий, ну как так-то.
+			</video>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Блоки💖️JSSDK: <code>model</code> и <code>models</code></h2>
+		<pre class="js-code">
+			// Список тредов строится на основе Thread.List
+			&lt;b:dataset-letters models="{attrs.model.threads}" />
+
+			// Вывод треда
+			&lt;b:thread model="{attrs.model.thread}" />
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Итого</h2>
+		<ul>
+			<li>Все данные пробрасываются <b>сверху &rarr; вниз</b></li>
+			<li>Обратная связ через <b>custom-events</b></li>
+			<li>Обновление как полное, так и через подписку на модели/колекции</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Где логика?</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Медиаторы</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Например</h2>
+		<pre class="js-code">
+			&lt;b:portal-menu
+				#! use:mediator="letters-actions letters-selection"
+			/>
+			// ...
+			&lt;b:thread
+				model="{attrs.model}"
+				#! use:mediator="letters-actions"
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -60px" class="js-code compact-xs">
+			// Действия
+			import MarkAsAction from "jssdk/mail/actions/MarkAs";
+			import DeleteAction from "jssdk/mail/actions/Delete";
+			#!+ // Другие медиаторы
+			#!- import lettersSelection from "mediator/letters-selection";
+
+			#!+ export default feast.Mediator.create("letters-actions", {
+				components: {
+					#!+ "dataset-letters": {  // имя для обращения внутри медиатора
+						#! "class": UIDatasetLetters, // &lt;b:dataset-letter/>
+						#!+ // события, на которые подписывается медиатор
+						#!- "events": ["invert:unread", "delete", ...],
+					#!- },
+					#!+ "router": {
+						"class": Pilot,
+					#!- },
+					// ...
+				},
+				handleEvent(evt) { /* ... */ },
+				// ...
+			#!- });
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<pre style="margin-top: -30px" class="js-code compact-xxs">
+			export default feast.Mediator.create("layout-manager", {
+				components: { /* ... */ },
+				handleEvent(evt) {
+					// Тип события
+					const type = evt.type;
+					// Получаем список моделей от медиатора отвечающего за выделение писем
+					const selectedModels = lettersSelection.getModels();
+					#!+
+					if (type === "delete") {
+						#!+ DeleteAction.execute({models: selectedModels})
+							.then(this._done)
+						#!-	.catch(this._fail);
+					} else if (type === "move") {
+						// ...
+					}
+					#!-
+					#!+ swipeManager.reset(); // Закрываем свайпы
+					lettersSelection.reset(); // Сбрасываем выделение
+
+					#!- // По завершению `handleEvent`, всем связанные блоки с медиатором будут обновлены
+				}
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="media/app-struct-shot-idx-final.png" width="100%"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>Сервисы</h2>
+		<ul>
+			<li><b>auth</b> — загрузка соответствующего типа авторизации (account, oauth) и запуск процесса логина</li>
+			<li><b>compose</b> — форма написания письма (загрузка, инициализация, менеджмент окон)</li>
+			<li><b>viewer</b> — приложение для просмотра документов, фотографий, архивов и любых других атачей</li>
+			<li>и т.п.</li>
+		</ul>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>The End</h2>
+
+		<div style="text-align: center; padding: 50px 0 80px; font-size: 200%;">
+			Спасибо за внимание.
+		</div>
+
+		<a href="https://github.com/RubaXa">github.com/RubaXa</a><br/>
+		<a href="https://twitter.com/ibnRubaXa">@ibnRubaXa</a>
+	</div></section>
+
+	<script src="../../shwr/shower.js"></script>
+</body>
+</html>
