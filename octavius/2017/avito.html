@@ -648,12 +648,16 @@
 
 	<section class="slide"><div>
 		<h2>Attrs Down, Events Up</h2>
-		<pre class="js-code">
+		<pre class="js-code compact">
 			&lt;b:letter-status
 				name="unread"
 				state="{attrs.unread}"
 				remit:<mark>click</mark>="<mark>invert:unread</mark>"
 			/>
+			#!+ &lt;b:dataset-letters>         // &lt;--- слушает "invert:unread"
+				&lt;b:dataset>
+					&lt;b:dataset-letters-item>
+			#!-				&lt;b:letter-status/>  // &lt;--- излучает "invert:unread"
 		</pre>
 	</div></section>
 
