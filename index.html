@@ -1,6 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<script id="GoogleAnalytics">
+		(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+		(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+		m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+		})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+		ga('create', 'UA-16483888-3', 'rubaxa.github.io');
+		ga('send', 'pageview');
+	</script>
+
+	<script id="TimeKeeper">
+//
+// TimeKeeper v1.1.0 | MIT
+// https://github.com/artifact-project/perf-tools/tree/master/timekeeper
+//
+var timekeeper=function(t){"use strict";var N=null,q="font-weight: bold;",D=Function("return this")(),e=D.Date,n=e.now||function(){return(new e).getTime()},i=n(),O=D.console,z=D.performance||{},A="groupCollapsed",I="mark",G="measure",P="clearMarks",j="clearMeasures";function B(t){return"color: #"+(t<2?"ccc":t<5?"666":t<10?"333":t<30?"f90":t<60?"f60":"f00")}function r(t){var s,u=t.perf||z,d=t.prefix||"",m=t.console||O,f=t.warn||m.warn&&m.warn.bind(m),i=t.analytics||[],r=t.print,p=t.disabled,v=!!(t.timeline&&u[I]&&u[G]&&u[P]&&u[j]),l=[],o=[],h=[],g=[],k=0,w=!1;function E(t){var e=i.length;if(e)for(;e--;)i[e](t);else o.unshift(t)}function a(t){var e=t.id,n=""+d+t.name;u[G](n,e),u[P](e),u[j](n)}function e(){!function t(e){for(var n,i,r,o,a,c,s,u=0,f=0;u<e.length;u++)(i=e[u]).end===N||i.active||(s=(c=i.entries)?c.length:0,n=i.start,r=i.end-n,a=""+d+i.name+": %c"+r.toFixed(3)+"ms",s<1?(m.log(a,""+q+B(r)),f+=r):(m[m[A]&&s<2?A:"group"](a,B(r)),3<(o=r-t(c))&&(E(T("[[unknown]]",i,!1,n,n+o)),m.log(d+"[[unknown]]: %c"+o.toFixed(3)+"ms",""+q+B(o))),f+=r,m.groupEnd()),i.parent===N&&(e.splice(u,1),u--));return w=!1,f}(l)}function c(t){t!=N?(r=t)&&c():!1===w&&(w=!0,(D.requestAnimationFrame||setTimeout)(e))}function T(t,e,n,i,r,o){var a=""+d+t+"-"+ ++k+"-mark";e===s&&(e=g[0]||N);var c={id:a,name:t,parent:e,entries:n?[]:N,active:+n,start:i!=N?i:u.now(),end:r!=N?r:N,stop:n?L:y};return e===N?!p&&l.push(c):e.end!==N&&r==N?f('[timekeeper] Group "'+e.name+'" is stopped'):p||(e.active++,e.entries.push(c)),n?(c.add=S,c.time=F,c.timeEnd=x,c.group=M,c.mark=C,!p&&!o&&g.unshift(c)):!p&&h.push(c),!p&&i==N&&v&&u[I](a),c}function y(t){return this.end===N&&(this.end=0<=t?t:u.now(),t==N&&v&&a(this),E(this),b(this.parent,t)),this}function L(t){return n(this),b(this,t),this}function b(t,e){if(r&&c(),t!==N)if(0<t.active)0==--t.active&&b(t,e);else if(t.end===N){var n=g.indexOf(t);-1<n&&g.splice(n,1),t.end=0<=e?e:u.now(),e==N&&v&&a(t),E(t),b(t.parent,e)}}function S(t,e,n){0<=e&&e<=n&&T(t,this,!1,e).stop(n)}function F(t,e){var n=T(t,this,!1);if(null==e)return n;e(),n.stop()}function x(t){if(!p){for(var e=h.length,n=void 0;e--;)if((n=h[e]).name===t)return n.stop(),void h.splice(e,1);f&&f('[timekeeper] Timer "'+t+"\" doesn't exist")}}function n(t){for(var e,n=t.entries,i=n.length;i--;)(e=n[i]).entries===N&&e.stop()}function C(t){n(this),this.time(t)}function M(t,e,n){return!0===e&&(n=e,e=N),T(t,n?N:this,!0,e,N,n)}return s={perf:u,entries:l,print:c,disable:function(t){p=t},setAnalytics:function(t){for(var e=t.length;e--;)for(var n=o.length;n--;)t[e](o[n]);i=t,o.length=0},add:S,time:F,timeEnd:x,group:M,groupEnd:function(t,e){for(var n=0;n<g.length;n++)if(t==N||g[n].name===t)return void g[n].stop(e);f('[timekeeper] Group "'+t+'" not found')}}}z.now=z.now||z.webkitNow||z.mozNow||z.msNow||function(){return n()-i};var o=D.timekeeper?D.timekeeper.system:r({print:/^(file:|https?:\/\/(localhost|artifact-project))/.test(D.location+""),timeline:!0,prefix:"⚡️"});return t.color=B,t.create=r,t.system=o,t}({}),timekeeperTimingsNavigation=function(t){"use strict";var e=Function("return this")();function v(t){"complete"===e.document.readyState?t():window.addEventListener("DOMContentLoaded",t)}return t.navigationTimings=function(t){var o,a,c=(o="tk-navigation",a=t,function(t,e,n,i){var r=a.group(t?o+"-"+t:o,e,!0);i.forEach(function(t){r.add(t[0],t[1],t[2])}),r.stop(n)});try{var e=performance.timing,n=e.navigationStart,i=e.redirectStart,r=e.redirectEnd,s=e.fetchStart,u=e.domainLookupStart,f=e.domainLookupEnd,d=e.requestStart,m=e.responseStart,p=e.responseEnd;c("net",n,p,[["redirect",i,r],["app-cache",s,u],["dns",u,f],["tcp",f,d],["request",d,m],["response",m,p]])}catch(t){}v(function t(){try{var e=performance.timing,n=e.responseEnd,i=e.domInteractive,r=e.domContentLoadedEventEnd,o=e.domComplete;if(!o)return void setTimeout(t,250);c("dom-ready",n,o,[["interactive",n,i],["content-loaded",i,r],["complete",r,o]])}catch(t){}}),v(function t(){try{var e=performance.timing,n=e.responseEnd,i=e.domComplete,r=e.loadEventEnd;if(!r)return void setTimeout(t,250);c("dom-load",n,r,[["ready",n,i],["load",i,r]])}catch(t){}})},t}({});timekeeperTimingsNavigation.navigationTimings(timekeeper.system);var timekeeperTimingsPaint=function(t){"use strict";var n=Function("return this")();return t.paintTimings=function(t){var o,a,e,r=(o="tk-paint",a=t,function(t,e,n,i){var r=a.group(t?o+"-"+t:o,e,!0);i.forEach(function(t){r.add(t[0],t[1],t[2])}),r.stop(n)});e=function t(){try{var e=performance.getEntriesByType("paint");if(1<e.length){var n=0,i=e.sort(function(t,e){return t.startTime-e.startTime}).map(function(t){var e=[t.name,n,t.startTime];return n=t.startTime,e});r(null,0,n,i)}else setTimeout(t,250)}catch(t){}},"complete"===n.document.readyState?e():window.addEventListener("DOMContentLoaded",e)},t}({});timekeeperTimingsPaint.paintTimings(timekeeper.system);var timekeeperTimingsInteractive=function(t){"use strict";var u=Function("return this")(),f={minLatency:100};function d(t,n,i){t.forEach(function(t){var e=function(){u.removeEventListener(t,e,!0),n(t)};(i=i||u).addEventListener(t,e,!0)})}return t.interactiveTimings=function(t,i){void 0===i&&(i=f);var o,a,e,r=(o="tk-interactive",a=t,function(t,e,n,i){var r=a.group(t?o+"-"+t:o,e,!0);i.forEach(function(t){r.add(t[0],t[1],t[2])}),r.stop(n)}),c=function(){return t.perf.now()},n=["click","touchup","submit","abort","blur","contextmenu","deviceorientation","offline","online","paint","popstate","resize","wheel","scroll"];function s(t,e,n,i){void 0===n&&(n=0),void 0===i&&(i=c()),r(t,n,i,[[e,n,i]])}d(n,function(t){s("first-"+t,"value")}),d(["beforeunload"],function(){s("tab-unload","value")}),["click","touchup","input","submit","resize","scroll"].forEach(function(e){var n;function t(){var t=c();t-n>=i.minLatency&&s("latency-"+e,"value",n,t)}u.addEventListener(e,function(){n=c(),requestAnimationFrame(t)},!0)}),e=function(){d(n,function(t){s("first-"+t,"after-ready")})},"complete"===u.document.readyState?e():window.addEventListener("DOMContentLoaded",e)},t}({});timekeeperTimingsInteractive.interactiveTimings(timekeeper.system);
+	</script>
+
+	<script id="TimeKeeperGoogleAnalytics">
+var timekeeperAnalyticsGoogle=function(e){"use strict";var o=Function("return this")(),t={useTabName:function(e){var n=e.pathname;return("/"===n?"index":n).replace(/[\/\.]+/g,"-").replace(/^-|-$/g,"")}};function a(e,n){return e&&n in e?e[n]:t[n]}return e.googleAnalytics=function(e,n){var i=a(e,"prefix"),r=a(e,"useTabName"),t=[],g=function(e){n?n("send",e):t.push(e)};return n||function e(){(n=o.gtag?function(e,n){o.gtag("event","timing_complete",{name:n.timingVar,value:n.timingValue,event_category:n.timingCategory,event_label:n.timingLabel})}:o.ga)?(t.forEach(g),t.length=0):setTimeout(e,500)}(),function(e){var n=e.name,t="value",a=e.parent;if(a)for(t=e.name;;){if(!a.parent){n=a.name;break}t=a.name+"_"+t,a=a.parent}g({hitType:"timing",timingCategory:""+i+n,timingVar:t,timingValue:Math.round(e.end-e.start),timingLabel:r?r(o.location):void 0})}},e}({});
+	</script>
+
+	<script id="TimeKeeperSetup">
+		timekeeper.system.setAnalytics([timekeeperAnalyticsGoogle.googleAnalytics()]);
+		timekeeper.system.print(true);
+
+		// Create custom keeper
+		var keeper = timekeeper.create({
+			print: true,    // DevTools -> Console
+			timeline: true, // DevTools -> Performance
+			prefix: '⏱',
+			analytics: [
+				timekeeperAnalyticsGoogle.googleAnalytics({
+					prefix: 'MyApp-',
+				}),
+			],
+		});
+
+		var gpage = keeper.group('page');
+		var ghead = gpage.group('head');
+	</script>
+
 	<meta charset="utf-8"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
@@ -12,14 +54,27 @@
 	<meta name='yandex-verification' content='494ce6d290c8a4db' />
 	<meta name="google-site-verification" content="5SAqUvZKPImPZbgQgB9sxo5H9w_5vVeug1lfyOGVv3o" />
 
-
+	<script>
+		var gcss = ghead.group('css');
+		gcss.mark('font-roboto');
+	</script>
 	<link href='//fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'/>
-	<link href='./st/main.css' rel='stylesheet' type='text/css'/>
 
+	<script>gcss.mark('main-file');</script>
+	<link href='./st/main.css' rel='stylesheet' type='text/css'/>
+	<script>
+		gcss.stop();
+		ghead.stop();
+	</script>
 </head>
 <body>
+	<script>
+		var gbody = gpage.group('body');
+		var gbox = gbody.group('container');
+	</script>
 
 	<div class="container">
+		<script>gbox.mark('splash');</script>
 		<div id="Splash">
 			<img class="userpic"
 				 src="//ru.gravatar.com/userimage/27787489/20f440e3dccbb3070fa15fc91680debb.jpg?size=100"/>
@@ -54,6 +109,7 @@
 		<ul id="rubaxa-friday" style="font-size: 18px; margin-top: 10px"></ul>
 		<script>
 			// Articles
+			gbox.mark('articles');
 			(function (lang) {
 				articlesList.innerHTML = [
 					{
@@ -149,14 +205,18 @@
 				}).join('');
 			})((navigator.userLanguage || navigator.language).split('-')[0]);
 
-
 			// Friday
-			(function (){
+			var gfriday = gbox.group('friday');
+			(function () {
+				gfriday.mark('request');
+
 				var date = new Date;
 				var xhr = new XMLHttpRequest();
 
 				xhr.open('GET', './README.md?'+date.toISOString().split('T')[0], true);
 				xhr.onload = function (){
+					gfriday.mark('parse');
+
 					var
 						  match
 						, list = []
@@ -168,7 +228,9 @@
 						list.push('<li><a href="'+match[2]+'">'+match[1]+'</a>: '+match[3]+'</li>');
 					}
 
+					gfriday.mark('innerHTML');
 					document.getElementById('rubaxa-friday').innerHTML = list.join('\n');
+					gfriday.stop();
 				};
 				xhr.send();
 			})();
@@ -183,20 +245,15 @@
 
 	</div>
 
-
+	<script>
+		gbox.stop();
+		gbody.mark('repos-js');
+	</script>
 	<script src="./repos.js"></script>
 
-
 	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-	  ga('create', 'UA-16483888-3', 'rubaxa.github.io');
-	  ga('send', 'pageview');
+		gbody.stop();
+		gpage.stop();
 	</script>
-
-
 </body>
 </html>
