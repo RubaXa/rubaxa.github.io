@@ -2,6 +2,16 @@
 	var _rname = /^(.*?)\s+([-—]+\s+)/;
 	var _repos = [
 			{
+				"name": "@perf-tools/keeper",
+				"desc": "It's a tool for performance monitoring and profiling your application (also best replacement for console.time).",
+				"url": "https://github.com/artifact-project/perf-tools/tree/master/keeper#readme"
+			},
+			{
+				"name": "tx-i18n",
+				"desc": "Auto-translate for your application (React supported)",
+				"url": "https://github.com/artifact-project/tx-i18n#readme"
+			},
+			{
 				"name": "react-devtools-symbiote",
 				"desc": "A module that allows use React DevTools for inspection your component hierarchy without React.",
 				"url": "https://github.com/artifact-project/react-devtools-symbiote/"
