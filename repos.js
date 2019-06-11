@@ -12,19 +12,29 @@
 				"url": "https://github.com/artifact-project/tx-i18n#readme"
 			},
 			{
+				"name": "~/.bashkit/",
+				"desc": "It is the toolset for the developing bash scripts.",
+				"url": "https://github.com/RubaXa/react-spy/#readme"
+			},
+			{
+				"name": "react-spy",
+				"desc": "A set of utilities for collecting UX-analytics of your React-application (ex: clicks, shows, errors and etc.)",
+				"url": "https://github.com/RubaXa/bashkit/#readme"
+			},
+			{
 				"name": "react-devtools-symbiote",
 				"desc": "A module that allows use React DevTools for inspection your component hierarchy without React.",
-				"url": "https://github.com/artifact-project/react-devtools-symbiote/"
+				"url": "https://github.com/artifact-project/react-devtools-symbiote/#readme"
 			},
 			{
 				"name": "npmy",
 				"desc": "`npm link` on steroids",
-				"url": "https://github.com/artifact-project/npmy/"
+				"url": "https://github.com/artifact-project/npmy/#readme"
 			},
 			{
 				"name": "tx-reflector",
 				"desc": "TypeScript transformer for code generation.",
-				"url": "https://github.com/artifact-project/tx-reflector/"
+				"url": "https://github.com/artifact-project/tx-reflector/#readme"
 			},
 			{
 				"name": "JSBench",
