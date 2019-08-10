@@ -178,6 +178,9 @@ a {
 	text-align: center;
 	font-size: 20px
 }
+.slide.hide-counter:after {
+	display: none;
+}
 
 .slide > div {
 	position: absolute;
@@ -304,12 +307,17 @@ h2 b { color: #333; }
 }
 
 .compact {}
+.compact-m {}
 .compact-s {}
 .compact-xs {}
 .compact-xxs {}
 
 .slide pre.compact code {
 	line-height: 40px;
+}
+.slide pre.compact-m code {
+	font-size: 90%;
+	line-height: 35px;
 }
 .slide pre.compact-s code {
 	font-size: 80%;
@@ -845,3 +853,56 @@ s { color: #666; }
 .code-xprop { font-style: italic; }
 
 .code-comment { color: #999; }
+
+
+.shout h2 small {
+	font-size: 50%;
+	opacity: .7;
+	position: relative;
+	top: -50px;
+}
+
+.slide h2.size-m {
+	font-size: 400%;
+}
+
+.slide h2.size-s {
+	font-size: 300%;
+}
+
+.slide h2.size-xs {
+	font-size: 250%;
+}
+
+h2 .arrow-down {
+	line-height: 50%;
+}
+
+h2 .arrow-down::before {
+	content: '↓';
+	display: inline-block;
+	font-size: 50%;
+}
+
+.slide-down {
+	max-height: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition: all .5s ease-out;
+}
+
+.active.slide-down {
+	opacity: 1;
+	max-height: 250px;
+}
+
+.cover h2.top {
+	margin-top: -80px;
+}
+
+.cover img.center {
+	position: absolute;
+	left: 50%;
+	top: 55%;
+	transform: translate(-50%, -50%);
+}

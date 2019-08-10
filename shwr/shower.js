@@ -1029,7 +1029,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 			return line.replace(/<\/?.*?>/g, function (tag) {
 							return '$$'+html.push(tag)+'$$';
 						})
-						.replace(/(\s[-+]?\d+|""|(?=[^=])(["`]).*?[^\\]\2|\/\/.+|\b(?:new|async|in|await|function|return|var|import|from|const|let|class|extends)\b)/g, function (_, val) {
+						.replace(/(\s[-+]?\d+|""|(?=[^=])(["`]).*?[^\\]\2|\/\/.+|\b(?:new|async|in|await|function|while|return|var|import|from|const|let|class|extends|as|readonly|infer|never)\b)/g, function (_, val) {
 							var type = '';
 							if (/^[-+]?\d+$/.test(val)) {
 								type = 'number';
@@ -1042,6 +1042,16 @@ window.shower = window.shower || (function(window, document, undefined) {
 							}
 							return '<span class="' + type + '">' + val + '</span>';
 						})
+						.replace(/(type)\s+([^\s&<]+)/gi, '<span class="keyword">$1</span> <span class="tomorrow-blue">$2</span>')
+						.replace(/(\w+)(\??:\s+)([^;<&.,)\](}]+)/gi, (_, p, sep, v) => {
+							let h = `<span class="tomorrow-aqua">${p}</span>${sep}`;
+							if (v[0] == `{`) {
+								h += v;
+							} else {
+								h += `<span class="tomorrow-orange">${v}</span>`;
+							}
+							return h;
+						})
 						.replace(/([\(\[,])(\d+)([,\)\]])/gi, '$1<span class="number">$2</span>$3')
 						.replace(/(\/\*.*?\*\/)/gi, '<span class="comment">$1</span>')
 						.replace(/(&lt;!--.*?--(&gt;|>))/gi, '<span class="comment">$1</span>')
@@ -1049,7 +1059,7 @@ window.shower = window.shower || (function(window, document, undefined) {
 						.replace(/\b(else\s)?if\s\(/g, '<span class="function">$1if </span>(')
 						.replace(/}( else )/g, '}<span class="function">$1</span>')
 						.replace(/\.(\w+)(?=\s|\[|;|\.|\))/gi, '.<span class="tomorrow-aqua">$1</span>')
-						.replace(/\b(default|arguments|true|false|interface)\b/g, '<span class="tomorrow-aqua">$1</span>')
+						.replace(/\b(default|arguments|true|false|interface|undefined)\b/g, '<span class="tomorrow-aqua">$1</span>')
 						.replace(/(\b(export|null|jQuery|ctx|window|Array|Math|this|typeof|instanceof|try|catch|switch|case|break)\b)/g, '<span class="tomorrow-orange">$1</span>')
 						.replace(/(&lt;)(\/?[\w:-]+)/g, '$1<span class="tomorrow-blue">$2</span>')
 						.replace(/\b(b|bem):([a-z0-9-]+)/g, '<span class="tomorrow-purple">$1</span>:<span class="tomorrow-aqua">$2</span>')

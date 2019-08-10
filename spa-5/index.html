@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<title>«UIKit, который точно сможет™» 🤦🏻‍♂️🤦🏻‍♀️</title>
+
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=792, user-scalable=no"/>
+	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
+
+	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+	<style>
+		.list .slide:not(.first-slide) {
+			filter: blur(30px);
+		}
+	</style>
+</head>
+<body class="list">
+
+	<header class="caption">
+		<h1>«UIKit, который точно сможет™»</h1>
+	</header>
+
+	<section class="slide first-slide"><div>
+		<h2 style="font-size: 300%">Лебедев Константин</h2>
+		<ul style="margin-left: 80px; margin-top: 80px;">
+			<li><a href="https://medium.com/@ibnRubaXa">https://medium.com/@ibnRubaXa</a></li>
+			<li><a href="https://github.com/RubaXa">https://github.com/RubaXa</a></li>
+			<li><a href="https://twitter.com/ibnRubaXa">https://twitter.com/ibnRubaXa</a></li>
+		</ul>
+		<img src="./st/truekit-qr.png" style="
+			position: absolute;
+			right: 18%;
+			top: 37%;
+		"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 style="font-size: 300%">Проблемы существующих<br/><br/>🐳🐋</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🎨Темизация<div style="font-size: 50%">(стили)</div></h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/material-ui-cls.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 180px">Material UI</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Material UI: Classes</h2>
+		<pre class="js-code compact-s">
+			const styles = {
+				root: {
+					background: "linear-gradient (45deg, #FE6B8B 30%, #FF8E53 90%)",
+					// ...
+				},
+			};
+
+			function HigherOrderComponent(props) {
+				const {<mark>classes</mark>} = props;
+				return &lt;Button className={<mark>classes.root</mark>}>Higher-order component&lt;/Button>;
+			}
+
+			export default withStyles(<mark>styles</mark>)(HigherOrderComponent);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Material UI: Classes</h2>
+		<pre class="js-code compact-m">
+			const StyledBtn = withStyles(styles)(function HOC(props) {
+				return &lt;Button <mark>{...props}</mark>/>;
+			}
+			#!+
+			//  ⬇️ &lt;StyledBtn>Higher-order&lt;/StyledBtn>  ⬇️
+
+			&lt;button class="mui-root <mark>HOC-root</mark>"> // ← 😕
+				Higher-order
+			#!- &lt;/button>
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/material-ui-style.png" height="100%"/>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/theme-login-form.png" height="60%" class="center" style="margin-top: -90px"/>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px;">Material UI: Theming</h2>
+		<pre class="js-code compact-xs">
+			const useStyles = makeStyles(theme => ({
+				root: {
+					background: theme.background,
+					// ...
+				},
+			}));
+
+			function ThemedBtn(props) {
+				const classes = <mark>useStyles()</mark>;
+				return &lt;Button classes={<mark>classes</mark>}>Higher-order component&lt;/Button>;
+			}
+
+			const themeInstance = {
+				background: "linear-gradient (45deg, #FE6B8B 30%, #FF8E53 90%)",
+			};
+
+			&lt;ThemeProvider theme={<mark>themeInstance</mark>}>
+				&lt;ThemedBtn/>
+			&lt;/ThemeProvider>
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/blueprint-cls.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Blueprint</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/blueprint-wtf.png" height="100%"/>
+		<img src="./st/owl.png" class="next" style="
+			position: absolute;
+			top: 75%;
+			left: 80%;
+			width: 20%;
+		"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Blueprint</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/antd-cls.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">AntDesign</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/vue-css.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Vuetify</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/grommet-style.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Grommet</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/uikits.png" width="100%"/>
+		<img src="./st/buzz-lightyear.png" style="
+			position: absolute;
+			left: 0;
+			top: 80%;
+			width: 20%;
+			z-index: 300000;
+		"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 Темизация и общие проблемы</h2>
+		<ul>
+			<li>Зашитые классы</li>
+			<li>Подключенные стили</li>
+			<li>Перегрузка темы только на уровне компонента (через props), либо через переменные темы</li>
+			<li>Использование пакета <code>classnames</code> 😑</li>
+			<li>Неконтролируемая комбинаторика модификаторов ⚠️</li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>classnames vs. my fn</h2>
+		<img src="./st/material-ui-cls.png" style="
+			position: absolute;
+			left: 60%;
+			top: 10%;
+			width: 80%;
+			transform: rotateZ(-10deg);
+			clip: rect(0, 500px, 380px, 0);
+		" />
+		<pre class="js-code compact-m" style="position: relative">
+			className={ classes(
+				cn.button,
+				props.disabled && cn.disabled,
+				// ...
+			) }
+
+			function classes(...values) {
+				let s = "";
+				let idx = values.length;
+				while (idx--) if (values[idx]) s += ` ${values[idx]}`;
+				return s;
+			}
+		</pre>
+	</div></section>
+
+
+	<section class="slide"><div>
+		<h2>🎨 Неконтролируемая комбинаторика</h2>
+		<pre class="js-code">
+			type ButtonProps = {
+				primary?: boolean;
+				danger?: boolean;
+				warning?: boolean;
+				info?: boolean;
+				// ... etc
+			}
+		</pre>
+		<div class="next" style="position: absolute; top: 40%; right: 20%;">
+			⬅️ <b style="font-size: 150%">Hello, Bootstrap 😑</b>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 Неконтролируемая комбинаторика</h2>
+		<pre class="js-code compact-s">
+			&lt;Button
+				primary={ condition1 }
+				secondary={ condition2 }
+				info={ condition3 }
+				warning={ condition4 }
+			>
+				...
+			&lt;/Button>
+
+			//  ⬇️     ⬇️      ⬇️
+
+			&lt;Button primary secondary warning>WTF?!&lt;/Button>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 Неконтролируемая комбинаторика 🤦🏻‍♀️</h2>
+		<pre class="js-code">
+			condition
+				? &lt;Button warning/>
+				: &lt;Button primary/>
+
+			// вместо:
+			&lt;Button kind={ getBtnKind(...) } />
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Зависимости 💉</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/antd-deps.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">AntDesign</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/material-ui-deps.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Material UI</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/blueprint-deps.png" height="60%" style="margin-top: 220px"/>
+		<h2 style="font-size: 300%; margin-top: -10px;">Blueprint</h2>
+	</div></section>
+
+	<!--<section class="slide"><div>
+		<h2>Итого</h2>
+		<ul>
+			<li>Темизация 🎨</li>
+			<li>Жесткие зависимости 💉</li>
+			<li>Избыточный размер 🍔</li>
+			<li>Отсуствует или слабая система «слотов» 🎰</li>
+		</ul>
+	</div></section>-->
+
+	<section class="slide shout"><div>
+		<h2>🤔</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img
+			src="./st/oh-no-whitout-circles-white.jpg"
+			style="
+				position: absolute;
+				height: 70%;
+				top: 30%;
+				left: 50%;
+				transform: translate(-50%,0)
+			"
+		/>
+		<h2 style="font-size: 200%; margin-top: -10px; opacity: 1">
+			«UIKit, который точно сможет™» 🤦🏻‍♂️🤦🏻‍♀️
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«UIKit, который точно сможет™» 🤦🏻‍♂️🤦🏻‍♀️</h2>
+		<ul>
+			<li>🎨 Никаких зашитых css-классов или стилей</li>
+			<li>💉 Минимальные зависимости, а лучше полное отсуствие</li>
+			<li>🎰 Система слотов</li>
+			<li><s>🧬 «Типажи»</s></li>
+			<li><s>🚀 Shared component state</s></li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/truekit-logo-0.png" width="80%" style="margin-top: 11%; margin-left: 10%"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 TrueТемизация</h2>
+		<ul>
+			<li>Компонент не должен иметь стилей совсем</li>
+			<li>Никаких зашитых <code>className</code> с их переопределением через <code>props</code></li>
+			<li>Компонент должет только запрашивать «Тему»</li>
+			<li>Тему можно передать как через <code>props</code> (inline), либо <code>ThemeProvider</code> (context)</li>
+			<li>«Прицельное» темизирование 🎯</li>
+		</ul>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 class="size-m">
+			🎨 TrueТемизация
+			<div class="next slide-down">
+				<div class="arrow-down"></div>
+				Спецификация
+			</div>
+			<div class="next slide-down">
+				<div class="arrow-down"></div>
+				TypeScript
+			</div>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 TrueТемизация: Спецификация</h2>
+		<pre class="js-code compact">
+			type ButtonProps extends LikeAnchor, LikeButton {
+				kind?: ButtonKind;   // "default" | "primary" | "warning" | etc
+				shape?: ButtonShape; // "default" | "circle" | etc
+				size?: ButtonSize;   // "inherit" | "L" | "M" | "S" | etc
+				block?: boolean;
+				multiline?: boolean;
+				icon?: IconName;
+				value: RawValue;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">🎨 TrueТемизация: Спецификация</h2>
+		<pre class="js-code compact-xs">
+			type ButtonProps ButtonProps extends LikeAnchor, LikeButton {
+				// ...
+				theme?: <mark>Theme</mark><{
+					#!+ host: Pick&lt;ButtonProps,
+						| "kind"     // модификаторы
+						| "type"
+						| "disabled"
+						| "shape"
+						| "block"
+						| "size"
+					> & {
+						is: "button" | "a"
+						multiline: "on" | "off";
+					#!- };
+					#!+ elements: { // Элементы компонента
+						icon: true;
+						text: true;
+					#!- };
+				}>;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 TrueТемизация: Спецификация</h2>
+		<pre class="js-code compact">
+			Theme<{
+				host: {...};
+				elements: {
+					icon: true; // без модификаторов
+					text: {     // с
+						// модификатор и его значения
+						align: "inherit" | "left" | "right" | "center";
+					};
+				};
+			}>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -40px">🎨 TrueТемизация: Использование</h2>
+		<pre class="js-code compact-xs" style="margin-left: -50px">
+			function Button(props: ButtonProps) {
+				const theme = useTheme(Button, props);
+				#!+ const hostTheme = theme.for("host"); // получаем тему для Блока
+				const iconTheme = theme.for("icon"); // тема для элемента `icon`
+				#!- const textTheme = theme.for("text"); // и текста
+				#!+
+				hostTheme.set("kind", kind);
+				hostTheme.set("disabled", disabled);
+				hostTheme.set("size", size);
+				hostTheme.set("shape", shape);
+				#!- (multiline != null) && hostTheme.set("multiline", multiline ? "on" : "off");
+				#!+ // ...остальной код...
+				return &lt;button className={<mark>hostTheme</mark>}>
+					{icon && &lt;span className={iconTheme}>{icon}&lt;/span>}
+					{children && &lt;span className={textTheme}>{children}&lt;/span>}
+				#!- &lt;/button>);
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/hosttheme-autocomplete.png" style="
+			width: 80%;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%)
+		"/>
+		<img src="./st/btn-props-shape.png" style="
+			height: 70%;
+			position: absolute;
+			left: 48%;
+			top: 13%;
+		"/>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>CSS in JS 🤔</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/material-ui-css.png" height="100%"/>
+		<h2 class="small">‍🙅🏻‍♀️</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img src="./st/grommet-style.png" height="100%"/>
+		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">🤦🏻‍♂️</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>Theme in TS <span style="font-size: 80%">💁🏻‍♂️</span></div>
+			<small><s>CSS in JS</s></small>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Theme in TS <span style="font-size: 80%">💁🏻‍♂️</span></h2>
+		<pre class="js-code compact">
+			export const buttonTheme = createThemeFor(Button, {
+				// Тема корневого блока
+				host: {
+					// CSS properties
+				},
+				// Элементы компонента
+				elements: {
+					icon: {
+						// CSS properties
+					},
+				},
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Theme in TS <span style="font-size: 80%">💁🏻‍♂️</span>: Модификаторы</h2>
+		<pre class="js-code compact-s">
+			export const buttonTheme = createThemeFor(Button, {
+				host: {
+					color: red,
+					":modifiers": {
+						disabled: {
+							pointerEvents: "none",
+						},
+						shape: {
+							default: { borderRadius: 4 },
+							circle:  { borderRadius: "100%" },
+						},
+					},
+				},
+				elements: {},
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/themerule-v1.png" width="80%" class="center"/>
+		<h2 class="size-m top" style="color: #fff">Theme in TS v1</h2>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/themerule-v2.png" height="75%" class="center" style="margin-top: 40px"/>
+		<h2 class="size-m top" style="color: #fff">Theme in TS v2</h2>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/themerule-v3.png" width="90%" class="center"/>
+		<h2 class="size-m top" style="color: #fff">Theme in TS v3</h2>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/themerule-v4.png" width="90%" class="center"/>
+		<h2 class="size-m top" style="color: #fff">Theme in TS v4 🎉</h2>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mods-list.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state-list.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state-nested.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-not.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-host-plus-self.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-elems-plus.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 150%; margin-top: -60px">Theme in TS: Объект, который получает компонент</h2>
+		<pre class="js-code compact-xs">
+			&lt;Theme>{
+				// Метод получения конфигуратора темы для блока или элемента
+				for: &lt;N>(name: N) => ThemeStyler&lt;N>,
+				owner: LikeComponent< object >; // Для кого эта тема
+				classes: { // Реальные имена классов
+					host: {
+						$root: "_0", // для Блока
+						shape: {  // модификатор с состояниями
+							default: "_1",
+							circle: "_2",
+						},
+						disabled: "_3", // boolean модификатор
+						// ...
+					},
+					elements: {
+						icon: "_42",
+						// ...
+					},
+				},
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🎨 Применение</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 Inline (props)</h2>
+		<pre class="js-code">
+			import { Button } from "@truekit/ui/Button";
+			import { buttonDarkTheme } from "@myapp/theme/Button";
+
+			&lt;Button
+				theme={ <mark>buttonDarkTheme</mark> }
+				{...props}
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">🎨 ThemeProvider (context)</h2>
+		<pre class="js-code compact-xs" style="margin-left: -40px">
+			import { buttonLightTheme, buttonSuperTheme } from "@myapp/theme/Button";
+			import { inputBaseTheme } from "@myapp/theme/Input";
+			import { ThemeProvider, createThemeRegistry } from "@truekit/core";
+
+			#! const rootRegistry = createThemeRegistry([buttonLightTheme, inputBaseTheme]);
+			#! const innerRegistry = createThemeRegistry([buttonSuperTheme]);
+			#!+
+			&lt;ThemeProvider value={ rootRegistry }>
+				&lt;Button /> // ← Light theme (root)
+				#!+
+				&lt;ThemeProvider value={ <mark>innerRegistry</mark> }>
+
+					&lt;Button />  // ← Super theme (inner)
+					&lt;Input />   // ← Base theme (root)
+
+				&lt;/ThemeProvider>
+				#!-
+			#!- &lt;/ThemeProvider>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 TrueТемизация</h2>
+		<style>
+			#theme-override li {
+				opacity: .5;
+				font-size: 70%;
+			}
+			#theme-override li:last-child {
+				opacity: 1;
+				font-size: 200%;
+			}
+		</style>
+		<ul id="theme-override">
+			<li>Компонент не должен иметь стилей совсем</li>
+			<li>Никаких зашитых <code>className</code> с их переопределением чем <code>props</code></li>
+			<li>У компонента есть только «Спецификация Темы»</li>
+			<li>Тему можно передать как через <code>props.theme</code> (inline), так и <code>ThemeProvider</code> (context)</li>
+			<li>«Прицельное» темизирование 🎯</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 class="size-m top" style="font-size: 250%">«Прицельное» темизирование 🎯</h2>
+		<img src="./st/theme-login-form.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«Прицельное» темизирование</h2>
+		<pre class="js-code compact">
+			import { buttonExperimentalTheme } from "@myapp/theme/Button";
+			import { createThemeOverrideFor } from "@truekit/core/theme";
+
+			#!+ const btnExpThemeOverride = createThemeOverrideFor(
+				#! Button,      // Цель 🎯
+				#! [LoginForm], // Куда вложен компонент
+			#!- )(buttonExperimentalTheme); // ← Тема 🎨
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«Прицельное» темизирование</h2>
+		<pre class="js-code compact">
+			const registry = createThemeRegistry(null, [
+				btnExpThemeOverride,
+			]);
+
+			&lt;ThemeProvider value={ registry }>
+				&lt;LoginForm>
+					&lt;Button type="submit" /> // 👍
+					#! &lt;Button type="button" /> // Oops 😕
+				&lt;/LoginForm>
+			&lt;/ThemeProvider>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Предикат💡</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Предикат💡</h2>
+		<pre class="js-code">
+			const btnExpThemeOverride = createThemeOverrideFor(
+				Button,      // Цель 🎯
+				[LoginForm], // Вложенность компонента
+				**(props) => props.type === "submit", // ← 👊**
+			)(buttonExperimentalTheme);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>За счет чего работает 🎯</h2>
+		<fieldset style="border: 1px dotted blue; color: blue; width: 60%; margin: 0 auto;">
+			<legend style="margin-left: 30px;">EnvScope</legend>
+			<div style="background: #bde2ff; margin: 0 30px 30px;">
+				<div style="margin-left: 20px">&lt;Login /></div>
+				<fieldset style="border: 1px dotted rgb(255, 0, 191); color:rgb(255, 0, 191); margin: 0 20px">
+					<legend style="margin-left: 30px;">EnvScope</legend>
+					<div style="background: rgba(255, 0, 191, .2); margin: 0 30px 30px; padding: 10px 0 15px">
+						<div style="margin-left: 20px">&lt;Button /></div>
+					</div>
+				</fieldset>
+				<div style="height: 30px;"></div>
+			</div>
+		</fieldset>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Структура</h2>
+		<pre class="js-code compact-m">
+			type EnvScope = null | {
+				parent: EnvScope;
+				owner: any | null; // Кому принадлежит scope
+				ctx: EnvContextProps | null;
+			}
+
+			type EnvContextProps = {
+				theme: ThemeRegistry | null; // ближайший реест с темой
+				deps: DepsRegistry | null; // Общие зависимости
+				props: object | null; // props компонента
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Не много benchmark'ов</h2>
+		<table>
+			<tr>
+				<th></th>
+				<th>props</th>
+				<th>context</th>
+				<th>scope</th>
+			</tr>
+			<tr>
+				<td>#1</td>
+				<td>30.805</td>
+				<td>51.860</td>
+				<td>40.159</td>
+			</tr>
+			<tr>
+				<td>#2</td>
+				<td>26.674</td>
+				<td>41.468</td>
+				<td>33.681</td>
+			</tr>
+			<tr>
+				<td>#3</td>
+				<td>25.400</td>
+				<td>41.754</td>
+				<td>33.765</td>
+			</tr>
+		</table>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎨 TrueТемизация: Итоги</h2>
+		<ul>
+			<li>Нет темы, нет проблемы 💁🏻‍♂️</li>
+			<li>У компонента есть только «Спецификация Темы» 🧾</li>
+			<li>Тему можно передать как через <code>props.theme</code> (inline), так и <code>ThemeProvider</code> (context)</li>
+			<li>Есть «Прицельное» темизирование 🎯</li>
+			<li>Описание темы строго типизировано с крутым autocomplete</li>
+			<li>Никакой избыточности 🤔</li>
+		</ul>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-create-wtf.png" width="70%" class="center"/>
+		<h2 class="size-m top" style="color: #fff; font-size: 300%; opacity: .9;">Никакой избыточности 🤔</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🧰 Truekit: Проблема #1</h2>
+		<pre class="js-code">
+			// Чтобы описать тему требуется компонент 🤦🏻‍♂️
+			const theme = createThemeFor(Button, { ... })
+
+			function Button(props: ButtonProps) {
+				const theme = useTheme(Button, props);
+				// ...
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🧰 Проблема #2</h2>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Зависимости 💉</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Зависимости 💉</h2>
+		<pre class="js-code compact-m">
+			type Form = {
+				action: string; // какие-то props
+				theme?: Theme<{...}>; // спека темы
+
+				// "Локальное название" => "Тип компонента"
+				deps?: Deps<{
+					Input: InputProps; // <mark>← ⚠️ Как найти?</mark>
+					                   // useDeps(Form, props); — не сделать
+					Button: ButtonProps;
+					// и так далее
+				}>;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Зависимости 💉</h2>
+		<pre class="js-code compact-s">
+			const registry = createDepsRegistry([
+				Icon,
+				Input,
+				Button,
+			]);
+
+			&lt;DepsProvider value={ registry }>
+				&lt;Form>
+					&lt;Icon>
+					&lt;Input>
+					&lt;Button>
+						&lt;Ico>  // ← Icon 🤷🏻‍♂️
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>Что делать🤔?</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🧰 Truekit: Решение</h2>
+		<blockquote>
+			<strong>Дескри́птор</strong> (от лат. descriptor «описывающий») — лексическая единица (слово, словосочетание) информационно-поискового языка, служащая для описания основного смыслового содержания документа или формулировки запроса при поиске документа (информации) в информационно-поисковой системе.
+		</blockquote>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Дескри́птор</h2>
+		<pre class="js-code compact-xs">
+			interface ComponentDescriptor<
+				ID extends string,  // уникальный идентификатор дескриптора
+				PROPS extends object,
+				DM extends DescriptorWithMetaMap,
+			> {
+				readonly id: ID;
+				readonly meta: PROPS; // Используется для TS
+				readonly deps: DepsDescriptor&lt;this, DM>; // Зависимости💉
+				readonly isOptional: boolean;
+
+				optional(): this | undefined; // ⬅️Вот это очень важный момент,
+				                              // undefined нужен как часть типа❗️
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Дескри́птор</h2>
+		<pre class="js-code compact">
+			const $Form = createComponentDescriptor(
+				"@truekit/Form",
+				#! <mark>{} as FormProps</mark>, // тип используется для вывода дженерика
+				#!+ { // Зависимости💉:
+					//   key — имя по которому будем обращаться внутри компоннета
+					//   value — ссылка на дескриптор компонента
+					Input: $Input,
+					Button: $Button,
+					#! Checkbox: $Checkbox.optional(), // необязательная
+				#!- },
+			);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Дескри́птор: структура</h2>
+		<pre class="js-code compact-xs">
+			// Основные свойства:
+			{
+				id: "@truekit/Form", // уникальный идентификатор дескриптора
+				meta: FormProps,  // это служебное свойство, которые используется для TS
+
+				// Описание зависимостей или Дескриптор зависимостей (да, ещё один 😏)
+				deps: {
+					descriptor: [Circular],
+					map: {
+						Input: {/* ... */},
+						Button: {/* ... */},
+						Checkbox: {/* ... */, isOptional: true},
+					},
+				},
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">Дескри́птор + Зависимости 💉</h2>
+		<pre class="js-code compact-xs">
+			// Создаём дескриптор компонента с описанием его зависимостей
+			const $Form = createComponentDescriptor("@truekit/Form", {} as FormProps, {
+				Input: $Input,
+				Button: $Button,
+				Checkbox: $Checkbox.optional(), // необязательная зависимость
+			});
+
+			type FormProps = {
+				// бла-бла-бла
+				deps?: Deps&lt;typeof $Form.deps>;
+				#!+ // ⬆️ В итоге `deps` будет принимать объект:
+				// {
+				//   Input: LikeComponent&lt;InputProps>;
+				//   Button: LikeComponent&lt;ButtonProps>;
+				//   Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+				#! //          <mark>⬆️ Cвойство именно опционально </mark>
+				#!- // }
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Дескри́птор «Зависимостей💉»</h2>
+		<pre class="js-code compact-m">
+			type DepsDescriptor<
+				D extends DescriptorWithMeta&lt;any, any>,
+				M extends DescriptorWithMetaMap,
+			> = {
+				map: M;
+				descriptor: D,
+				use: (
+					props: D['meta'],
+					ctx: EnvContextEntry | null,
+				) => DepsInline&lt;M>;
+			}
+		</pre>
+		<div class="next" style="
+			position: absolute;
+			left: 45%;
+			top: 75%;
+		">
+			<pre class="js-code compact-xxs">
+			{ // 📌
+				Input: LikeComponent&lt;InputProps>;
+				Button: LikeComponent&lt;ButtonProps>;
+				Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+			}
+			</pre>
+		</div>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -50px">Inline (props) зависимости 💉</h2>
+		<pre class="js-code">
+			type Deps&lt;
+				T extends DepsDescriptor&lt;any, any>
+			> = FlattenObject<
+				**Cast**<
+					DepsInline&lt;T['map']>,
+					object
+				>
+			> & **Meta**&lt;T['map']>
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>TypeScript 🧙‍♂️</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">TypeScript 🧙‍♂️</h2>
+		<pre class="js-code compact">
+			type Cast< X, Y > = X extends Y ? X : Y;
+
+			#! const __meta__ = Symbol("__meta__");
+			#!+ type Meta< T > = {
+				[ __meta__ ]?: T;
+			#!- }
+			#!+
+			type GetMeta&lt; T extends {**[ __meta__ ]?**: any} > = {
+				[K in keyof T]-?: **K extends symbol** ? T[K] : never;
+			#!- }[keyof T]
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -80px">TypeScript 🧙‍♂️: DepsInline< ... ></h2>
+		<pre class="js-code compact">
+			// typeof $Form.deps['map']
+			{
+				Input: $Input,
+				Button: $Button,
+				Checkbox: $Checkbox | undefined,
+			}
+			#!+ //      ⬇️ ️   ️⬇️    ⬇️
+			{💉
+			   Input: LikeComponent&lt;InputProps>;
+			   Button: LikeComponent&lt;ButtonProps>;
+			   Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+			        // ⬆️ Но как?
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙‍♂️: DepsInline< ... ></h2>
+		<pre class="js-code">
+			// Казалось бы логичным:
+			type IsOptional< T > = (
+				T extends undefined
+					? true
+					: false
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<h2 class="size-xs top">TypeScript и аксиома Эскобара🤦🏻‍♂️ </h2>
+		<img src="./st/ts-optional-vscode.png" width="40%" style="
+			border-radius: 5px;
+			top: 30%;
+			left: 5%;
+			box-shadow: 0 2px 15px rgba(0,0,0,.3);
+		"/>
+		<img src="./st/ts-optional-playground.png" width="40%" style="
+			border-radius: 5px;
+			top: 30%;
+			left: 53%;
+			box-shadow: 0 2px 15px rgba(0,0,0,.3);
+		"/>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙‍♂️: DepsInline< ... ></h2>
+		<pre class="js-code">
+			type Required = "any";
+			type Optional = "any" | undefined;
+			#!+             //        ⬇️
+			#!-             //  "any" & undefined;
+			#!+
+			IsOptional< Required >; // false
+			#!- IsOptional< Optional >; // true
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🤔</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️</h2>
+		<pre class="js-code">
+			type UnionToIntersect< UNION > =
+				(UNION extends any
+					? (inp: UNION) => void
+					: never
+				) extends ((out: infer INTERSECT) => void)
+					? INTERSECT
+					: never
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: по шагам 💁🏻‍♀️</h2>
+		<pre class="js-code">
+			type UnionToIntersect< UNION > =
+			#!   UNION extends any
+			#!     ↳ (inp: UNION) => void
+			#!          extends
+			#!        (out: infer T) => void)
+			#!	        ↳ <mark style="font-size: 200%">T // IS INTERSECT 🧙🏿‍♂️ 🤯</mark>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: IsOptional< T ></h2>
+		<pre class="js-code">
+			// Вспомогательный тип, который добавляет `undefined`
+			type Optional< T > = T | undefined
+
+			type IsOptional< T > = <mark>ToIntersect< T ></mark> extends undefined
+				? true
+				: false
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... ></h2>
+		<pre class="js-code compact" style="margin-left: -60px">
+			type DepsInline<
+				T extends DescriptorWithMetaMap
+			> = ToIntersect<
+				{
+					[K in keyof T]: IsOptional&lt; T[K] > extends true
+						? { [X in K]?: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
+						: { [X in K]: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
+				}[keyof T]
+			>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #1</h2>
+		<pre class="js-code compact-s">
+			// [K in keyof T]: IsOptional&lt; T[K] > extends true
+			{
+				Input: {     // { [X in K]: ... }
+					Input: LikeComponent&lt;InputProps>;
+				};
+				Button: {    // { [X in K]: ... }
+					Button: LikeComponent&lt;ButtonProps>;
+				};
+				Checkbox: {  // { [X in K]?: ... }
+					Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+				};
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #2</h2>
+		<pre class="js-code">
+			// { ... }[keyof T] ➡️ UNION type
+			  { Input: LikeComponent&lt;InputProps> }
+			  | { Button: LikeComponent&lt;ButtonProps> }
+			  | { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #3</h2>
+		<pre class="js-code">
+			// UNION  ➡️  INTERSECT
+			  { Input: LikeComponent&lt;InputProps> }
+			  & { Button: LikeComponent&lt;ButtonProps> }
+			  & { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, бонус</h2>
+		<pre class="js-code compact">
+			{
+				Input: LikeComponent&lt;InputProps>;
+				Button: LikeComponent&lt;ButtonProps>;
+				Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+			}
+			#!+ //    ⬆️   ⬆️   ⬆️
+			type FlattenObject< T extends object > = {
+				[K in keyof T]: T[K];
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DepsInline: Применение</h2>
+		<pre class="js-code">
+			import { Input } from "@truekit/ui/Input";
+			import { Button } from "@truekit/ui/Button";
+
+			&lt;Form
+				{...props}
+				deps={ <mark>{ Input, Button }</mark> }
+			/>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -60px">Truekit: 🤔</h2>
+		<pre class="js-code compact-xs">
+			const $Form = createComponentDescriptor(
+				"@truekit/ui/Form",
+				{} as FormProps,
+				{ /* 💉 */},
+			);
+
+			type FormProps = {
+				// ...
+				deps?: Deps< typeof $Form.deps >;
+				theme?: Theme<{ ... }>;
+			}
+
+			export const Form = withEnvScope(function Form(props: FormProps) {
+				const theme = $Form.useTheme(props); // <mark>всё это</mark>
+				const deps = $Form.useDeps(props);   // <mark>шаблонный код❗️</mark>
+				return // ...;
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🏭<br/>компонентов</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -30px">🏭 компонентов</h2>
+		<pre class="js-code compact-xs" style="margin-left: -50px">
+			// Декскриптор иконки
+			const $Icon = createComponentDescriptor("@truekit/ui/Icon", {} as IconProps);
+			type IconProps = {
+				name: string;
+				theme?: Theme<{...}>;
+			}
+			// Компонент на основе дескриптора иконки
+			export const Icon = $Icon.createComponent((
+				#! jsx,       // аля React.createElement
+				#! { name },  // это IconProps
+				#! { theme }, // Equipment
+			) => {
+				#!+ const hostTheme = theme.for("host").set("name", name);
+				#!- return &lt;div className={ hostTheme }/>
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -30px">🏭 компонентов</h2>
+		<pre class="js-code compact-s">
+			const $Button = createComponentDescriptor(
+				"@truekit/ui/Button",
+				{} as ButtonProps,
+				{ // 💉
+					Icon: $Icon.optional(), // необязательная зависимость!
+				},
+			);
+
+			type ButtonProps = {
+				// ...
+				theme?: Theme<{ ... }>;
+				deps?: Deps< typeof $Button.deps >;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="margin-top: -30px">🏭 компонентов</h2>
+		<pre class="js-code compact-s">
+			export const Button = $Button.createComponent((
+				jsx,
+				{ type, children }, // ButtonProps
+				{ theme },
+				#! { Icon = DefaultIcon }, // Зависимости💉
+			) => {
+				#!+ const hostTheme = theme.for("host").set("type", type);
+
+				return jsx("button", hostTheme.toDOMProps({type}), &lt;>
+					<mark>&lt;Icon /></mark>
+					&lt;span className={theme.for("value")}>{children}&lt;/span>
+				#!- &lt;/>);
+			});
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>DepsProvider</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Замечание: EnvProvider</h2>
+		<pre class="js-code">
+			function createEnvContextProvider<
+				K extends keyof EnvContextProps
+			>(key: K) { /* ... */ }
+
+			const ThemeProvider = createEnvContextProvider("theme");
+			const DepsProvider = createEnvContextProvider("deps");
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 xstyle="margin-top: -30px">DepsProvider: Пример</h2>
+		<pre class="js-code compact">
+			export const $Login = createComponentDescriptor(
+				"@myapp/Login",
+				{} as FormProps,
+				{
+					Input: $Input,
+					Button: $Button,
+				},
+			);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DepsProvider</h2>
+		<pre class="js-code">
+			import { Login } from "@myapp/ui/Login";
+			import { createDepsRegistry } from "@truekit/core";
+			const registry = createDepsRegistry([ <mark> 🤔 </mark> ]);
+
+			&lt;DepsProvider value={ registry }>
+				&lt;Login/>
+			&lt;/DepsProvider>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Deps resolving</h2>
+		<ul>
+			<li>По локальному имени достаём из <code>props</code></li>
+			<li>Используя ID-дескриптора заивисмости ищем в <code>context</code></li>
+		</ul>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>$Login: все зависимости💉</h2>
+		<pre class="js-code compact">
+			{
+				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+				"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
+				"@truekit/ui/Icon"?: LikeComponent&lt;IconProps> | undefined;
+				               // ⬆️ не забываем
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide cover" style="background: #007acc"><div>
+		<img src="./st/ts.png" height="40%" style="
+			top: 55%;
+			left: 65%;
+		" />
+		<h2 style="font-size: 600%; color: #fff; opacity: 1; margin-top: 100px">Рекурсия 🙃</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>Deps & Meta</h2>
+		<pre class="js-code">
+			// Вспомним, как описаны зависимости
+			type Deps< T extends DepsDescriptor< any, any > > = (
+				  DepsInline< T['map'] >
+				& <mark>Meta< T['map'] ></mark>      // ⬅️ скрытая meta-информация
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DescriptorMap → DesInjection</h2>
+		<pre class="js-code">
+			{
+				Input: Descriptor<"@truekit/ui/Input", InputProps>;
+				Button: Descriptor<"@truekit/ui/Button", ButtonProps>;
+			}
+			#!+ //     ⬇️   ⬇️   ⬇️
+			{
+				[uniqDescriptorId: string]: LikeComponent< object >;
+			#!- }
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 130%;">DesInjection: получаем карту локальных зависимостей</h2>
+		<pre class="js-code">
+			type GetMetaDeps< T > = T extends {deps?: infer D}
+			                             ? GetMeta< D > : never;
+			//       ⬇️         ⬇️         ⬇️
+			{ // DescriptorMap
+				Input: Descriptor<"@truekit/ui/Input", InputProps>;
+				Button: Descriptor<"@truekit/ui/Button", ButtonProps>;
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component | ...</h2>
+		<pre class="js-code" style="margin-left: -60px;">
+			type FlattenDepsMap< T extends DescriptorMap > = ToIntersect<
+				{
+					[K in keyof T]: ConvertMetaDeps<
+						NonNullable< T[K] >,  // Descriptor< N, PROPS >
+						IsOptional< T[K] >    // true | false
+					>;
+				}[keyof T]
+			>;
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component</h2>
+		<pre class="js-code">
+			type ConvertMetaDeps<
+				T extends Descriptor< string, object >,
+				OPTIONAL extends boolean,
+			> = (
+				#! OPTIONAL extends true
+				#!	  ? { [ID in T['id']]?: LikeComponent< T['meta'] > }
+				#!	  : { [ID in T['id']]: LikeComponent< T['meta'] > }
+			);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component</h2>
+		<pre class="js-code compact">
+			type ConvertMetaDeps<
+				T extends Descriptor< string, object >,
+				OPTIONAL extends boolean,
+			> = (
+				// ...
+			) | (
+				#! HasDepsMap< T['meta'] > extends true
+				#!	  ? AllDeps< T['meta'] >  // рекурсия❗️
+				#!	  : never
+			);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2 style="font-size: 130%;">DesInjection: рекурсивое преобразуем в "uniqId" => Component</h2>
+		<pre class="js-code compact">
+			export type AllDeps< T > = FlattenObject<
+				Cast<
+					FlattenDepsMap<
+						GetMetaDeps< T >
+					>,
+					object
+				>
+			>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DesInjection: этапы преобразования</h2>
+		<pre class="js-code compact-xs">
+			// FlattenDepsMap< { ... } >
+			{
+				Input: {
+					"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+				};
+				#!+ Button: (
+					#!+ {
+						"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
+					#!- }
+					#!+ | {
+						Icon: {
+							"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+						};
+					#!- }
+				#!- );
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DesInjection: этапы преобразования</h2>
+		<pre class="js-code compact-xs">
+			// FlattenDepsMap< <mark>{...}[keyof T]</mark> >
+			{
+				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+			}
+			| (
+					{
+						"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
+					}
+					| {
+						"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+					}
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DesInjection: Финальное преобразование</h2>
+		<pre class="js-code compact">
+			// FlattenObject<
+			//		ToIntersect< FlattenDepsMap< { ... } > >
+			// >
+			{
+				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+				"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
+				"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>DepsProvider</h2>
+		<pre class="js-code compact">
+			const registry = createDepsRegistry([
+				#!+ createStrictDeps($Login, {
+					#! [$Input.id]: Input,
+					#! [$Button.id]: Button,
+				#!- }),
+			]);
+
+			&lt;DepsProvider value={ registry }>
+				&lt;Login/>
+			&lt;/DepsProvider>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«Прицельные» зависимости 🎯</h2>
+		<pre class="js-code">
+			const btnOverDeps = createDepsOverrideFor(
+				$Button,
+				[$Login],
+			)(<mark>SuperButton</mark>)
+
+			const registry = createDepsRegistry(null, [btnOverDeps]);
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>«Прицельные» зависимости 🎯</h2>
+		<pre class="js-code compact">
+			const btnOverDeps = createDepsOverrideFor(
+				$SomeBlock,
+				[$PromoPage],
+			)(
+				#!+ function FunkySomeBlock(props: SomeBlockProps) {
+					return &lt;SomeBlock {...props} deps={{
+						Input: FunkyInput,
+					}} />;
+				#!- }
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>🎰 TrueСлоты</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Определение</h2>
+		<pre class="js-code">
+			import { SlotProp, SlotContent } from "@truekit/core";
+
+			type SomeBlockProps = {
+				#! icon: SlotProp< LikeFragment >;
+				#! children: SlotProp< SlotContent >;
+				#!+ onemore: SlotProp< (**{ts}: {ts:Date}**) => string >;
+				#!- // ...остальные свойства
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Использование</h2>
+		<pre class="js-code compact-xs">
+			export const SomeBlock = $SomeBlock.createComponent((
+				jsx,
+				props,
+				{ theme, <mark>Slot</mark> },
+			) => (
+				&lt;div className={ theme.for("host") }>
+					#! &lt;Slot name="icon"/>
+					#! &lt;Slot>Содердимое по умолчанию&lt;/Slot>
+					#!+ &lt;Slot
+						name="onemore"
+						#! value={<mark>{ts: new Date}</mark>} // SlotProp< ({ts}: {ts:Date}) => string >
+					>
+						#! ({ts}) => ts.toString()
+					#!- &lt;/Slot>
+				&lt;/div>
+			));
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Переопределение</h2>
+		<pre class="js-code compact">
+			&lt;SomeBlock
+				icon={&lt;Icon/>}   // новое значение слота
+				onemore={null}   // затираем значение по умолчанию
+			/>
+			//    ⬇️
+			&lt;div class="_0">
+				&lt;i class="_1"/>
+				Содердимое по умолчанию
+			&lt;/div>
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Переопределение</h2>
+		<pre class="js-code compact-s" id="sb-onemore-iso">
+			&lt;SomeBlock
+				icon={&lt;Icon/>}
+				onemore={(_, {ts}) => ts.toISOString()}
+			>
+				Меняем содердимое &lt;Slot/>
+			&lt;/SomeBlock>
+
+			//    ⬇️
+
+			&lt;div class="_0">
+				&lt;i class="_1"/>
+				Меняем содердимое &lt;Slot/>
+				${DATE}
+			&lt;/div>
+		</pre>
+		<script>
+			var a = document.getElementById('sb-onemore-iso');
+			a.innerHTML = a.innerHTML.replace('${DATE}', new Date().toISOString());
+		</script>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Перегрузка</h2>
+		<pre class="js-code compact-m" id="sb-onemore">
+			&lt;SomeBlock
+				onemore={
+					#! (parent, value) => `Сейчас: ${<mark>parent(value)</mark>}!`
+				}
+			>{
+				#! (parent) => &lt;>{<mark>parent()</mark>} 😤&lt;/>;
+			}&lt;/SomeBlock>
+			#!+//    ⬇️
+			&lt;div class="_0">
+				Содердимое по умолчанию 😤
+				Сейчас: ${DATE}!
+			#!-&lt;/div>
+		</pre>
+		<script>
+			var a = document.getElementById('sb-onemore');
+			a.innerHTML = a.innerHTML.replace('${DATE}', new Date().toString());
+		</script>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация</h2>
+		<pre class="js-code compact-s" style="margin-left: -60px">
+			type SlotProp< S extends SlotPropType > = null | (
+				S extends (value: infer V) => infer R // если S — функция
+					? SlotWithValue< S, V, R > | R
+					: SlotWithoutValue< S > | S
+			)
+
+			type SlotWithValue< S extends SlotPropType, V, R > = (parent: S, val: V) => R
+
+			type SlotWithoutValue< S extends SlotPropType > = (parent: S) => S
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<pre class="js-code compact-xs" style="margin-left: -60px">
+			type SlotComponentProps< N, T > = (
+			#!+	N extends "children"
+					? { name?: "default" }
+			#!-		 : { name: N }
+			) & (
+			#!+	T extends (value: infer V) => any // если SlotProp< T — фунция >
+					? {value: V; children?: T; } // &lt;Slot name="..." value="...">{(value) => ...}&lt;/Slot>
+			#!-		 : {children?: T;} // &lt;Slot name="...">...&lt;/Slot>
+			)
+
+			#!+ type SlotComponent< SPEC extends object > = (
+				(props: {
+					[N in keyof S]: SlotComponentProps< N, SPEC[N] >;
+				}[keyof SPEC]) => LikeFragment;
+			#!- );
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<pre class="js-code">
+			function Slot(props: SlotProps) { /* ... */ }
+
+			type SlotProps = (
+				#! { name?: "default", children?: SlotContent }
+				#! | { name: "icon", children?: LikeFragment }
+				#! | { name: "someone", children?: (value) => string }
+			)
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2 class="size-m">SlotComponent< SPEC ></h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<pre class="js-code compact">
+			type GetSlotsSpec< P extends object > = {
+				[K in keyof P]-?: SlotPropTypeInfer< ToIntersect< P[K] > >;
+			}
+
+			type SlotPropTypeInfer< P > =
+				P extends SlotWithValue< infer T, any, any> ? T :
+				P extends SlotWithoutValue< infer T > ? T :
+				never
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<pre class="js-code compact-m">
+			type GetSlotsSpec< P extends object > = {
+				[K in keyof P]-?: SlotPropTypeInfer< ToIntersect< P[K] > >;
+			}
+			//     ⬇️    ⬇️    ⬇️
+			{
+				icon: LikeFragment;
+				children: SlotContent;
+				onemore: (value: {ts:Date}) => string;
+				#!+ offset: never; // 😧 &lt;Slot name="offset">{never}&lt;/Slot>
+				#!- limit: never;  // как-то не очень
+			}
+		</pre>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<pre class="js-code compact-xs">
+			type GetSlotsSpec< P extends object > = CleanObject< ... >
+
+			type CleanObject< T extends object > = ToIntersect<{
+			#!	[K in keyof T]: T[K] extends never
+			#!		? never
+			#!		: { [X in K]: T[K] }
+			}[keyof T]>;
+			#!+ //     ⬇️    ⬇️    ⬇️
+			  { icon: LikeFragment; }
+			  | { children: SlotContent; }
+			  | { onemore: (value: {ts:Date}) => string; }
+			  | never // offset
+			#!-   | never // и limit
+		</pre>
+	</div></section>
+
+	<section class="slide shout"><div>
+		<h2>
+			<div>TrueKit 🐳</div>
+			<small>ver 0.XX</small>
+		</h2>
+	</div></section>
+
+	<section class="slide"><div>
+		<h2>TrueKit 🐳: Компонент</h2>
+		<code>/Button/</code>
+		<ul style="margin-left: 50px">
+			<li>Button.<b>types</b>.ts — дескриптор, спецификации и связанные типы</li>
+			<li>Button.<b>theme</b>.ts — тема по умолчанию</li>
+			<li>Button.<b>deps</b>.ts — зависимости по умолчанию</li>
+			<li>Button.<b>tsx</b> — сам компонент</li>
+		</ul>
+	</div></section>
+
+	<section class="slide hide-counter"><div style="text-align: center">
+		<img src="./st/truekit-logo-0.png" width="70%" style="margin-top: -50px"/>
+		<br/>
+		<br/>
+		<img src="./st/medium-qr.png"/>
+	</div></section>
+
+	<script src="../shwr/shower.js"></script>
+
+	<script>
+	  (function(i,s,o,g,r,a,m){i["GoogleAnalyticsObject"]=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,"script","//www.google-analytics.com/analytics.js","ga");
+
+	  ga("create", "UA-16483888-3", "rubaxa.github.io");
+	  ga("send", "pageview");
+	</script>
+</body>
+</html>
