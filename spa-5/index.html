@@ -7,8 +7,8 @@
 	<meta name="viewport" content="width=792, user-scalable=no"/>
 	<meta http-equiv="x-ua-compatible" content="ie=edge"/>
 
-	<link rel="stylesheet" href="../shwr/styles/screen.css"/>
-	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+	<link rel="stylesheet" href="./st/screen.css"/>
+	<script src="./st/jquery-1.11.2.min.js"></script>
 
 	<style>
 		.list .slide:not(.first-slide) {
@@ -25,8 +25,8 @@
 	<section class="slide first-slide"><div>
 		<h2 style="font-size: 300%">Лебедев Константин</h2>
 		<ul style="margin-left: 80px; margin-top: 80px;">
-			<li><a href="https://medium.com/@ibnRubaXa">https://medium.com/@ibnRubaXa</a></li>
 			<li><a href="https://github.com/RubaXa">https://github.com/RubaXa</a></li>
+			<li><a href="https://medium.com/@ibnRubaXa">https://medium.com/@ibnRubaXa</a></li>
 			<li><a href="https://twitter.com/ibnRubaXa">https://twitter.com/ibnRubaXa</a></li>
 		</ul>
 		<img src="./st/truekit-qr.png" style="
@@ -34,10 +34,6 @@
 			right: 18%;
 			top: 37%;
 		"/>
-	</div></section>
-
-	<section class="slide shout"><div>
-		<h2 style="font-size: 300%">Проблемы существующих<br/><br/>🐳🐋</h2>
 	</div></section>
 
 	<section class="slide shout"><div>
@@ -50,33 +46,20 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Material UI: Classes</h2>
-		<pre class="js-code compact-s">
+		<h2 style="margin-top: -60px">Material UI: Classes</h2>
+		<pre class="js-code compact-xs">
 			const styles = {
 				root: {
 					background: "linear-gradient (45deg, #FE6B8B 30%, #FF8E53 90%)",
 					// ...
 				},
 			};
-
-			function HigherOrderComponent(props) {
-				const {<mark>classes</mark>} = props;
-				return &lt;Button className={<mark>classes.root</mark>}>Higher-order component&lt;/Button>;
-			}
-
-			export default withStyles(<mark>styles</mark>)(HigherOrderComponent);
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>Material UI: Classes</h2>
-		<pre class="js-code compact-m">
-			const StyledBtn = withStyles(styles)(function HOC(props) {
+			const StyledBtn = <mark>withStyles(styles)</mark>(function HOC(props) {
 				return &lt;Button <mark>{...props}</mark>/>;
 			}
-			#!+
-			//  ⬇️ &lt;StyledBtn>Higher-order&lt;/StyledBtn>  ⬇️
 
+			//  ⬇️ &lt;StyledBtn>Higher-order&lt;/StyledBtn>  ⬇️
+			#!+
 			&lt;button class="mui-root <mark>HOC-root</mark>"> // ← 😕
 				Higher-order
 			#!- &lt;/button>
@@ -124,12 +107,6 @@
 
 	<section class="slide cover"><div>
 		<img src="./st/blueprint-wtf.png" height="100%"/>
-		<img src="./st/owl.png" class="next" style="
-			position: absolute;
-			top: 75%;
-			left: 80%;
-			width: 20%;
-		"/>
 		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Blueprint</h2>
 	</div></section>
 
@@ -146,6 +123,12 @@
 	<section class="slide cover"><div>
 		<img src="./st/grommet-style.png" height="100%"/>
 		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">Grommet</h2>
+		<img src="./st/owl.png" style="
+			position: absolute;
+			top: 75%;
+			left: 80%;
+			width: 20%;
+		"/>
 	</div></section>
 
 	<section class="slide cover"><div>
@@ -165,52 +148,8 @@
 			<li>Зашитые классы</li>
 			<li>Подключенные стили</li>
 			<li>Перегрузка темы только на уровне компонента (через props), либо через переменные темы</li>
-			<li>Использование пакета <code>classnames</code> 😑</li>
 			<li>Неконтролируемая комбинаторика модификаторов ⚠️</li>
 		</ul>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>classnames vs. my fn</h2>
-		<img src="./st/material-ui-cls.png" style="
-			position: absolute;
-			left: 60%;
-			top: 10%;
-			width: 80%;
-			transform: rotateZ(-10deg);
-			clip: rect(0, 500px, 380px, 0);
-		" />
-		<pre class="js-code compact-m" style="position: relative">
-			className={ classes(
-				cn.button,
-				props.disabled && cn.disabled,
-				// ...
-			) }
-
-			function classes(...values) {
-				let s = "";
-				let idx = values.length;
-				while (idx--) if (values[idx]) s += ` ${values[idx]}`;
-				return s;
-			}
-		</pre>
-	</div></section>
-
-
-	<section class="slide"><div>
-		<h2>🎨 Неконтролируемая комбинаторика</h2>
-		<pre class="js-code">
-			type ButtonProps = {
-				primary?: boolean;
-				danger?: boolean;
-				warning?: boolean;
-				info?: boolean;
-				// ... etc
-			}
-		</pre>
-		<div class="next" style="position: absolute; top: 40%; right: 20%;">
-			⬅️ <b style="font-size: 150%">Hello, Bootstrap 😑</b>
-		</div>
 	</div></section>
 
 	<section class="slide"><div>
@@ -227,19 +166,22 @@
 
 			//  ⬇️     ⬇️      ⬇️
 
-			&lt;Button primary secondary warning>WTF?!&lt;/Button>
+			&lt;button class="primary secondary warning">WTF?!&lt;/button>
 		</pre>
+		<div style="position: absolute; top: 40%; right: 20%;">
+			⬅️ <b style="font-size: 150%">Hello, Bootstrap 😑</b>
+		</div>
 	</div></section>
 
 	<section class="slide"><div>
 		<h2>🎨 Неконтролируемая комбинаторика 🤦🏻‍♀️</h2>
 		<pre class="js-code">
 			condition
-				? &lt;Button warning/>
+				? &lt;Button secondary/>
 				: &lt;Button primary/>
 
 			// вместо:
-			&lt;Button kind={ getBtnKind(...) } />
+			&lt;Button kind={ ... } />
 		</pre>
 	</div></section>
 
@@ -262,34 +204,8 @@
 		<h2 style="font-size: 300%; margin-top: -10px;">Blueprint</h2>
 	</div></section>
 
-	<!--<section class="slide"><div>
-		<h2>Итого</h2>
-		<ul>
-			<li>Темизация 🎨</li>
-			<li>Жесткие зависимости 💉</li>
-			<li>Избыточный размер 🍔</li>
-			<li>Отсуствует или слабая система «слотов» 🎰</li>
-		</ul>
-	</div></section>-->
-
 	<section class="slide shout"><div>
 		<h2>🤔</h2>
-	</div></section>
-
-	<section class="slide cover"><div>
-		<img
-			src="./st/oh-no-whitout-circles-white.jpg"
-			style="
-				position: absolute;
-				height: 70%;
-				top: 30%;
-				left: 50%;
-				transform: translate(-50%,0)
-			"
-		/>
-		<h2 style="font-size: 200%; margin-top: -10px; opacity: 1">
-			«UIKit, который точно сможет™» 🤦🏻‍♂️🤦🏻‍♀️
-		</h2>
 	</div></section>
 
 	<section class="slide"><div>
@@ -298,13 +214,9 @@
 			<li>🎨 Никаких зашитых css-классов или стилей</li>
 			<li>💉 Минимальные зависимости, а лучше полное отсуствие</li>
 			<li>🎰 Система слотов</li>
-			<li><s>🧬 «Типажи»</s></li>
-			<li><s>🚀 Shared component state</s></li>
+			<li style="opacity: .3">🧬 «Типажи»</li>
+			<li style="opacity: .3">🚀 Shared component state</li>
 		</ul>
-	</div></section>
-
-	<section class="slide cover"><div>
-		<img src="./st/truekit-logo-0.png" width="80%" style="margin-top: 11%; margin-left: 10%"/>
 	</div></section>
 
 	<section class="slide"><div>
@@ -321,11 +233,11 @@
 	<section class="slide shout"><div>
 		<h2 class="size-m">
 			🎨 TrueТемизация
-			<div class="next slide-down">
+			<div xclass="next slide-down">
 				<div class="arrow-down"></div>
 				Спецификация
 			</div>
-			<div class="next slide-down">
+			<div xclass="next slide-down">
 				<div class="arrow-down"></div>
 				TypeScript
 			</div>
@@ -370,22 +282,6 @@
 					#!- };
 				}>;
 			}
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>🎨 TrueТемизация: Спецификация</h2>
-		<pre class="js-code compact">
-			Theme<{
-				host: {...};
-				elements: {
-					icon: true; // без модификаторов
-					text: {     // с
-						// модификатор и его значения
-						align: "inherit" | "left" | "right" | "center";
-					};
-				};
-			}>
 		</pre>
 	</div></section>
 
@@ -437,11 +333,6 @@
 		<h2 class="small">‍🙅🏻‍♀️</h2>
 	</div></section>
 
-	<section class="slide cover"><div>
-		<img src="./st/grommet-style.png" height="100%"/>
-		<h2 style="font-size: 300%; margin-top: 100px; margin-left: 100px">🤦🏻‍♂️</h2>
-	</div></section>
-
 	<section class="slide shout"><div>
 		<h2>
 			<div>Theme in TS <span style="font-size: 80%">💁🏻‍♂️</span></div>
@@ -467,25 +358,24 @@
 		</pre>
 	</div></section>
 
-	<section class="slide"><div>
-		<h2 style="margin-top: -80px">Theme in TS <span style="font-size: 80%">💁🏻‍♂️</span>: Модификаторы</h2>
-		<pre class="js-code compact-s">
-			export const buttonTheme = createThemeFor(Button, {
-				host: {
-					color: red,
-					":modifiers": {
-						disabled: {
-							pointerEvents: "none",
-						},
-						shape: {
-							default: { borderRadius: 4 },
-							circle:  { borderRadius: "100%" },
-						},
-					},
-				},
-				elements: {},
-			});
-		</pre>
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mods-list.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state-list.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-mod-state-nested.png" width="70%" class="center"/>
+	</div></section>
+
+	<section class="slide cover" style="background: #1e1e1e"><div>
+		<img src="./st/theme-elems-plus.png" width="70%" class="center"/>
 	</div></section>
 
 	<section class="slide cover" style="background: #1e1e1e"><div>
@@ -506,34 +396,6 @@
 	<section class="slide cover" style="background: #1e1e1e"><div>
 		<img src="./st/themerule-v4.png" width="90%" class="center"/>
 		<h2 class="size-m top" style="color: #fff">Theme in TS v4 🎉</h2>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-mods-list.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-mod-state.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-mod-state-list.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-mod-state-nested.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-mod-not.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-host-plus-self.png" width="70%" class="center"/>
-	</div></section>
-
-	<section class="slide cover" style="background: #1e1e1e"><div>
-		<img src="./st/theme-elems-plus.png" width="70%" class="center"/>
 	</div></section>
 
 	<section class="slide"><div>
@@ -569,7 +431,7 @@
 	<section class="slide"><div>
 		<h2>🎨 Inline (props)</h2>
 		<pre class="js-code">
-			import { Button } from "@truekit/ui/Button";
+			import { Button } from "@truekit/Button";
 			import { buttonDarkTheme } from "@myapp/theme/Button";
 
 			&lt;Button
@@ -582,23 +444,23 @@
 	<section class="slide"><div>
 		<h2 style="margin-top: -60px">🎨 ThemeProvider (context)</h2>
 		<pre class="js-code compact-xs" style="margin-left: -40px">
-			import { buttonLightTheme, buttonSuperTheme } from "@myapp/theme/Button";
+			import { buttonBaseTheme, buttonSuperTheme } from "@myapp/theme/Button";
 			import { inputBaseTheme } from "@myapp/theme/Input";
 			import { ThemeProvider, createThemeRegistry } from "@truekit/core";
 
-			#! const rootRegistry = createThemeRegistry([buttonLightTheme, inputBaseTheme]);
-			#! const innerRegistry = createThemeRegistry([buttonSuperTheme]);
+			#!+ const rootRegistry = createThemeRegistry([buttonBaseTheme, inputBaseTheme]);
+			#!- const innerRegistry = createThemeRegistry([buttonSuperTheme]);
 			#!+
 			&lt;ThemeProvider value={ rootRegistry }>
-				&lt;Button /> // ← Light theme (root)
-				#!+
+				&lt;Button /> // ← Base theme (root)
+
 				&lt;ThemeProvider value={ <mark>innerRegistry</mark> }>
 
 					&lt;Button />  // ← Super theme (inner)
 					&lt;Input />   // ← Base theme (root)
 
 				&lt;/ThemeProvider>
-				#!-
+
 			#!- &lt;/ThemeProvider>
 		</pre>
 	</div></section>
@@ -635,10 +497,10 @@
 			import { buttonExperimentalTheme } from "@myapp/theme/Button";
 			import { createThemeOverrideFor } from "@truekit/core/theme";
 
-			#!+ const btnExpThemeOverride = createThemeOverrideFor(
+			const btnExpThemeOverride = createThemeOverrideFor(
 				#! Button,      // Цель 🎯
 				#! [LoginForm], // Куда вложен компонент
-			#!- )(buttonExperimentalTheme); // ← Тема 🎨
+			)(buttonExperimentalTheme); // ← Тема 🎨
 		</pre>
 	</div></section>
 
@@ -652,7 +514,7 @@
 			&lt;ThemeProvider value={ registry }>
 				&lt;LoginForm>
 					&lt;Button type="submit" /> // 👍
-					#! &lt;Button type="button" /> // Oops 😕
+					&lt;Button type="button" /> // Oops 😕
 				&lt;/LoginForm>
 			&lt;/ThemeProvider>
 		</pre>
@@ -668,7 +530,7 @@
 			const btnExpThemeOverride = createThemeOverrideFor(
 				Button,      // Цель 🎯
 				[LoginForm], // Вложенность компонента
-				**(props) => props.type === "submit", // ← 👊**
+				<mark>(props) => props.type === "submit", // ← 👊</mark>
 			)(buttonExperimentalTheme);
 		</pre>
 	</div></section>
@@ -691,48 +553,27 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Структура</h2>
-		<pre class="js-code compact-m">
-			type EnvScope = null | {
-				parent: EnvScope;
-				owner: any | null; // Кому принадлежит scope
-				ctx: EnvContextProps | null;
-			}
-
-			type EnvContextProps = {
-				theme: ThemeRegistry | null; // ближайший реест с темой
-				deps: DepsRegistry | null; // Общие зависимости
-				props: object | null; // props компонента
-			}
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
 		<h2>Не много benchmark'ов</h2>
 		<table>
 			<tr>
 				<th></th>
 				<th>props</th>
 				<th>context</th>
-				<th>scope</th>
 			</tr>
 			<tr>
 				<td>#1</td>
 				<td>30.805</td>
 				<td>51.860</td>
-				<td>40.159</td>
 			</tr>
 			<tr>
 				<td>#2</td>
 				<td>26.674</td>
 				<td>41.468</td>
-				<td>33.681</td>
 			</tr>
 			<tr>
 				<td>#3</td>
 				<td>25.400</td>
 				<td>41.754</td>
-				<td>33.765</td>
 			</tr>
 		</table>
 	</div></section>
@@ -754,23 +595,6 @@
 		<h2 class="size-m top" style="color: #fff; font-size: 300%; opacity: .9;">Никакой избыточности 🤔</h2>
 	</div></section>
 
-	<section class="slide"><div>
-		<h2>🧰 Truekit: Проблема #1</h2>
-		<pre class="js-code">
-			// Чтобы описать тему требуется компонент 🤦🏻‍♂️
-			const theme = createThemeFor(Button, { ... })
-
-			function Button(props: ButtonProps) {
-				const theme = useTheme(Button, props);
-				// ...
-			}
-		</pre>
-	</div></section>
-
-	<section class="slide shout"><div>
-		<h2>🧰 Проблема #2</h2>
-	</div></section>
-
 	<section class="slide shout"><div>
 		<h2>Зависимости 💉</h2>
 	</div></section>
@@ -785,29 +609,11 @@
 				// "Локальное название" => "Тип компонента"
 				deps?: Deps<{
 					Input: InputProps; // <mark>← ⚠️ Как найти?</mark>
-					                   // useDeps(Form, props); — не сделать
+					                   // <mark>useDeps(Form, props); — не сделать</mark>
 					Button: ButtonProps;
 					// и так далее
 				}>;
 			}
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>Зависимости 💉</h2>
-		<pre class="js-code compact-s">
-			const registry = createDepsRegistry([
-				Icon,
-				Input,
-				Button,
-			]);
-
-			&lt;DepsProvider value={ registry }>
-				&lt;Form>
-					&lt;Icon>
-					&lt;Input>
-					&lt;Button>
-						&lt;Ico>  // ← Icon 🤷🏻‍♂️
 		</pre>
 	</div></section>
 
@@ -822,7 +628,7 @@
 		</blockquote>
 	</div></section>
 
-	<section class="slide"><div>
+	<!--section class="slide"><div>
 		<h2>Дескри́птор</h2>
 		<pre class="js-code compact-xs">
 			interface ComponentDescriptor<
@@ -839,21 +645,21 @@
 				                              // undefined нужен как часть типа❗️
 			}
 		</pre>
-	</div></section>
+	</div></section-->
 
 	<section class="slide"><div>
 		<h2>Дескри́птор</h2>
 		<pre class="js-code compact">
 			const $Form = createComponentDescriptor(
 				"@truekit/Form",
-				#! <mark>{} as FormProps</mark>, // тип используется для вывода дженерика
-				#!+ { // Зависимости💉:
+				<mark>{} as FormProps</mark>, // тип используется для вывода дженерика
+				{ // Зависимости💉:
 					//   key — имя по которому будем обращаться внутри компоннета
 					//   value — ссылка на дескриптор компонента
 					Input: $Input,
 					Button: $Button,
 					#! Checkbox: $Checkbox.optional(), // необязательная
-				#!- },
+				},
 			);
 		</pre>
 	</div></section>
@@ -891,59 +697,27 @@
 
 			type FormProps = {
 				// бла-бла-бла
-				deps?: Deps&lt;typeof $Form.deps>;
+				deps?: Deps&lt;<mark>typeof $Form.deps</mark>>;
 				#!+ // ⬆️ В итоге `deps` будет принимать объект:
 				// {
 				//   Input: LikeComponent&lt;InputProps>;
 				//   Button: LikeComponent&lt;ButtonProps>;
 				//   Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
-				#! //          <mark>⬆️ Cвойство именно опционально </mark>
+				//          <mark>⬆️ Cвойство именно опционально </mark>
 				#!- // }
 			}
 		</pre>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2 style="margin-top: -50px">Дескри́птор «Зависимостей💉»</h2>
-		<pre class="js-code compact-m">
-			type DepsDescriptor<
-				D extends DescriptorWithMeta&lt;any, any>,
-				M extends DescriptorWithMetaMap,
-			> = {
-				map: M;
-				descriptor: D,
-				use: (
-					props: D['meta'],
-					ctx: EnvContextEntry | null,
-				) => DepsInline&lt;M>;
-			}
-		</pre>
-		<div class="next" style="
-			position: absolute;
-			left: 45%;
-			top: 75%;
-		">
-			<pre class="js-code compact-xxs">
-			{ // 📌
-				Input: LikeComponent&lt;InputProps>;
-				Button: LikeComponent&lt;ButtonProps>;
-				Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
-			}
-			</pre>
-		</div>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2 style="margin-top: -50px">Inline (props) зависимости 💉</h2>
+		<h2 xstyle="margin-top: -50px">Inline (props) зависимости 💉</h2>
 		<pre class="js-code">
 			type Deps&lt;
 				T extends DepsDescriptor&lt;any, any>
-			> = FlattenObject<
-				**Cast**<
-					DepsInline&lt;T['map']>,
-					object
-				>
-			> & **Meta**&lt;T['map']>
+			> = (
+				& <mark>DepsInline&lt;T['map']></mark>
+				& <mark>Meta</mark>&lt;T['map']> // срытая мета информация
+			)
 		</pre>
 	</div></section>
 
@@ -952,27 +726,11 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2 style="margin-top: -80px">TypeScript 🧙‍♂️</h2>
-		<pre class="js-code compact">
-			type Cast< X, Y > = X extends Y ? X : Y;
-
-			#! const __meta__ = Symbol("__meta__");
-			#!+ type Meta< T > = {
-				[ __meta__ ]?: T;
-			#!- }
-			#!+
-			type GetMeta&lt; T extends {**[ __meta__ ]?**: any} > = {
-				[K in keyof T]-?: **K extends symbol** ? T[K] : never;
-			#!- }[keyof T]
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
 		<h2 style="margin-top: -80px">TypeScript 🧙‍♂️: DepsInline< ... ></h2>
-		<pre class="js-code compact">
-			// typeof $Form.deps['map']
+		<pre class="js-code compact-m">
+			// typeof <mark>$Form.deps['map']</mark>
 			{
-				Input: $Input,
+				Input: $Input // Descriptor<"@truekit/Input", InputProps>
 				Button: $Button,
 				Checkbox: $Checkbox | undefined,
 			}
@@ -985,6 +743,22 @@
 			#!- }
 		</pre>
 	</div></section>
+
+	<section class="slide"><div>
+		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... ></h2>
+		<pre class="js-code compact" style="margin-left: -60px">
+			type DepsInline<
+				T extends DescriptorWithMetaMap
+			> = ToIntersect<
+				{
+					[K in keyof T]: IsOptional&lt; T[K] > extends true
+						? { [X in K]?: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
+						: { [X in K]: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
+				}[keyof T]
+			>
+		</pre>
+	</div></section>
+
 
 	<section class="slide"><div>
 		<h2>TypeScript 🧙‍♂️: DepsInline< ... ></h2>
@@ -1019,11 +793,11 @@
 		<pre class="js-code">
 			type Required = "any";
 			type Optional = "any" | undefined;
-			#!+             //        ⬇️
-			#!-             //  "any" & undefined;
-			#!+
+			            //        ⬇️
+			            //  "any" & undefined;
+
 			IsOptional< Required >; // false
-			#!- IsOptional< Optional >; // true
+			IsOptional< Optional >; // true
 		</pre>
 	</div></section>
 
@@ -1069,21 +843,6 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... ></h2>
-		<pre class="js-code compact" style="margin-left: -60px">
-			type DepsInline<
-				T extends DescriptorWithMetaMap
-			> = ToIntersect<
-				{
-					[K in keyof T]: IsOptional&lt; T[K] > extends true
-						? { [X in K]?: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
-						: { [X in K]: LikeComponent&lt;NonNullable&lt; T[K] >['meta']> }
-				}[keyof T]
-			>
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
 		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #1</h2>
 		<pre class="js-code compact-s">
 			// [K in keyof T]: IsOptional&lt; T[K] > extends true
@@ -1095,7 +854,7 @@
 					Button: LikeComponent&lt;ButtonProps>;
 				};
 				Checkbox: {  // { [X in K]?: ... }
-					Checkbox?: LikeComponent&lt;CheckboxProps> | undefined;
+					Checkbox<mark>?</mark>: LikeComponent&lt;CheckboxProps> | undefined;
 				};
 			}
 		</pre>
@@ -1105,19 +864,19 @@
 		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #2</h2>
 		<pre class="js-code">
 			// { ... }[keyof T] ➡️ UNION type
-			  { Input: LikeComponent&lt;InputProps> }
-			  | { Button: LikeComponent&lt;ButtonProps> }
-			  | { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
+			{ Input: LikeComponent&lt;InputProps> }
+			| { Button: LikeComponent&lt;ButtonProps> }
+			| { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
 		</pre>
 	</div></section>
 
 	<section class="slide"><div>
 		<h2>TypeScript 🧙🏿‍♂️: DepsInline< ... >, шаг #3</h2>
 		<pre class="js-code">
-			// UNION  ➡️  INTERSECT
-			  { Input: LikeComponent&lt;InputProps> }
-			  & { Button: LikeComponent&lt;ButtonProps> }
-			  & { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
+			// ToIntersect<{ ... }[keyof T]>: UNION  ➡️  INTERSECT
+			{ Input: LikeComponent&lt;InputProps> }
+			& { Button: LikeComponent&lt;ButtonProps> }
+			& { Checkbox?: LikeComponent&lt;CheckboxProps> | undefined }
 		</pre>
 	</div></section>
 
@@ -1139,8 +898,8 @@
 	<section class="slide"><div>
 		<h2>DepsInline: Применение</h2>
 		<pre class="js-code">
-			import { Input } from "@truekit/ui/Input";
-			import { Button } from "@truekit/ui/Button";
+			import { Input } from "@truekit/Input";
+			import { Button } from "@truekit/Button";
 
 			&lt;Form
 				{...props}
@@ -1153,7 +912,7 @@
 		<h2 style="margin-top: -60px">Truekit: 🤔</h2>
 		<pre class="js-code compact-xs">
 			const $Form = createComponentDescriptor(
-				"@truekit/ui/Form",
+				"@truekit/Form",
 				{} as FormProps,
 				{ /* 💉 */},
 			);
@@ -1164,7 +923,7 @@
 				theme?: Theme<{ ... }>;
 			}
 
-			export const Form = withEnvScope(function Form(props: FormProps) {
+			export const Form = <mark>withEnvScope</mark>(function Form(props: FormProps) {
 				const theme = $Form.useTheme(props); // <mark>всё это</mark>
 				const deps = $Form.useDeps(props);   // <mark>шаблонный код❗️</mark>
 				return // ...;
@@ -1178,33 +937,12 @@
 
 	<section class="slide"><div>
 		<h2 style="margin-top: -30px">🏭 компонентов</h2>
-		<pre class="js-code compact-xs" style="margin-left: -50px">
-			// Декскриптор иконки
-			const $Icon = createComponentDescriptor("@truekit/ui/Icon", {} as IconProps);
-			type IconProps = {
-				name: string;
-				theme?: Theme<{...}>;
-			}
-			// Компонент на основе дескриптора иконки
-			export const Icon = $Icon.createComponent((
-				#! jsx,       // аля React.createElement
-				#! { name },  // это IconProps
-				#! { theme }, // Equipment
-			) => {
-				#!+ const hostTheme = theme.for("host").set("name", name);
-				#!- return &lt;div className={ hostTheme }/>
-			});
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2 style="margin-top: -30px">🏭 компонентов</h2>
 		<pre class="js-code compact-s">
 			const $Button = createComponentDescriptor(
-				"@truekit/ui/Button",
+				"@truekit/Button",
 				{} as ButtonProps,
 				{ // 💉
-					Icon: $Icon.optional(), // необязательная зависимость!
+					Icon: $Icon,
 				},
 			);
 
@@ -1220,16 +958,16 @@
 		<h2 style="margin-top: -30px">🏭 компонентов</h2>
 		<pre class="js-code compact-s">
 			export const Button = $Button.createComponent((
-				jsx,
-				{ type, children }, // ButtonProps
-				{ theme },
-				#! { Icon = DefaultIcon }, // Зависимости💉
+				#! jsx, // JSX-factory
+				#! { type, children }, // ButtonProps
+				#! { theme }, // Equipment
+				#! { Icon }, // Зависимости💉
 			) => {
 				#!+ const hostTheme = theme.for("host").set("type", type);
 
 				return jsx("button", hostTheme.toDOMProps({type}), &lt;>
 					<mark>&lt;Icon /></mark>
-					&lt;span className={theme.for("value")}>{children}&lt;/span>
+					&lt;span className={theme.for("content")}>{children}&lt;/span>
 				#!- &lt;/>);
 			});
 		</pre>
@@ -1240,24 +978,12 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Замечание: EnvProvider</h2>
-		<pre class="js-code">
-			function createEnvContextProvider<
-				K extends keyof EnvContextProps
-			>(key: K) { /* ... */ }
-
-			const ThemeProvider = createEnvContextProvider("theme");
-			const DepsProvider = createEnvContextProvider("deps");
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
 		<h2 xstyle="margin-top: -30px">DepsProvider: Пример</h2>
 		<pre class="js-code compact">
 			export const $Login = createComponentDescriptor(
 				"@myapp/Login",
 				{} as FormProps,
-				{
+				{💉
 					Input: $Input,
 					Button: $Button,
 				},
@@ -1279,21 +1005,18 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>Deps resolving</h2>
-		<ul>
-			<li>По локальному имени достаём из <code>props</code></li>
-			<li>Используя ID-дескриптора заивисмости ищем в <code>context</code></li>
-		</ul>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>$Login: все зависимости💉</h2>
-		<pre class="js-code compact">
+		<h2>$Login: зависимости💉</h2>
+		<pre class="js-code compact-m">
+			// <mark>typeof $Login.deps['map']</mark>
 			{
-				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
-				"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
-				"@truekit/ui/Icon"?: LikeComponent&lt;IconProps> | undefined;
-				               // ⬆️ не забываем
+				Input: Descriptor<"@truekit/Input", InputProps>;
+				Button: Descriptor<"@truekit/Button", ButtonProps>;
+			}
+			//     ⬇️         ⬇️        ⬇️
+			{
+				"@truekit/Input": LikeComponent&lt;InputProps>;
+				"@truekit/Button": LikeComponent&lt;ButtonProps>;
+				"@truekit/Icon": LikeComponent&lt;IconProps> | undefined;
 			}
 		</pre>
 	</div></section>
@@ -1311,36 +1034,40 @@
 		<pre class="js-code">
 			// Вспомним, как описаны зависимости
 			type Deps< T extends DepsDescriptor< any, any > > = (
-				  DepsInline< T['map'] >
+				& DepsInline< T['map'] >
 				& <mark>Meta< T['map'] ></mark>      // ⬅️ скрытая meta-информация
 			)
 		</pre>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>DescriptorMap → DesInjection</h2>
+		<h2 style="margin-top: -80px">Deps & Meta: TypeScript 🧙‍♂️</h2>
 		<pre class="js-code">
-			{
-				Input: Descriptor<"@truekit/ui/Input", InputProps>;
-				Button: Descriptor<"@truekit/ui/Button", ButtonProps>;
+			const __meta__ = Symbol("__meta__");
+			type Meta< T > = {
+				[ __meta__ ]<mark>?</mark>: T;
 			}
-			#!+ //     ⬇️   ⬇️   ⬇️
-			{
-				[uniqDescriptorId: string]: LikeComponent< object >;
-			#!- }
+
+			type GetMeta&lt; T extends {<mark>[ __meta__ ]?</mark>: any} > = {
+				[K in keyof T]-?: <mark>K extends symbol</mark> ? T[K] : never;
+			}[keyof T]
 		</pre>
 	</div></section>
 
 	<section class="slide"><div>
 		<h2 style="font-size: 130%;">DesInjection: получаем карту локальных зависимостей</h2>
-		<pre class="js-code">
-			type GetMetaDeps< T > = T extends {deps?: infer D}
+		<pre class="js-code compact-m">
+			type GetDepsMap< T > = T extends {deps?: infer D}
 			                             ? GetMeta< D > : never;
-			//       ⬇️         ⬇️         ⬇️
-			{ // DescriptorMap
-				Input: Descriptor<"@truekit/ui/Input", InputProps>;
-				Button: Descriptor<"@truekit/ui/Button", ButtonProps>;
-			}
+			#!+ //       ⬇️
+			{ // DepsDescriptorMap
+				Input: Descriptor<"@truekit/Input", InputProps>;
+				Button: Descriptor<"@truekit/Button", ButtonProps>;
+			#!- }
+			#!+ //                     ⬇️            	       ⬇️
+			{
+				[uniqDescriptorId: string]: LikeComponent< Props >;
+			#!- }
 		</pre>
 	</div></section>
 
@@ -1348,8 +1075,8 @@
 		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component | ...</h2>
 		<pre class="js-code" style="margin-left: -60px;">
 			type FlattenDepsMap< T extends DescriptorMap > = ToIntersect<
-				{
-					[K in keyof T]: ConvertMetaDeps<
+				{// K - Input, Button, etc
+					[K in keyof T]: ConvertToDep<
 						NonNullable< T[K] >,  // Descriptor< N, PROPS >
 						IsOptional< T[K] >    // true | false
 					>;
@@ -1361,13 +1088,13 @@
 	<section class="slide"><div>
 		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component</h2>
 		<pre class="js-code">
-			type ConvertMetaDeps<
+			type ConvertToDep<
 				T extends Descriptor< string, object >,
 				OPTIONAL extends boolean,
 			> = (
 				#! OPTIONAL extends true
-				#!	  ? { [ID in T['id']]?: LikeComponent< T['meta'] > }
-				#!	  : { [ID in T['id']]: LikeComponent< T['meta'] > }
+				#!+	  ? { [ID in T["id"]]?: LikeComponent< T["meta"] > }
+				#!-	  : { [ID in T["id"]]: LikeComponent< T["meta"] > }
 			);
 		</pre>
 	</div></section>
@@ -1375,15 +1102,15 @@
 	<section class="slide"><div>
 		<h2 style="font-size: 130%;">DesInjection: преобразуем в "uniqId" => Component</h2>
 		<pre class="js-code compact">
-			type ConvertMetaDeps<
+			type ConvertToDep<
 				T extends Descriptor< string, object >,
 				OPTIONAL extends boolean,
 			> = (
 				// ...
 			) | (
-				#! HasDepsMap< T['meta'] > extends true
-				#!	  ? AllDeps< T['meta'] >  // рекурсия❗️
-				#!	  : never
+				#! HasDepsMap< T["meta"] > extends true
+				#!+	  ? RecursionDeps< T["meta"] >  // рекурсия❗️
+				#!-	  : never
 			);
 		</pre>
 	</div></section>
@@ -1391,10 +1118,10 @@
 	<section class="slide"><div>
 		<h2 style="font-size: 130%;">DesInjection: рекурсивое преобразуем в "uniqId" => Component</h2>
 		<pre class="js-code compact">
-			export type AllDeps< T > = FlattenObject<
+			export type RecursionDeps< T > = FlattenObject<
 				Cast<
-					FlattenDepsMap<
-						GetMetaDeps< T >
+					FlattenDepsMap<     // (2)
+						GetDepsMap< T >   // (1)
 					>,
 					object
 				>
@@ -1408,18 +1135,18 @@
 			// FlattenDepsMap< { ... } >
 			{
 				Input: {
-					"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+					"@truekit/Input": LikeComponent&lt;InputProps>;
 				};
-				#!+ Button: (
-					#!+ {
-						"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
-					#!- }
-					#!+ | {
+				Button: (
+					{
+						"@truekit/Button": LikeComponent&lt;ButtonProps>;
+					}
+					| { // Результат рекурсии
 						Icon: {
-							"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+							"@truekit/Icon"?: LikeComponent&lt;IconProps>;
 						};
-					#!- }
-				#!- );
+					}
+				);
 			}
 		</pre>
 	</div></section>
@@ -1429,14 +1156,14 @@
 		<pre class="js-code compact-xs">
 			// FlattenDepsMap< <mark>{...}[keyof T]</mark> >
 			{
-				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
+				"@truekit/Input": LikeComponent&lt;InputProps>;
 			}
 			| (
 					{
-						"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
+						"@truekit/Button": LikeComponent&lt;ButtonProps>;
 					}
 					| {
-						"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+						"@truekit/Icon"?: LikeComponent&lt;IconProps>;
 					}
 			)
 		</pre>
@@ -1449,9 +1176,9 @@
 			//		ToIntersect< FlattenDepsMap< { ... } > >
 			// >
 			{
-				"@truekit/ui/Input": LikeComponent&lt;InputProps>;
-				"@truekit/ui/Button": LikeComponent&lt;ButtonProps>;
-				"@truekit/ui/Icon"?: LikeComponent&lt;IconProps>;
+				"@truekit/Input": LikeComponent&lt;InputProps>;
+				"@truekit/Button": LikeComponent&lt;ButtonProps>;
+				"@truekit/Icon": LikeComponent&lt;IconProps>;
 			)
 		</pre>
 	</div></section>
@@ -1460,27 +1187,16 @@
 		<h2>DepsProvider</h2>
 		<pre class="js-code compact">
 			const registry = createDepsRegistry([
-				#!+ createStrictDeps($Login, {
-					#! [$Input.id]: Input,
-					#! [$Button.id]: Button,
-				#!- }),
+				createStrictDeps($Login, {
+					#!+[$Input.id]: Input,
+					[$Button.id]: Button,
+					#!-[$Icon.id]: Icon,
+				}),
 			]);
 
 			&lt;DepsProvider value={ registry }>
 				&lt;Login/>
 			&lt;/DepsProvider>
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>«Прицельные» зависимости 🎯</h2>
-		<pre class="js-code">
-			const btnOverDeps = createDepsOverrideFor(
-				$Button,
-				[$Login],
-			)(<mark>SuperButton</mark>)
-
-			const registry = createDepsRegistry(null, [btnOverDeps]);
 		</pre>
 	</div></section>
 
@@ -1510,10 +1226,10 @@
 			import { SlotProp, SlotContent } from "@truekit/core";
 
 			type SomeBlockProps = {
-				#! icon: SlotProp< LikeFragment >;
-				#! children: SlotProp< SlotContent >;
-				#!+ onemore: SlotProp< (**{ts}: {ts:Date}**) => string >;
-				#!- // ...остальные свойства
+				icon: SlotProp< LikeFragment >;
+				children: SlotProp< SlotContent >;
+				curTime: SlotProp< ({ts}: {ts:Date}) => string >;
+				// ...остальные свойства
 			}
 		</pre>
 	</div></section>
@@ -1528,13 +1244,13 @@
 			) => (
 				&lt;div className={ theme.for("host") }>
 					#! &lt;Slot name="icon"/>
-					#! &lt;Slot>Содердимое по умолчанию&lt;/Slot>
+					#! &lt;Slot>SPA Meetup #5&lt;/Slot>
 					#!+ &lt;Slot
-						name="onemore"
+						name="curTime"
 						#! value={<mark>{ts: new Date}</mark>} // SlotProp< ({ts}: {ts:Date}) => string >
-					>
-						#! ({ts}) => ts.toString()
-					#!- &lt;/Slot>
+					>{
+						#! ({ts}) => ts.toISOString().split("T")[1]
+					#!- }&lt;/Slot>
 				&lt;/div>
 			));
 		</pre>
@@ -1545,45 +1261,22 @@
 		<pre class="js-code compact">
 			&lt;SomeBlock
 				icon={&lt;Icon/>}   // новое значение слота
-				onemore={null}   // затираем значение по умолчанию
+				curTime={null}   // затираем значение по умолчанию
 			/>
 			//    ⬇️
 			&lt;div class="_0">
 				&lt;i class="_1"/>
-				Содердимое по умолчанию
+				SPA Meetup #5
 			&lt;/div>
 		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>🎰 TrueСлоты: Переопределение</h2>
-		<pre class="js-code compact-s" id="sb-onemore-iso">
-			&lt;SomeBlock
-				icon={&lt;Icon/>}
-				onemore={(_, {ts}) => ts.toISOString()}
-			>
-				Меняем содердимое &lt;Slot/>
-			&lt;/SomeBlock>
-
-			//    ⬇️
-
-			&lt;div class="_0">
-				&lt;i class="_1"/>
-				Меняем содердимое &lt;Slot/>
-				${DATE}
-			&lt;/div>
-		</pre>
-		<script>
-			var a = document.getElementById('sb-onemore-iso');
-			a.innerHTML = a.innerHTML.replace('${DATE}', new Date().toISOString());
-		</script>
 	</div></section>
 
 	<section class="slide"><div>
 		<h2>🎰 TrueСлоты: Перегрузка</h2>
-		<pre class="js-code compact-m" id="sb-onemore">
+		<pre class="js-code compact-s" id="sb-curTime">
 			&lt;SomeBlock
-				onemore={
+				icon={&lt;Icon/>}
+				curTime={
 					#! (parent, value) => `Сейчас: ${<mark>parent(value)</mark>}!`
 				}
 			>{
@@ -1591,49 +1284,35 @@
 			}&lt;/SomeBlock>
 			#!+//    ⬇️
 			&lt;div class="_0">
-				Содердимое по умолчанию 😤
-				Сейчас: ${DATE}!
+				&lt;i class="_1"/>
+				SPA Meetup #5 😤
+				Сейчас: ${TIME}!
 			#!-&lt;/div>
 		</pre>
 		<script>
-			var a = document.getElementById('sb-onemore');
-			a.innerHTML = a.innerHTML.replace('${DATE}', new Date().toString());
+			var a = document.getElementById('sb-curTime');
+			a.innerHTML = a.innerHTML.replace('${TIME}', new Date().toISOString().split('T')[1])
 		</script>
 	</div></section>
 
-	<section class="slide"><div>
-		<h2>🎰 TrueСлоты: Типизация</h2>
-		<pre class="js-code compact-s" style="margin-left: -60px">
-			type SlotProp< S extends SlotPropType > = null | (
-				S extends (value: infer V) => infer R // если S — функция
-					? SlotWithValue< S, V, R > | R
-					: SlotWithoutValue< S > | S
-			)
-
-			type SlotWithValue< S extends SlotPropType, V, R > = (parent: S, val: V) => R
-
-			type SlotWithoutValue< S extends SlotPropType > = (parent: S) => S
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
+	<!--<section class="slide"><div>
 		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
 		<pre class="js-code compact-xs" style="margin-left: -60px">
-			type SlotComponentProps< N, T > = (
-			#!+	N extends "children"
-					? { name?: "default" }
-			#!-		 : { name: N }
-			) & (
-			#!+	T extends (value: infer V) => any // если SlotProp< T — фунция >
-					? {value: V; children?: T; } // &lt;Slot name="..." value="...">{(value) => ...}&lt;/Slot>
-			#!-		 : {children?: T;} // &lt;Slot name="...">...&lt;/Slot>
-			)
-
-			#!+ type SlotComponent< SPEC extends object > = (
+			type SlotComponent<<mark>SPEC extends object</mark>> = (
 				(props: {
-					[N in keyof S]: SlotComponentProps< N, SPEC[N] >;
+					[N in keyof SPEC]: SlotComponentProps< N, SPEC[N] >;
 				}[keyof SPEC]) => LikeFragment;
-			#!- );
+			);
+
+			type SlotComponentProps< N, T > = (
+				N extends "children"
+					? { name?: "default" }
+					 : { name: N }
+			) & (
+				T extends (value: infer V) => any // если SlotProp< T — фунция >
+					? {children?: T; value: V;} // &lt;Slot name="..." value="...">{(value) => ...}&lt;/Slot>
+					: {children?: T;} // &lt;Slot name="...">...&lt;/Slot>
+			)
 		</pre>
 	</div></section>
 
@@ -1643,42 +1322,28 @@
 			function Slot(props: SlotProps) { /* ... */ }
 
 			type SlotProps = (
-				#! { name?: "default", children?: SlotContent }
-				#! | { name: "icon", children?: LikeFragment }
-				#! | { name: "someone", children?: (value) => string }
+				{ name?: "default", children?: SlotContent }
+				| { name: "icon", children?: LikeFragment }
+				| { name: "curTime", children?: (value) => string }
 			)
 		</pre>
 	</div></section>
 
 	<section class="slide shout"><div>
 		<h2 class="size-m">SlotComponent< SPEC ></h2>
-	</div></section>
+	</div></section>-->
 
 	<section class="slide"><div>
-		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
-		<pre class="js-code compact">
-			type GetSlotsSpec< P extends object > = {
-				[K in keyof P]-?: SlotPropTypeInfer< ToIntersect< P[K] > >;
-			}
-
-			type SlotPropTypeInfer< P > =
-				P extends SlotWithValue< infer T, any, any> ? T :
-				P extends SlotWithoutValue< infer T > ? T :
-				never
-		</pre>
-	</div></section>
-
-	<section class="slide"><div>
-		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<h2>🎰 TrueСлоты: Получение SPEC</h2>
 		<pre class="js-code compact-m">
-			type GetSlotsSpec< P extends object > = {
-				[K in keyof P]-?: SlotPropTypeInfer< ToIntersect< P[K] > >;
+			type GetSlotsSpec< PROPS extends object > = {
+				[K in keyof PROPS]-?: SlotPropTypeInfer< ToIntersect< PROPS[K] > >;
 			}
 			//     ⬇️    ⬇️    ⬇️
 			{
 				icon: LikeFragment;
 				children: SlotContent;
-				onemore: (value: {ts:Date}) => string;
+				curTime: (value: {ts:Date}) => string;
 				#!+ offset: never; // 😧 &lt;Slot name="offset">{never}&lt;/Slot>
 				#!- limit: never;  // как-то не очень
 			}
@@ -1686,7 +1351,7 @@
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>🎰 TrueСлоты: Типизация для &lt;Slot/></h2>
+		<h2>🎰 TrueСлоты: Получение SPEC</h2>
 		<pre class="js-code compact-xs">
 			type GetSlotsSpec< P extends object > = CleanObject< ... >
 
@@ -1698,29 +1363,53 @@
 			#!+ //     ⬇️    ⬇️    ⬇️
 			  { icon: LikeFragment; }
 			  | { children: SlotContent; }
-			  | { onemore: (value: {ts:Date}) => string; }
+			  | { curTime: (value: {ts:Date}) => string; }
 			  | never // offset
 			#!-   | never // и limit
 		</pre>
 	</div></section>
 
-	<section class="slide shout"><div>
-		<h2>
-			<div>TrueKit 🐳</div>
-			<small>ver 0.XX</small>
-		</h2>
+	<!--section class="slide"><div>
+		<h2>🐳 Truekit</h2>
+		<pre class="js-code compact-xs">
+			const $Login = createComponentDescriptor(
+				"@myapp/Login",
+				{} as LoginProps,
+				{
+					Input: $Input,
+					Button: $Button,
+				},
+			);
+
+			type LoginProps = {
+				action: string;
+				deps?: Deps< typeof $Login.deps >;
+				theme?: Theme<{...}>;
+				welcomeText?: SlotProp< LikeFragment >;
+			}
+		</pre>
 	</div></section>
 
 	<section class="slide"><div>
-		<h2>TrueKit 🐳: Компонент</h2>
-		<code>/Button/</code>
-		<ul style="margin-left: 50px">
-			<li>Button.<b>types</b>.ts — дескриптор, спецификации и связанные типы</li>
-			<li>Button.<b>theme</b>.ts — тема по умолчанию</li>
-			<li>Button.<b>deps</b>.ts — зависимости по умолчанию</li>
-			<li>Button.<b>tsx</b> — сам компонент</li>
-		</ul>
-	</div></section>
+		<h2>🐳 Truekit</h2>
+		<pre class="js-code compact-xs">
+			const logi = createComponentDescriptor(
+				"@myapp/Login",
+				{} as LoginProps,
+				{
+					Input: $Input,
+					Button: $Button,
+				},
+			);
+
+			type LoginProps = {
+				action: string;
+				deps?: Deps< typeof $Login.deps >;
+				theme?: Theme<{...}>;
+				welcomeText?: SlotProp< LikeFragment >;
+			}
+		</pre>
+	</div></section-->
 
 	<section class="slide hide-counter"><div style="text-align: center">
 		<img src="./st/truekit-logo-0.png" width="70%" style="margin-top: -50px"/>
@@ -1729,16 +1418,6 @@
 		<img src="./st/medium-qr.png"/>
 	</div></section>
 
-	<script src="../shwr/shower.js"></script>
-
-	<script>
-	  (function(i,s,o,g,r,a,m){i["GoogleAnalyticsObject"]=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,"script","//www.google-analytics.com/analytics.js","ga");
-
-	  ga("create", "UA-16483888-3", "rubaxa.github.io");
-	  ga("send", "pageview");
-	</script>
+	<script src="./st/shower.js"></script>
 </body>
 </html>
