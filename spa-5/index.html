@@ -55,9 +55,9 @@
 				},
 			});
 
-			function SomeBlock(props) {
+			function StyledBtn(props) {
 				const cls = useStyles();
-				return &lt;Button <mark>classes={cls}</mark>/>;
+				return &lt;Button {...props} <mark>classes={cls}</mark>/>;
 			}
 
 			//        ⬇️
@@ -80,7 +80,7 @@
 	<section class="slide"><div>
 		<h2 style="margin-top: -80px;">Material UI: Theming</h2>
 		<pre class="js-code compact-xs">
-			const useStyles = makeStyles(theme => ({
+			const useStyles = makeStyles(<mark>theme</mark> => ({
 				root: {
 					background: theme.background,
 					// ...
@@ -89,7 +89,7 @@
 
 			function ThemedBtn(props) {
 				const classes = <mark>useStyles()</mark>;
-				return &lt;Button classes={<mark>classes</mark>}>Higher-order component&lt;/Button>;
+				return &lt;Button {...props} classes={<mark>classes</mark>}/>
 			}
 
 			const themeInstance = {
@@ -149,7 +149,7 @@
 		<ul>
 			<li>Зашитые классы</li>
 			<li>Подключенные стили</li>
-			<li>Перегрузка темы только на уровне компонента (через props), либо через переменные темы</li>
+			<li>Перегрузка темы только на уровне компонента (через props), либо через переменные темы (context и это редкость)</li>
 			<li>Неконтролируемая комбинаторика модификаторов ⚠️</li>
 		</ul>
 	</div></section>
@@ -208,6 +208,22 @@
 
 	<section class="slide shout"><div>
 		<h2>🤔</h2>
+	</div></section>
+
+	<section class="slide cover"><div>
+		<img
+			src="./st/oh-no-whitout-circles-white.jpg"
+			style="
+				position: absolute;
+				height: 70%;
+				top: 30%;
+				left: 50%;
+				transform: translate(-50%,0)
+			"
+		/>
+		<h2 style="font-size: 200%; margin-top: -10px; opacity: 1">
+			«UIKit, который точно сможет™» 🤦🏻‍♂️🤦🏻‍♀️
+		</h2>
 	</div></section>
 
 	<section class="slide"><div>
@@ -676,8 +692,8 @@
 			type Deps&lt;
 				T extends DepsDescriptor&lt;any, any>
 			> = (
-				& <mark>DepsInline&lt;T['map']></mark>
-				& <mark>Meta</mark>&lt;T['map']> // срытая мета информация
+				& <mark>DepsInline&lt;T["map"]></mark>
+				& Meta&lt;T["map"]> // срытая мета информация
 			)
 		</pre>
 	</div></section>
@@ -689,7 +705,7 @@
 	<section class="slide"><div>
 		<h2 style="margin-top: -80px">TypeScript 🧙‍♂️: DepsInline< ... ></h2>
 		<pre class="js-code compact-m">
-			// typeof <mark>$Form.deps['map']</mark>
+			// typeof <mark>$Form.deps["map"]</mark>
 			{
 				Input: $Input // Descriptor<"@truekit/Input", InputProps>
 				Button: $Button,
@@ -711,8 +727,8 @@
 				T extends DescriptorWithMetaMap
 			> = ToIntersect<
 				{
-					[K in keyof T]: IsOptional&lt; T[K] > extends true
-						? { [X in K]?: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
+					[K in keyof T]: <mark>IsOptional</mark>&lt; T[K] > extends true
+						? { [X in K]<mark>?</mark>: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
 						: { [X in K]: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
 				}[keyof T]
 			>
@@ -724,9 +740,9 @@
 		<pre class="js-code">
 			// Казалось бы логичным:
 			type IsOptional< T > = (
-				T extends undefined
-					? true
-					: false
+					T extends undefined
+							? true
+							: false
 			)
 		</pre>
 	</div></section>
@@ -808,8 +824,8 @@
 				T extends DescriptorWithMetaMap
 			> = ToIntersect<
 				{
-					[K in keyof T]: IsOptional&lt; T[K] > extends true
-						? { [X in K]?: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
+					[K in keyof T]: <mark>IsOptional</mark>&lt; T[K] > extends true
+						? { [X in K]<mark>?</mark>: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
 						: { [X in K]: LikeComponent&lt;NonNullable&lt; T[K] >["props"]> }
 				}[keyof T]
 			>
@@ -961,8 +977,8 @@
 		<pre class="js-code">
 			// Вспомним, как описаны зависимости
 			type Deps< T extends DepsDescriptor< any, any > > = (
-				& DepsInline< T['map'] >
-				& <mark>Meta< T['map'] ></mark>      // ⬅️ скрытая meta-информация
+				& DepsInline&lt;T["map"] >
+				& <mark>Meta&lt;T["map"] ></mark>      // ⬅️ скрытая meta-информация
 			)
 		</pre>
 	</div></section>
@@ -1044,9 +1060,10 @@
 
 	<section class="slide"><div>
 		<h2 style="font-size: 130%;">DesInjection: рекурсивое преобразуем в "uniqId" => Component</h2>
+		<br/>
 		<pre class="js-code">
 			export type RecursionDeps< T > = FlattenObject<
-				FlattenDeps<     // (2)
+				FlattenDeps<        // (2)
 					GetDepsMap< T >   // (1)
 				>
 			>
@@ -1114,7 +1131,7 @@
 				createStrictDepsBy($Login, {
 					#!+[$Input.id]: Input,
 					[$Button.id]: Button,
-					#!-[$Icon.id]: Icon,
+					#!-[$Icon.id]: Icon, // 👍
 				}),
 			]);
 
@@ -1153,7 +1170,7 @@
 			type SomeBlockProps = {
 				icon: SlotProp< LikeFragment >;
 				children: SlotProp< SlotContent >;
-				curTime: SlotProp< ({ts}: {ts:Date}) => string >;
+				curTime: SlotProp<<mark>({ts}: {ts:Date}) => string</mark>>;
 				// ...остальные свойства
 			}
 		</pre>
@@ -1346,6 +1363,10 @@
 			<li>Button.<b>tsx</b> — сам компонент (подключает только дескриптор)</li>
 		</ul>
 	</div></section>-->
+
+	<section class="slide shout"><div>
+		<h2>🐳 </h2>
+	</div></section>
 
 	<section class="slide"><div>
 		<h2>🐳 Truekit</h2>
