@@ -1127,13 +1127,11 @@
 	<section class="slide"><div>
 		<h2>DepsProvider</h2>
 		<pre class="js-code compact">
-			const registry = createDepsRegistry([
-				createStrictDepsBy($Login, {
-					#!+[$Input.id]: Input,
-					[$Button.id]: Button,
-					#!-[$Icon.id]: Icon, // 👍
-				}),
-			]);
+			const registry = createStrictDepsRegistryBy($Login, {
+				#!+[$Input.id]: Input,
+				[$Button.id]: Button,
+				#!-[$Icon.id]: Icon, // 👍
+			});
 
 			&lt;DepsProvider value={ registry }>
 				&lt;Login/>
