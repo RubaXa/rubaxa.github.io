@@ -12,6 +12,11 @@
 				"url": "https://github.com/artifact-project/perf-tools/tree/master/keeper#readme"
 			},
 			{
+				"name": "@artifact-project/recaptcha",
+				"desc": "🤖reCAPTCHA API wrapper + Base Components (vue, react, web-component)",
+				"url": "https://github.com/artifact-project/recaptcha"
+			},
+			{
 				"name": "tx-i18n",
 				"desc": "🈂️Auto-translate for your application (React supported)",
 				"url": "https://github.com/artifact-project/tx-i18n#readme"
