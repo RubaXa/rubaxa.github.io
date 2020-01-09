@@ -12,6 +12,11 @@
 				"url": "https://github.com/artifact-project/perf-tools/tree/master/keeper#readme"
 			},
 			{
+				"name": "@artifact-project/morph",
+				"desc": "🦠It's a micro library for DOM patching",
+				"url": "https://github.com/artifact-project/morph"
+			},
+			{
 				"name": "@artifact-project/recaptcha",
 				"desc": "🤖reCAPTCHA API wrapper + Base Components (vue, react, web-component)",
 				"url": "https://github.com/artifact-project/recaptcha"
